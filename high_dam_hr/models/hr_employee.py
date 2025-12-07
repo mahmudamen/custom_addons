@@ -1,4 +1,4 @@
-from odoo.exceptions import Warning, UserError
+from odoo.exceptions import UserError
 from odoo import fields, models, api, _
 from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
