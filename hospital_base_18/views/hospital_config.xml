@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="res_config_settings_view_form_hospital" model="ir.ui.view">
+            <field name="name">res_config_settings_view_form_hospital</field>
+            <field name="model">res.config.settings</field>
+            <field name="priority" eval="40"/>
+            <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form" position="inside">
+                    <app data-string="Hospital" string="Hospital" name="hospital">
+                        <block title="accounting" name="default_accounting_setting">
+                            <setting string="Accounting Default:">
+                                <div class="content-group">
+                                    <div class="row mt8">
+                                        <label for="cash_receivable_acc" class="col-lg-4 o_light_label" string="Cash Customers Account" />
+                                        <field name="cash_receivable_acc" options='{"no_open": True, "no_create": True}'/>
+                                    </div>
+                                    <div class="row mt8">
+                                        <label for="cash_receivable_partner" class="col-lg-4 o_light_label" string="Cash Customers Partner" />
+                                        <field name="cash_receivable_partner" options='{"no_open": True, "no_create": True}'/>
+                                    </div>
+                                    <div class="row mt8">
+                                        <label for="main_cash_journal" class="col-lg-4 o_light_label" string="Main Cash Journal" />
+                                        <field name="main_cash_journal" options='{"no_open": True, "no_create": True}'/>
+                                    </div>
+                                    <div class="row mt8">
+                                        <label for="main_cash" class="col-lg-4 o_light_label" string="Main Cash" />
+                                        <field name="main_cash" options='{"no_open": True, "no_create": True}'/>
+                                    </div>
+                                    <div class="row mt8">
+                                        <label for="service_exp_account" class="col-lg-4 o_light_label" string="Service exp account" />
+                                        <field name="service_exp_account" options='{"no_open": True, "no_create": True}'/>
+                                    </div>
+                                    <div class="row mt8">
+                                        <label for="service_tax_account" class="col-lg-4 o_light_label" string="Service tax account" />
+                                        <field name="service_tax_account" options='{"no_open": True, "no_create": True}'/>
+                                    </div>
+                                    <div class="row mt8">
+                                        <label for="reception_journal" class="col-lg-4 o_light_label" string="Reception Journal" />
+                                        <field name="reception_journal" options='{"no_open": True, "no_create": True}'/>
+                                    </div>
+                                    <div class="row mt8">
+                                        <label for="doctor_due_account" class="col-lg-4 o_light_label" string="Doctor Due Account" />
+                                        <field name="doctor_due_account" options='{"no_open": True, "no_create": True}'/>
+                                    </div>
+                                    <div class="row mt8">
+                                        <label for="doctor_discount_account" class="col-lg-4 o_light_label" string="Doctor Discount Account" />
+                                        <field name="doctor_discount_account" options='{"no_open": True, "no_create": True}'/>
+                                    </div>
+                                    <div class="row mt8">
+                                        <label for="inpatient_journal" class="col-lg-4 o_light_label" string="Inpatient Journal" />
+                                        <field name="inpatient_journal" options='{"no_open": True, "no_create": True}'/>
+                                    </div>
+                                    <div class="row mt8">
+                                        <label for="surgery_tax_account" class="col-lg-4 o_light_label" string="Surgery tax account" />
+                                        <field name="surgery_tax_account" options='{"no_open": True, "no_create": True}'/>
+                                    </div>
+
+                                    <div class="row mt8">
+                                        <label for="inpatient_deposit" class="col-lg-4 o_light_label" string="Inpatient Deposit" />
+                                        <field name="inpatient_deposit" options='{"no_open": True, "no_create": True}'/>
+                                    </div>
+                                    <div class="row mt8">
+                                        <label for="outpatient_deposit" class="col-lg-4 o_light_label" string="Outpatient Deposit" />
+                                        <field name="outpatient_deposit"/>
+                                    </div>
+                                    <div class="row mt8">
+                                        <label for="nursing_exp" class="col-lg-4 o_light_label" string="Nursing Exp" />
+                                        <field name="nursing_exp"/>
+                                    </div>
+                                    <div class="row mt8">
+                                        <label for="nursing_tax" class="col-lg-4 o_light_label" string="Nursing Tax" />
+                                        <field name="nursing_tax"/>
+                                    </div>
+                                    <div class="row mt8">
+                                        <label for="contract_journal" class="col-lg-4 o_light_label" string="Contract Journal" />
+                                        <field name="contract_journal"/>
+                                    </div>
+                                </div>
+                            </setting>
+                        </block>
+                    </app>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

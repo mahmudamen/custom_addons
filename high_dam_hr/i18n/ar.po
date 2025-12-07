@@ -1,0 +1,242 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* high-dam-hr
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 15.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-06-23 08:13+0000\n"
+"PO-Revision-Date: 2022-06-23 08:13+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: high-dam-hr
+#: model:ir.model.fields,field_description:high-dam-hr.field_hr_employee__age
+msgid "Age"
+msgstr "العمر"
+
+#. module: high-dam-hr
+#: model:ir.model.fields.selection,name:high-dam-hr.selection__hr_employee__current_status__appendix
+msgid "Appendix"
+msgstr "ملحق"
+
+#. module: high-dam-hr
+#: model:ir.model.fields,field_description:high-dam-hr.field_hr_qualitative_group__create_uid
+msgid "Created by"
+msgstr "انشاء بواسطة"
+
+#. module: high-dam-hr
+#: model:ir.model.fields,field_description:high-dam-hr.field_hr_qualitative_group__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: high-dam-hr
+#: model:ir.model.fields,field_description:high-dam-hr.field_hr_qualitative_group__display_name
+msgid "Display Name"
+msgstr "الاسم"
+
+#. module: high-dam-hr
+#: model:ir.model,name:high-dam-hr.model_hr_employee
+msgid "Employee"
+msgstr "الموظف"
+
+#. module: high-dam-hr
+#: model:ir.model.fields,field_description:high-dam-hr.field_hr_qualitative_group__id
+msgid "ID"
+msgstr "كود"
+
+#. module: high-dam-hr
+#: model:ir.model.fields,field_description:high-dam-hr.field_hr_qualitative_group____last_update
+msgid "Last Modified on"
+msgstr ""
+
+#. module: high-dam-hr
+#: model:ir.model.fields,field_description:high-dam-hr.field_hr_qualitative_group__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: high-dam-hr
+#: model:ir.model.fields,field_description:high-dam-hr.field_hr_qualitative_group__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: high-dam-hr
+#: model_terms:ir.actions.act_window,help:high-dam-hr.qualitative_group_act_window
+msgid "There is no examples click here to add new qualitative group."
+msgstr ""
+
+#. module: high-dam-hr
+#: model:ir.model.fields.selection,name:high-dam-hr.selection__hr_employee__current_status__basic
+msgid "basic"
+msgstr "اساسي"
+
+#. module: high-dam-hr
+#: model:ir.model.fields,field_description:high-dam-hr.field_hr_employee__code
+msgid "code"
+msgstr ""
+
+#. module: high-dam-hr
+#: model:ir.model.fields,field_description:high-dam-hr.field_hr_employee__current_status
+msgid "current status"
+msgstr "الحالة الحالية"
+
+#. module: high-dam-hr
+#: model:ir.model.fields,field_description:high-dam-hr.field_hr_employee__hiring_date
+msgid "hiring date"
+msgstr "تاريخ التعيين"
+
+#. module: high-dam-hr
+#: model_terms:ir.ui.view,arch_db:high-dam-hr.qualitative_group_form_view
+msgid "hr qualitative group"
+msgstr "المجموعة النوعية"
+
+#. module: high-dam-hr
+#: model:ir.model,name:high-dam-hr.model_hr_qualitative_group
+msgid "hr.qualitative.group"
+msgstr "المجموعة النوعية"
+
+#. module: high-dam-hr
+#: model:ir.model.fields.selection,name:high-dam-hr.selection__hr_employee__current_status__loan
+msgid "loan"
+msgstr "اعارة"
+
+#. module: high-dam-hr
+#: model:ir.model.fields.selection,name:high-dam-hr.selection__hr_employee__current_status__mandate
+msgid "mandate"
+msgstr "منتدب"
+
+#. module: high-dam-hr
+#: model:ir.model.fields,field_description:high-dam-hr.field_hr_employee__national_id
+msgid "national Id"
+msgstr "الرقم القومي"
+
+#. module: high-dam-hr
+#: code:addons/high-dam-hr/models/hr_employee.py:0
+#, python-format
+msgid "national id must be 14 digits and numbers  %s"
+msgstr "يجب ان يكون الرقم القومي 14 رقما "
+
+#. module: high-dam-hr
+#: model:ir.model.fields,field_description:high-dam-hr.field_hr_employee__qualitative_group
+#: model:ir.model.fields,field_description:high-dam-hr.field_hr_qualitative_group__qualitative_group
+#: model_terms:ir.ui.view,arch_db:high-dam-hr.qualitative_group_form_view
+#: model_terms:ir.ui.view,arch_db:high-dam-hr.qualitative_group_tree_view
+msgid "qualitative group"
+msgstr "المجموعة النوعية"
+
+#. module: high-dam-hr
+#: model:ir.actions.act_window,name:high-dam-hr.qualitative_group_act_window
+#: model:ir.ui.menu,name:high-dam-hr.qualitative_group_menu
+msgid "qualitative_group"
+msgstr "المجموعة النوعية"
+
+#. module: high-dam-hr
+#: model:ir.model.fields,field_description:high-dam-hr.field_hr_employee__resolution_date
+msgid "resolution date"
+msgstr ""
+
+#. module: high-dam-hr
+#: model:ir.model.fields,field_description:high-dam-hr.field_hr_employee__resolution_id
+msgid "resolution id"
+msgstr ""
+
+#. module: high-dam-hr
+#: model:ir.model.fields,field_description:high-dam-hr.field_hr_employee__start_date
+msgid "start date"
+msgstr "تاريخ بدء العمل"
+
+#. module: high-dam-hr
+#: model:ir.model.fields.selection,name:high-dam-hr.selection__hr_employee__current_status__stoped
+msgid "stoped"
+msgstr "متوقف"
+
+
+
+
+#. module: hr
+#: model:ir.model,name:hr.model_hr_department
+#: model:ir.model.fields,field_description:hr.field_hr_employee__department_id
+#: model:ir.model.fields,field_description:hr.field_hr_employee_base__department_id
+#: model:ir.model.fields,field_description:hr.field_hr_employee_public__department_id
+#: model:ir.model.fields,field_description:hr.field_hr_job__department_id
+#: model:ir.model.fields,field_description:hr.field_res_users__department_id
+#: model_terms:ir.ui.view,arch_db:hr.hr_employee_public_view_search
+#: model_terms:ir.ui.view,arch_db:hr.view_department_filter
+#: model_terms:ir.ui.view,arch_db:hr.view_employee_filter
+#: model_terms:ir.ui.view,arch_db:hr.view_job_filter
+msgid "Department"
+msgstr "الادارة"
+
+#. module: hr
+#: model:ir.model.fields,field_description:hr.field_hr_department__name
+msgid "Department Name"
+msgstr "اسم الادارة"
+
+#. module: hr
+#: model:ir.actions.act_window,name:hr.hr_department_kanban_action
+#: model:ir.actions.act_window,name:hr.hr_department_tree_action
+#: model:ir.ui.menu,name:hr.menu_hr_department_kanban
+#: model:ir.ui.menu,name:hr.menu_hr_department_tree
+#: model_terms:ir.ui.view,arch_db:hr.view_department_filter
+msgid "Departments"
+msgstr "الادارات"
+
+#. module: hr
+#: model:ir.model.fields,field_description:hr.field_mail_channel__subscription_department_ids
+msgid "HR Departments"
+msgstr "ادارات الموارد البشرية"
+
+
+#. module: hr
+#: model:ir.model,name:hr.model_hr_job
+#: model:ir.model.fields,field_description:hr.field_hr_employee__job_id
+#: model:ir.model.fields,field_description:hr.field_hr_employee_base__job_id
+#: model:ir.model.fields,field_description:hr.field_hr_employee_public__job_id
+#: model:ir.model.fields,field_description:hr.field_hr_job__name
+#: model_terms:ir.ui.view,arch_db:hr.res_users_view_form_profile
+#: model_terms:ir.ui.view,arch_db:hr.view_employee_form
+#: model_terms:ir.ui.view,arch_db:hr.view_job_filter
+msgid "Job Position"
+msgstr "المسمي  الوظيفي"
+
+
+#. module: hr
+#: model:ir.actions.act_window,name:hr.action_hr_job
+#: model:ir.ui.menu,name:hr.menu_view_hr_job
+msgid "Job Positions"
+msgstr "المسميات الوظيفية"
+
+#. module: hr
+#: model:ir.model.fields,field_description:hr.field_hr_employee__job_title
+#: model:ir.model.fields,field_description:hr.field_hr_employee_base__job_title
+#: model:ir.model.fields,field_description:hr.field_hr_employee_public__job_title
+#: model:ir.model.fields,field_description:hr.field_res_users__job_title
+#: model_terms:ir.ui.view,arch_db:hr.hr_employee_public_view_form
+#: model_terms:ir.ui.view,arch_db:hr.hr_employee_public_view_search
+msgid "Job Title"
+msgstr "المسمى الوظيفي"
+
+#. module: hr
+#: model_terms:ir.ui.view,arch_db:hr.view_job_filter
+msgid "In Position"
+msgstr "في المسمي الوظيفي"
+
+
+#. module: hr
+#: model:ir.model,name:hr.model_hr_department
+#: model:ir.model.fields,field_description:hr.field_hr_employee__department_id
+#: model:ir.model.fields,field_description:hr.field_hr_employee_base__department_id
+#: model:ir.model.fields,field_description:hr.field_hr_employee_public__department_id
+#: model:ir.model.fields,field_description:hr.field_hr_job__department_id
+#: model:ir.model.fields,field_description:hr.field_res_users__department_id
+#: model_terms:ir.ui.view,arch_db:hr.hr_employee_public_view_search
+#: model_terms:ir.ui.view,arch_db:hr.view_department_filter
+#: model_terms:ir.ui.view,arch_db:hr.view_employee_filter
+#: model_terms:ir.ui.view,arch_db:hr.view_job_filter
+msgid "Department"
+msgstr "الادارة"

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Patient Exit Wizard Form -->
+    <record id="patient_exit_wizard_form" model="ir.ui.view">
+        <field name="name">patient.exit.wizard.form</field>
+        <field name="model">patient.exit.wizard</field>
+        <field name="arch" type="xml">
+            <form string="تقرير خروج المريض">
+                <style>
+                    .o_form_view .o_group .o_form_label {
+                        font-weight: bold;
+                        color: #666;
+                    }
+                    .patient_info_section {
+                        background-color: #f8f9fa;
+                        border: 1px solid #dee2e6;
+                        border-radius: 5px;
+                        padding: 15px;
+                        margin-bottom: 20px;
+                    }
+                    .wizard_header {
+                        text-align: center;
+                        background-color: #4472c4;
+                        color: white;
+                        padding: 5px;
+                        border-radius: 5px;
+                        margin-bottom: 5px;
+                    }
+                </style>
+                <div class="wizard_header">
+                    <h2>تقرير خروج المريض</h2>
+                </div>
+                <!-- Patient Information Display -->
+                <group string="معلومات المريض" class="patient_info_section">
+                    <group>
+                        <field name="patient_file_id" invisible="1"/>
+                        <field name="patient_name" readonly="1"/>
+                        <field name="doctor_name" readonly="1"/>
+                    </group>
+                    <group>
+                        <field name="date_in" readonly="1"/>
+                        <field name="diagnosis" readonly="1" />
+                    </group>
+                </group>
+                <separator string="معلومات الخروج" style="font-weight: bold; color: #4472c4;"/>
+                <group>
+                    <group>
+                        <field name="date_out" required="1"/>
+                        <field name="discharge_condition" required="1"/>
+                    </group>
+                </group>
+                <group string="التوصيات الطبية">
+                    <field name="discharge_summary"
+                           placeholder="أدخل التوصيات الطبية وملخص العلاج..."
+                           />
+                </group>
+                <footer>
+                    <button name="action_confirm_discharge"
+                            string="تأكيد الخروج وإنشاء التقرير"
+                            type="object"
+                            class="btn-primary"/>
+                    <button name="action_cancel"
+                            string="إلغاء"
+                            type="object"
+                            class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Wizard Action -->
+    <record id="action_patient_exit_wizard" model="ir.actions.act_window">
+        <field name="name">تقرير خروج المريض</field>
+        <field name="res_model">patient.exit.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="view_id" ref="patient_exit_wizard_form"/>
+    </record>
+</odoo>

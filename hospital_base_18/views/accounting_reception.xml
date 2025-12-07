@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="close_user_session_form" model="ir.ui.view">
+            <field name="name">close_user_session_form</field>
+            <field name="model">close.user.session</field>
+            <field name="arch" type="xml">
+                <form string="Reception Sessions">
+                    <field name="show_message" invisible="1"/>
+                    <header>
+                        <button name="confirm_post" string="ترحيل" class="oe_highlight"
+                                invisible="state != 'draft'"
+                                type="object"/>
+                        <button name="cancel_entry" string="إلغاء" class="oe_highlight"
+                                invisible="state == 'cancel'"
+                                type="object"/>
+                        <button name="session_income" string="ترحيل الايرادات" class="oe_highlight"
+                                invisible="state != 'post'"
+                                type="object"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,post,income_posted,cancel"/>
+                    </header>
+                    <div class="alert alert-danger mb-0" role="alert" invisible="not show_message">
+                        <field name="messages"/>
+                    </div>
+                    <sheet>
+                        <div class="oe_title">
+                            <h4>
+                                <field name="name" placeholder="Draft" readonly="1"/>
+                            </h4>
+                        </div>
+                        <group readonly="state != 'draft'">
+                            <group>
+                                <field name="accounting_user_pin"/>
+                                <field name="reception_user_pin"/>
+                                <field name="from_move"/>
+                                <field name="actual_amount"/>
+                                <field name="diff_amount"/>
+                                <field name="cash_id" invisible="not cash_id" readonly="1" force_save="1"/>
+                            </group>
+                            <group>
+                                <field name="accounting_user" readonly="1" force_save="1"/>
+                                <field name="reception_user" readonly="1" force_save="1"/>
+                                <field name="to_move"/>
+                                <field name="req_amount"/>
+                                <field name="move_id" invisible="not move_id" readonly="1" force_save="1"/>
+                            </group>
+                        </group>
+                        <group readonly="state != 'draft'">
+                            <field name="notes"/>
+                        </group>
+                    </sheet>
+                    <div class="o_attachment_preview"/>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+        <record id="close_user_session_tree" model="ir.ui.view">
+            <field name="name">close_user_session_tree</field>
+            <field name="model">close.user.session</field>
+            <field name="arch" type="xml">
+                <list limit="20">
+                    <field name="name" readonly="1"/>
+                    <field name="accounting_user" readonly="1"/>
+                    <field name="reception_user" readonly="1"/>
+                    <field name="from_move" readonly="1"/>
+                    <field name="to_move" readonly="1"/>
+                    <field name="req_amount" readonly="1"/>
+                    <field name="actual_amount" readonly="1"/>
+                    <field name="diff_amount" readonly="1"/>
+                </list>
+            </field>
+        </record>
+        <record id="close_user_session_action" model="ir.actions.act_window">
+            <field name="name">Close Session</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">close.user.session</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <menuitem id="close_user_session_menu"
+                  name="Reception Sessions"
+                  parent="account.menu_finance_entries"
+                  action="close_user_session_action"
+                  sequence="0"/>
+
+        <record id="doctor_post_visits_form" model="ir.ui.view">
+            <field name="name">doctor_post_visits_form</field>
+            <field name="model">doctor.post.visits</field>
+            <field name="arch" type="xml">
+                <form string="Doctor Post">
+                    <field name="doctor_readonly" invisible="1"/>
+                    <header>
+                        <button name="action_post" string="ترحيل" class="oe_highlight"
+                                invisible="state != 'draft'"
+                                type="object"/>
+                        <button name="action_pay" string="سداد" class="oe_highlight"
+                                invisible="state != 'post'"
+                                type="object"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,post,paid"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h4>
+                                <field name="name" placeholder="مسودة" readonly="1"/>
+                            </h4>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="doctor_id" readonly="doctor_readonly" force_save="1"/>
+                                <field name="from_rec" readonly="doctor_readonly" force_save="1"/>
+                                <field name="due_move" readonly="1" force_save="1"/>
+                                <field name="pay_move" readonly="1" force_save="1"/>
+                            </group>
+                            <group>
+                                <field name="date"/>
+                                <field name="to_rec" readonly="doctor_readonly" force_save="1"/>
+                                <field name="total_amount" readonly="1" force_save="1"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="note"/>
+                        </group>
+                    </sheet>
+                    <div class="o_attachment_preview"/>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+        <record id="doctor_post_visits_tree" model="ir.ui.view">
+            <field name="name">doctor_post_visits_tree</field>
+            <field name="model">doctor.post.visits</field>
+            <field name="arch" type="xml">
+                <list limit="20">
+                    <field name="name"/>
+                </list>
+            </field>
+        </record>
+        <record id="doctor_post_visits_action" model="ir.actions.act_window">
+            <field name="name">Doctors Post</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">doctor.post.visits</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <menuitem id="doctor_post_visits_menu"
+                  name="حسابات الاطباء"
+                  parent="account.menu_finance_entries"
+                  action="doctor_post_visits_action"
+                  sequence="0"/>
+
+        <record id="action_view_doctor_post" model="ir.actions.act_window">
+            <field name="name">ترحيل حسابات الاطباء</field>
+            <field name="res_model">doctor.post.visits</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="doctor_post_visits_form"/>
+            <field name="target">new</field>
+            <field name="context">{'default_doctor': active_id, 'default_doctor_readonly': True}</field>
+            <field name="binding_model_id" ref="hospital_base.model_clinic_visit"/>
+            <field name="binding_view_types">list</field>
+        </record>
+
+        <record id="action_server_doctor_post" model="ir.actions.server">
+            <field name="name">ترحيل خدمات الاطباء</field>
+            <field name="model_id" ref="model_clinic_visit"/>
+            <field name="binding_model_id" ref="hospital_base.model_clinic_visit"/>
+            <field name="binding_view_types">list</field>
+            <field name="state">code</field>
+            <field name="code">action = records.action_doctor_post_serv()</field>
+        </record>
+
+    </data>
+</odoo>

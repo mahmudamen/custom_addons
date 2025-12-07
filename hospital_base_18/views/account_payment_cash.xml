@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+    <!-- List View -->
+    <record id="view_account_payment_cash_tree" model="ir.ui.view">
+        <field name="name">account.payment.cash.list</field>
+        <field name="model">account.payment.cash</field>
+        <field name="arch" type="xml">
+            <list
+                  decoration-info="payment_type=='inbound'"
+                  decoration-warning="payment_type=='outbound'"
+                  decoration-success="partner_type=='customer'"
+                  decoration-muted="partner_type=='supplier'" limit="20">
+                <field name="name"/>
+                <field name="date"/>
+                <field name="partner_id"/>
+                <field name="payment_type" />
+                <field name="partner_type"/>
+                <field name="amount"  />
+                <field name="currency_id" />
+                <field name="payment_reference"/>
+                <field name="destination_journal_id"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_account_payment_cash_form" model="ir.ui.view">
+        <field name="name">account.payment.cash.form</field>
+        <field name="model">account.payment.cash</field>
+        <field name="arch" type="xml">
+            <form string="Cash Payment">
+                <header>
+                    <button name="action_create_payment"
+                                string="إنشاء دفعة"
+                                type="object"
+                                class="oe_highlight"
+                                groups="hospital_base.module_category_custom_acc_access_rights"
+                                help="Create an account payment with the same data"/>
+                    <button name="action_cancel"
+                                string="إلغاء"
+                                type="object"
+                                groups="hospital_base.reception_user"
+                                />
+                    <button name="action_reset_to_draft"
+                                string="إعادة تعيين إلى مسودة"
+                                groups="hospital_base.reception_user"
+                                type="object"
+                                />
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,settled"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="%(account.action_account_payments)d"
+                                type="action"
+                                class="oe_stat_button"
+                                icon="fa-money"
+                                invisible="payment_id == False">
+                            <field name="payment_id" invisible="1"/>
+                            <span>عرض الدفعة</span>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name" string="وذلك قيمة"/>
+                        <h1>
+                            <field name="name" placeholder="استلامنا مبلغ وذلك قيمة ...."/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Payment Information">
+                            <field name="date" readonly="0"/>
+                            <field name="payment_type" groups="hospital_base.module_category_custom_acc_access_rights" readonly="1" widget="radio" options="{'horizontal': true}"/>
+                            <field name="partner_type" groups="hospital_base.module_category_custom_acc_access_rights" widget="radio" options="{'horizontal': true}"/>
+                            <field name="partner_id" string="المريض"/>
+                        </group>
+                        <group string="Amount And Currency">
+                            <field name="amount" widget="monetary"
+                                   class="oe_inline"
+                                   options="{'currency_field': 'currency_id'}"/>
+                            <field name="currency_id" readonly="1"
+                                   options="{'no_create': True, 'no_open': True}"/>
+                            <field name="payment_reference" placeholder="Reference number, check number, etc."/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Accounting Information">
+                            <field name="outstanding_account_id" groups="hospital_base.module_category_custom_acc_access_rights"
+                                   options="{'no_create': True}" readonly="1"
+                                   context="{'default_account_type': 'asset_current'}"/>
+                            <field name="destination_account_id" groups="hospital_base.module_category_custom_acc_access_rights"
+                                   options="{'no_create': True}" readonly="1"
+                                   required="1"/>
+                        </group>
+                        <group string="Journal">
+                            <field name="destination_journal_id" groups="hospital_base.module_category_custom_acc_access_rights"
+                                   options="{'no_create': True}" readonly="1"
+                                   context="{'default_type': 'cash'}"/>
+                        </group>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Kanban View -->
+    <record id="view_account_payment_cash_kanban" model="ir.ui.view">
+        <field name="name">account.payment.cash.kanban</field>
+        <field name="model">account.payment.cash</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="payment_type" class="o_kanban_small_column">
+                <field name="name"/>
+                <field name="date"/>
+                <field name="partner_id"/>
+                <field name="amount"/>
+                <field name="currency_id"/>
+                <field name="payment_type"/>
+                <field name="partner_type"/>
+                <field name="payment_reference"/>
+                <field name="destination_journal_id"/>
+                <field name="activity_ids"/>
+                <field name="activity_state"/>
+                <progressbar field="activity_state" colors='{"planned": "success", "today": "warning", "overdue": "danger"}'/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_card oe_kanban_global_click">
+                            <div class="oe_kanban_content">
+                                <div class="o_kanban_record_top">
+                                    <div class="o_kanban_record_headings">
+                                        <strong class="o_kanban_record_title">
+                                            <field name="name"/>
+                                        </strong>
+                                        <span class="o_kanban_record_subtitle">
+                                            <t t-if="record.payment_reference.value">
+                                                Ref: <field name="payment_reference"/>
+                                            </t>
+                                        </span>
+                                    </div>
+                                    <div class="o_kanban_manage_button_section">
+                                        <a class="o_kanban_manage_toggle_button" href="#" title="Manage">
+                                            <i class="fa fa-ellipsis-v" title="Manage Options"/>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="o_kanban_record_body">
+                                    <div class="o_kanban_tags_section">
+                                        <span t-attf-class="badge badge-pill #{record.partner_type.value == 'customer' ? 'badge-success' : 'badge-secondary'}">
+                                            <i class="fa fa-user" title="Partner Type"/>
+                                            <t t-if="record.partner_type.value == 'customer'">Customer</t>
+                                            <t t-else="">Vendor</t>
+                                        </span>
+                                    </div>
+                                    <div class="o_kanban_record_subtitle">
+                                        <i class="fa fa-building" title="Partner"/>
+                                        <field name="partner_id"/>
+                                    </div>
+                                    <div class="o_kanban_record_subtitle">
+                                        <i class="fa fa-calendar" title="Date"/>
+                                        <field name="date"/>
+                                    </div>
+                                    <div t-if="record.destination_journal_id.value" class="o_kanban_record_subtitle">
+                                        <i class="fa fa-book" title="Journal"/>
+                                        <field name="destination_journal_id"/>
+                                    </div>
+                                </div>
+                                <div class="o_kanban_record_bottom">
+                                    <div class="oe_kanban_bottom_left">
+                                        <div class="o_kanban_inline_block">
+                                            <field name="activity_ids" widget="kanban_activity"/>
+                                        </div>
+                                    </div>
+                                    <div class="oe_kanban_bottom_right">
+                                        <strong t-attf-class="#{record.payment_type.value == 'inbound' ? 'text-success' : 'text-warning'}">
+                                            <t t-if="record.payment_type.value == 'inbound'">+</t>
+                                            <t t-else="">-</t>
+                                            <field name="amount" widget="monetary"/>
+                                        </strong>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="oe_kanban_manage_button_section oe_kanban_manage_view">
+
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_account_payment_cash_search" model="ir.ui.view">
+        <field name="name">account.payment.cash.search</field>
+        <field name="model">account.payment.cash</field>
+        <field name="arch" type="xml">
+            <search string="Search Cash Payments">
+                <field name="name" string="Name"
+                       filter_domain="[('name', 'ilike', self)]"/>
+                <field name="partner_id" string="Partner"/>
+                <field name="payment_reference" string="Reference"/>
+                <field name="destination_journal_id" string="Journal"/>
+                <separator/>
+                <filter string="Inbound" name="inbound"
+                        domain="[('payment_type', '=', 'inbound')]"/>
+                <filter string="Outbound" name="outbound"
+                        domain="[('payment_type', '=', 'outbound')]"/>
+                <separator/>
+                <filter string="Customer" name="customer"
+                        domain="[('partner_type', '=', 'customer')]"/>
+                <filter string="Vendor" name="vendor"
+                        domain="[('partner_type', '=', 'supplier')]"/>
+                <separator/>
+                <filter string="Today" name="today"
+                        domain="[('date', '=', context_today())]"/>
+                <filter string="This Month" name="this_month"
+                        domain="[('date', '>=', (context_today() - relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                ('date', '&lt;', (context_today() + relativedelta(months=1, day=1)).strftime('%Y-%m-%d'))]"/>
+                <filter string="This Year" name="this_year"
+                        domain="[('date', '>=', (context_today() - relativedelta(month=1, day=1)).strftime('%Y-%m-%d')),
+                                ('date', '&lt;', (context_today() + relativedelta(years=1, month=1, day=1)).strftime('%Y-%m-%d'))]"/>
+                <separator/>
+                <filter string="Activities Todo" name="activities_my"
+                        domain="[('activity_ids.user_id', '=', uid)]"/>
+                <filter string="Late Activities" name="activities_overdue"
+                        domain="[('activity_ids.date_deadline', '&lt;', context_today())]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Payment Type" name="group_payment_type"
+                            context="{'group_by': 'payment_type'}"/>
+                    <filter string="Partner Type" name="group_partner_type"
+                            context="{'group_by': 'partner_type'}"/>
+                    <filter string="Partner" name="group_partner"
+                            context="{'group_by': 'partner_id'}"/>
+                    <filter string="Journal" name="group_journal"
+                            context="{'group_by': 'destination_journal_id'}"/>
+                    <filter string="Date" name="group_date"
+                            context="{'group_by': 'date:month'}"/>
+                    <filter string="Currency" name="group_currency"
+                            context="{'group_by': 'currency_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    <record id="account_payment_cash_action" model="ir.actions.act_window">
+            <field name="name">ايصال استلام نقد</field>
+            <field name="res_model">account.payment.cash</field>
+            <field name="view_mode">list,form</field>
+            <field name="context">{}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                            (0, 0, {'view_mode': 'list', 'view_id': ref('view_account_payment_cash_tree')}),
+                            (0, 0, {'view_mode': 'form', 'view_id': ref('view_account_payment_cash_form')}),
+                            (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_account_payment_cash_kanban')})]"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    انشاء هنا ايصال استلام نقدية
+                </p>
+            </field>
+        </record>
+        <menuitem id="account_payment_cash_menu"
+                  name="ايصال استلام نقدي"
+                  groups="hospital_base.reception_user"
+                  parent="hospital_base.hospital_base_reception_menu"
+                  action="account_payment_cash_action"
+                  sequence="11"/>
+    </data>
+</odoo>

@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Main Wizard View -->
+    <record id="view_clinic_visit_wizard_form" model="ir.ui.view">
+        <field name="name">clinic.visit.wizard.form</field>
+        <field name="model">clinic.visit.wizard</field>
+        <field name="arch" type="xml">
+            <form string="معالج إنشاء زيارة العيادة">
+                <header>
+                    <field name="step" widget="statusbar" statusbar_visible="step1,step2,step3,step4,step5"/>
+                </header>
+
+                <sheet>
+                    <!-- Step 1: Basic Visit Information -->
+                    <div invisible="step != 'step1'">
+                        <div class="oe_title">
+                            <h1>معلومات الزيارة الأساسية</h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="queue_number" required="1"/>
+                                <field name="date" required="1"/>
+                                <field name="reservation_date"/>
+                            </group>
+                            <group>
+                                <field name="shift"/>
+                                <field name="on_site"/>
+                                <field name="section_id"/>
+                            </group>
+                        </group>
+                    </div>
+
+                    <!-- Step 2: Patient Information -->
+                    <div invisible="step != 'step2'">
+                        <div class="oe_title">
+                            <h1>معلومات المريض</h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="patient_id" required="1"/>
+                                <field name="patient_file"/>
+                                <field name="patient_nat_id" invisible="1"/>
+                                <field name="patient_phone" invisible="1"/>
+                            </group>
+                            <group>
+                                <field name="patient_mobile"/>
+                                <field name="patient_account"/>
+                                <field name="patient_employer" invisible="patient_account != 'company'"/>
+                                <field name="patient_contract_company" invisible="patient_account != 'contract'" />
+                            </group>
+                        </group>
+                    </div>
+
+                    <!-- Step 3: Doctor and Service Information -->
+                    <div invisible="step != 'step3'">
+                        <div class="oe_title">
+                            <h1>معلومات الطبيب والخدمة</h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="doctor_id" required="1"/>
+                                <field name="clinic_id" readonly="1"/>
+                                <field name="doctor_shift" readonly="1"/>
+                                <field name="service_id" required="1"/>
+                            </group>
+                            <group>
+                                <field name="product_id" readonly="1"/>
+                                <field name="can_be_installment" readonly="1"/>
+                                <field name="template_id"/>
+                                <field name="amount" readonly="1"/>
+                            </group>
+                        </group>
+                    </div>
+
+                    <!-- Step 4: Financial Information -->
+                    <div invisible="step != 'step4'">
+                        <div class="oe_title">
+                            <h1>المعلومات المالية</h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="amount"/>
+                                <field name="doctor_amount"/>
+                                <field name="patient_per"/>
+                                <field name="service_exp_amount"/>
+                            </group>
+                            <group>
+                                <field name="service_tax_amount"/>
+                                <field name="total_amount" readonly="1"/>
+                                <field name="patient_amount"/>
+                                <field name="deposit_amount"/>
+                                <field name="pay_deposit"/>
+                            </group>
+                        </group>
+                    </div>
+
+                    <!-- Step 5: Review and Confirm -->
+                    <div invisible="step != 'step5'">
+                        <field name="created_visit_id" invisible="1"/>
+
+                        <!-- Review Section - Visible when visit not created yet -->
+                        <div invisible="created_visit_id !=  False">
+                            <div class="oe_title">
+                                <h1>مراجعة وتأكيد البيانات</h1>
+                            </div>
+                            <group>
+                                <group string="معلومات المريض">
+                                    <field name="patient_id" readonly="1"/>
+                                    <field name="patient_nat_id" invisible="1" readonly="1"/>
+                                    <field name="patient_phone" invisible="1" readonly="1"/>
+                                    <field name="patient_account" readonly="1"/>
+                                </group>
+                                <group string="معلومات الطبيب">
+                                    <field name="doctor_id" readonly="1"/>
+                                    <field name="clinic_id" readonly="1"/>
+                                    <field name="service_id" readonly="1"/>
+                                    <field name="shift" readonly="1"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group string="المعلومات المالية">
+                                    <field name="amount" readonly="1"/>
+                                    <field name="total_amount" readonly="1"/>
+                                    <field name="patient_amount" readonly="1"/>
+                                </group>
+                                <group string="معلومات إضافية">
+                                    <field name="queue_number" readonly="1"/>
+                                    <field name="date" readonly="1"/>
+                                    <field name="on_site" readonly="1"/>
+                                </group>
+                            </group>
+                            <group>
+                                <field name="diagnosis" placeholder="أدخل التشخيص هنا..."/>
+                                <field name="notes" placeholder="أدخل أي ملاحظات إضافية..."/>
+                            </group>
+                        </div>
+
+                        <!-- Print Section - Visible after visit creation -->
+                        <div invisible="created_visit_id == False">
+                            <div class="oe_title">
+                                <h1>تم إنشاء الزيارة بنجاح</h1>
+                                <p class="text-muted">يمكنك الآن طباعة التقارير والإيصالات</p>
+                            </div>
+
+                            <div class="alert alert-success" role="alert">
+                                <i class="fa fa-check-circle" title="check"/> تم إنشاء زيارة العيادة بنجاح
+                            </div>
+
+                            <group string="خيارات الطباعة">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <button name="print_clinic_report"
+                                                string="طباعة تقرير العيادة"
+                                                type="object"
+                                                class="btn btn-info btn-block"
+                                                icon="fa-file-text"/>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <button name="print_receipt_confirm"
+                                                string="طباعة إيصال مع إنشاء فاتورة"
+                                                type="object"
+                                                class="btn btn-success btn-block"
+                                                icon="fa-print"/>
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-md-4">
+                                        <button name="print_reception_receipt"
+                                                string="إيصال الاستقبال"
+                                                type="object"
+                                                class="btn btn-primary btn-block"
+                                                icon="fa-receipt"/>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <button name="print_accounting_receipt"
+                                                string="إيصال المحاسبة"
+                                                type="object"
+                                                class="btn btn-warning btn-block"
+                                                icon="fa-calculator"/>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <button name="print_pharmacy_receipt"
+                                                string="إيصال الصيدلية"
+                                                type="object"
+                                                class="btn btn-secondary btn-block"
+                                                icon="fa-pills"/>
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-md-12">
+                                        <button name="print_receipt_direct"
+                                                string="طباعة مباشرة"
+                                                type="object"
+                                                class="btn btn-danger btn-block"
+                                                icon="fa-print"/>
+                                    </div>
+                                </div>
+                            </group>
+
+                            <group string="معلومات الزيارة المنشأة">
+                                <group>
+                                    <field name="patient_id" readonly="1"/>
+                                    <field name="doctor_id" readonly="1"/>
+                                    <field name="service_id" readonly="1"/>
+                                </group>
+                                <group>
+                                    <field name="queue_number" readonly="1"/>
+                                    <field name="total_amount" readonly="1"/>
+                                    <field name="patient_amount" readonly="1"/>
+                                </group>
+                            </group>
+                        </div>
+                    </div>
+                </sheet>
+
+                <footer>
+                    <div class="text-left" invisible="step == 'step1'">
+                        <button name="action_previous_step"
+                                string="السابق"
+                                type="object"
+                                class="btn-secondary"
+                                invisible="created_visit_id != False"/>
+                    </div>
+                    <div class="text-right">
+                        <button name="action_next_step"
+                                string="التالي"
+                                type="object"
+                                class="btn-primary"
+                                invisible="'step', '=', 'step5' or created_visit_id !=  False"/>
+
+                        <button name="action_create_visit"
+                                string="إنشاء الزيارة"
+                                type="object"
+                                class="btn-primary"
+                                invisible="step !=  'step5' or created_visit_id !=  False"/>
+
+                        <button name="%(action_clinic_visit_wizard)d"
+                                string="زيارة جديدة"
+                                type="action"
+                                class="btn-success"
+                                invisible="created_visit_id == False"/>
+
+                        <button string="إغلاق"
+                                class="btn-secondary"
+                                special="cancel"/>
+                    </div>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Simple Quick Create Wizard -->
+    <record id="view_clinic_visit_simple_wizard_form" model="ir.ui.view">
+        <field name="name">clinic.visit.simple.wizard.form</field>
+        <field name="model">clinic.visit.wizard</field>
+        <field name="arch" type="xml">
+            <form string="إنشاء زيارة سريعة">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>إنشاء زيارة عيادة سريعة</h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="patient_id" required="1"/>
+                            <field name="doctor_id" required="1"/>
+                            <field name="clinic_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="service_id" required="1"/>
+                            <field name="queue_number" required="1"/>
+                            <field name="date" required="1"/>
+                            <field name="amount" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="notes" placeholder="أدخل أي ملاحظات..."/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_create_visit" string="إنشاء الزيارة" type="object" class="btn-primary"/>
+                    <button name="print_receipt_direct" string="إنشاء وطباعة" type="object" class="btn-success"/>
+                    <button string="إلغاء" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Wizard Actions -->
+    <record id="action_clinic_visit_wizard" model="ir.actions.act_window">
+        <field name="name">معالج إنشاء زيارة العيادة</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">clinic.visit.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_clinic_visit_wizard_form"/>
+        <field name="target">new</field>
+        <field name="context">{}</field>
+    </record>
+
+    <record id="action_clinic_visit_simple_wizard" model="ir.actions.act_window">
+        <field name="name">إنشاء زيارة سريعة</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">clinic.visit.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_clinic_visit_simple_wizard_form"/>
+        <field name="target">new</field>
+        <field name="context">{'simple_mode': True}</field>
+    </record>
+
+    <!-- Menu Items -->
+
+
+    <!-- Enhanced Clinic Visit List View with Wizard Access -->
+    <record id="view_clinic_visit_tree_with_wizard" model="ir.ui.view">
+        <field name="name">clinic.visit.list.with.wizard</field>
+        <field name="model">clinic.visit</field>
+        <field name="arch" type="xml">
+            <list
+                  decoration-success="state=='done'"
+                  decoration-warning="state=='waiting'"
+                  decoration-danger="state=='cancelled'"
+                  create="false">
+                <button name="%(action_clinic_visit_wizard)d"
+                        string="معالج الزيارة"
+                        type="action"
+                        class="btn-primary"/>
+                <button name="%(action_clinic_visit_simple_wizard)d"
+                        string="زيارة سريعة"
+                        type="action"
+                        class="btn-success"/>
+                <field name="name"/>
+                <field name="queue_number"/>
+                <field name="patient_id"/>
+                <field name="doctor_id"/>
+                <field name="clinic_id"/>
+                <field name="date"/>
+                <field name="shift"/>
+                <field name="total_amount"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Action for enhanced list view -->
+    <record id="action_clinic_visit_with_wizard" model="ir.actions.act_window">
+        <field name="name">زيارات العيادة</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">clinic.visit</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_clinic_visit_tree_with_wizard"/>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                إنشاء زيارة عيادة جديدة
+            </p>
+            <p>
+                استخدم المعالج المفصل للحصول على تحكم كامل في البيانات
+                أو استخدم الزيارة السريعة للإنشاء السريع
+            </p>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+<record id="hr_punch_form_view" model="ir.ui.view">
+            <field name="name">hr.punch.form</field>
+            <field name="model">hr.punch</field>
+            <field name="arch" type="xml">
+
+                <form string="الجزاءات ">
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="emp_id"/>
+                            <h1>
+                                <field name="emp_id" placeholder="اسم الموظف"/>
+                            </h1>
+                            <span/>
+                            <h3>
+                                <field name="partner_id" placeholder="المدير"/>
+                            </h3>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="date"/>
+                                <field name="year"/>
+                                <field name="national_id"/>
+                            </group>
+                            <group>
+                                <field name="department_id"/>
+                                <field name="job_name"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page id="punch_tab"
+                                  string="الجزاءات "
+                                  >
+                                <field name="hr_punch_line_ids"
+                                       widget="section_and_note_one2many"
+                                       mode="tree"
+                                       >
+                                    <tree editable="bottom" string="العناصر">
+                                        <control>
+                                            <create name="add_line_control" string="اضافة سطر"/>
+                                            <create name="add_section_control" string="سكشن" context="{'default_display_type': 'line_section'}"/>
+                                            <create name="add_note_control" string="ملاحظات" context="{'default_display_type': 'line_note'}"/>
+                                        </control>
+
+                                        <field name="punch_id" invisible="1"/>
+                                        <field name="num_resolution"
+                                               string="رقم القرار"
+                                               />
+                                        <field name="date" string="تاريخ الجزاء"/>
+                                        <field name="type" string="نوع الجزاء"/>
+                                        <field name="field_name" widget="binary"/>
+
+                                    </tree>
+                                </field>
+
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="hr_punch_act_window" model="ir.actions.act_window">
+            <field name="name">الجزاءات</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.punch</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    الجزاءات .
+                </p>
+            </field>
+        </record>
+        <menuitem name="الجزاءات" id="hr_punch_menu" parent="hr.menu_human_resources_configuration" action="hr_punch_act_window"/>
+    </data>
+</odoo>

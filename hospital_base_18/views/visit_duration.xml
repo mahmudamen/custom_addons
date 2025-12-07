@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+<record id="view_visit_dosage_form" model="ir.ui.view">
+        <field name="name">visit.duration.form</field>
+        <field name="model">visit.duration</field>
+        <field name="arch" type="xml">
+            <form string="المدة العلاجية">
+                <sheet>
+                    <group>
+                        <field name="name" placeholder="اسم المدة..."/>
+                        <field name="active" widget="boolean_toggle"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- List View -->
+    <record id="view_visit_duration_tree" model="ir.ui.view">
+        <field name="name">visit.duration.list</field>
+        <field name="model">visit.duration</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_visit_duration_search" model="ir.ui.view">
+        <field name="name">visit.duration.search</field>
+        <field name="model">visit.duration</field>
+        <field name="arch" type="xml">
+            <search string="بحث المدة العلاجية">
+                <field name="name"/>
+                <filter string="نشط" name="active" domain="[('active', '=', True)]"/>
+                <filter string="غير نشط" name="inactive" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_visit_duration" model="ir.actions.act_window">
+        <field name="name">المدة العلاجية</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">visit.duration</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_visit_duration_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                قم بإنشاء أول مدة علاجية
+            </p>
+        </field>
+    </record>
+        <menuitem id="doctor_degrees_view_menu"
+                  name=" المدة العلاجية"
+                  parent="hospital_base.hospital_doctor_menu"
+                  action="action_visit_duration"
+                  sequence="100"/>
+    </data>
+</odoo>

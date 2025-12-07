@@ -1,0 +1,395 @@
+// Variables
+$primary-color: #0ea5e9;
+$secondary-color: #8b5cf6;
+$success-color: #10b981;
+$danger-color: #ef4444;
+$dark-color: #1e293b;
+$light-bg: #f8fafc;
+$border-color: #e2e8f0;
+$shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+$transition: all 0.3s ease;
+
+// Main Container
+.patient-container {
+  background: $light-bg;
+  min-height: 100vh;
+  padding: 2rem;
+  font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif;
+  direction: rtl;
+}
+
+// Header Section
+.patient-header {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: $shadow;
+
+  .header-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+
+    .patient-id {
+      font-size: 2rem;
+      font-weight: 700;
+      color: $dark-color;
+      letter-spacing: 2px;
+    }
+
+    .patient-name {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        border: 3px solid $primary-color;
+      }
+
+      span {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: $dark-color;
+      }
+    }
+  }
+}
+
+// Action Buttons
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  margin: 2rem 0;
+  flex-wrap: wrap;
+
+  button {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: $transition;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+
+    i {
+      font-size: 1.2rem;
+    }
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: $shadow;
+    }
+
+    &.btn-excel {
+      background: #10b981;
+      color: white;
+
+      &:hover {
+        background: darken(#10b981, 10%);
+      }
+    }
+
+    &.btn-print {
+      background: $secondary-color;
+      color: white;
+
+      &:hover {
+        background: darken($secondary-color, 10%);
+      }
+    }
+
+    &.btn-add {
+      background: $primary-color;
+      color: white;
+
+      &:hover {
+        background: darken($primary-color, 10%);
+      }
+    }
+
+    &.btn-delete {
+      background: $danger-color;
+      color: white;
+
+      &:hover {
+        background: darken($danger-color, 10%);
+      }
+    }
+
+    &.btn-report {
+      background: #06b6d4;
+      color: white;
+
+      &:hover {
+        background: darken(#06b6d4, 10%);
+      }
+    }
+  }
+}
+
+// Owl Carousel Styling
+.patient-carousel-container {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: $shadow;
+
+  .owl-carousel {
+    .item {
+      padding: 1rem;
+
+      .carousel-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 12px;
+        padding: 2rem;
+        color: white;
+        min-height: 200px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        transition: $transition;
+
+        &:hover {
+          transform: scale(1.02);
+        }
+
+        .carousel-icon {
+          font-size: 3rem;
+          margin-bottom: 1rem;
+          opacity: 0.9;
+        }
+
+        h3 {
+          font-size: 1.5rem;
+          margin-bottom: 0.5rem;
+        }
+
+        p {
+          font-size: 1rem;
+          opacity: 0.9;
+        }
+      }
+    }
+  }
+
+  // Owl Navigation
+  .owl-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
+
+    button {
+      position: absolute;
+      background: white !important;
+      color: $primary-color !important;
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      box-shadow: $shadow;
+      transition: $transition;
+      font-size: 1.5rem !important;
+
+      &:hover {
+        background: $primary-color !important;
+        color: white !important;
+      }
+
+      &.owl-prev {
+        left: -20px;
+      }
+
+      &.owl-next {
+        right: -20px;
+      }
+    }
+  }
+
+  // Owl Dots
+  .owl-dots {
+    text-align: center;
+    margin-top: 1.5rem;
+
+    .owl-dot {
+      display: inline-block;
+      margin: 0 5px;
+
+      span {
+        display: block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: $border-color;
+        transition: $transition;
+      }
+
+      &.active span {
+        background: $primary-color;
+        width: 30px;
+        border-radius: 6px;
+      }
+    }
+  }
+}
+
+// Patient Info Table
+.patient-info-section {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: $shadow;
+
+  h2 {
+    font-size: 1.5rem;
+    color: $dark-color;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid $border-color;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+
+    .info-item {
+      display: flex;
+      align-items: center;
+      padding: 1rem;
+      background: $light-bg;
+      border-radius: 8px;
+      transition: $transition;
+
+      &:hover {
+        background: darken($light-bg, 5%);
+        transform: translateX(-5px);
+      }
+
+      .info-label {
+        font-weight: 600;
+        color: #64748b;
+        min-width: 120px;
+        margin-left: 1rem;
+      }
+
+      .info-value {
+        color: $dark-color;
+        font-weight: 500;
+
+        a {
+          color: $primary-color;
+          text-decoration: none;
+          transition: $transition;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+
+      .info-icon {
+        width: 40px;
+        height: 40px;
+        background: $primary-color;
+        color: white;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: auto;
+
+        i {
+          font-size: 1.2rem;
+        }
+      }
+    }
+  }
+}
+
+// Status Tags
+.status-tags {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+
+  .tag {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+
+    &.tag-open {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    &.tag-closed {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .patient-container {
+    padding: 1rem;
+  }
+
+  .action-buttons {
+    justify-content: center;
+
+    button {
+      font-size: 0.875rem;
+      padding: 0.5rem 1rem;
+    }
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .patient-carousel-container {
+    .owl-nav {
+      display: none;
+    }
+  }
+}
+
+// Loading Animation
+.loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// Card Hover Effects
+.hover-card {
+  transition: $transition;
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+}

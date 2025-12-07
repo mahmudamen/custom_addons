@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- External Laboratory Views -->
+        <!-- Update Lab Test Form -->
+        <record id="laboratory_form" model="ir.ui.view">
+            <field name="name">laboratory_form</field>
+            <field name="model">lab.test</field>
+            <field name="arch" type="xml">
+                <form string="التحاليل">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="result"/>
+                            </group>
+                            <group>
+                                <field name="product_id" options="{'no_create': True}"/>
+                            </group>
+                            <notebook>
+                                <page string="الاصناف">
+                                    <field name="line_ids" mode="list">
+                                        <list editable="bottom">
+                                            <field name="name"/>
+                                            <field name="note"/>
+                                            <field name="high"/>
+                                            <field name="low"/>
+                                            <field name="high_notes"/>
+                                            <field name="low_notes"/>
+                                        </list>
+                                    </field>
+                                </page>
+                            </notebook>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="laboratory_tree" model="ir.ui.view">
+            <field name="name">laboratory_tree</field>
+            <field name="model">lab.test</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="name"/>
+                    <field name="product_id"/>
+                    <field name="result"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="laboratory_action" model="ir.actions.act_window">
+            <field name="name">الاختبارات</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">lab.test</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <menuitem id="laboratory_menu"
+                  name="الاختبارات"
+                  parent="hospital_base.hospital_laboratory_menu"
+                  action="laboratory_action"
+                  sequence="0"/>
+
+        <!-- Updated Lab Request Form with External Lab Features -->
+        <record id="lab_request_form" model="ir.ui.view">
+            <field name="name">lab_request_form</field>
+            <field name="model">lab.request</field>
+            <field name="arch" type="xml">
+                <form string="طلب تحليل">
+                    <header>
+                        <button name="send_to_external_lab"
+                                string="إرسال للمختبر الخارجي"
+                                type="object"
+                                class="oe_highlight"
+                                invisible="is_external == False or external_status != 'draft'"/>
+                        <button name="receive_from_external_lab"
+                                string="استلام النتائج"
+                                type="object"
+                                class="oe_highlight"
+                                invisible="is_external ==  False or external_status !=  'sent'"/>
+                        <button name="complete_external_process"
+                                string="إكمال العملية"
+                                type="object"
+                                class="oe_highlight"
+                                invisible="is_external ==  False or external_status !=  'received'"/>
+                        <button name="cancel_external_process"
+                                string="إلغاء"
+                                type="object"
+                                invisible="is_external ==  False or external_status in  ['completed', 'cancelled']"/>
+                        <field name="external_status" widget="statusbar" statusbar_visible="draft,sent,received,completed" invisible="is_external ==  False"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="create_reservation"
+                                    type="object"
+                                    string="انشاء حجز"
+                                    class="oe_stat_button"
+                                    icon="fa-calendar"
+                                    invisible="clinic_receipt_id !=  False"/>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="patient_id" required="1"/>
+                                <field name="laboratory_technician" invisible="1"/>
+                                <field name="clinic_receipt_id" readonly="1"/>
+                                <field name="is_external"/>
+                            </group>
+                            <group>
+                                <field name="date"/>
+                                <field name="doctor_id" options="{'no_open': True, 'no_create': True}" context="{'default_company_type': 'patient', 'default_is_patient': True}" required="1"/>
+                                <field name="clinic_visit_id" />
+                                <field name="external_laboratory_id" invisible="is_external == False" required="is_external ==  True"/>
+                                <field name="external_cost" invisible="is_external == False" readonly="1"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="البنود">
+                                <field name="line_ids" mode="list">
+                                    <list editable="bottom">
+                                        <field name="lab_test_id"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="معلومات التحويل الخارجي" invisible="is_external == False">
+                                <group>
+                                    <group>
+                                        <field name="external_reference"/>
+                                        <field name="shipping_date" readonly="1"/>
+                                        <field name="expected_return_date"/>
+                                    </group>
+                                    <group>
+                                        <field name="actual_return_date" readonly="1"/>
+                                        <field name="shipping_notes"/>
+                                        <field name="result_notes"/>
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <record id="lab_request_tree" model="ir.ui.view">
+            <field name="name">lab_request_tree</field>
+            <field name="model">lab.request</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="name"/>
+                    <field name="patient_id"/>
+                    <field name="doctor_id"/>
+                    <field name="laboratory_technician"/>
+                    <field name="date"/>
+                    <field name="is_external"/>
+                    <field name="external_laboratory_id"/>
+                    <field name="external_status"/>
+                    <field name="clinic_receipt_id" readonly="1"/>
+                    <button name="create_reservation"
+                            type="object"
+                            string="انشاء حجز"
+                            invisible="clinic_receipt_id"
+                            class="oe_highlight"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Add a filter for external lab requests -->
+        <record id="lab_request_search" model="ir.ui.view">
+            <field name="name">lab_request_search</field>
+            <field name="model">lab.request</field>
+            <field name="arch" type="xml">
+                <search string="بحث في طلبات التحاليل">
+                    <field name="name"/>
+                    <field name="patient_id"/>
+                    <field name="doctor_id"/>
+                    <field name="external_laboratory_id"/>
+                    <filter string="طلبات خارجية" name="external_labs" domain="[('is_external', '=', True)]"/>
+                    <filter string="قيد التنفيذ" name="in_progress" domain="[('is_external', '=', True), ('external_status', 'in', ['draft', 'sent', 'received'])]"/>
+                    <filter string="تم الإرسال" name="sent" domain="[('is_external', '=', True), ('external_status', '=', 'sent')]"/>
+                    <filter string="تم الاستلام" name="received" domain="[('is_external', '=', True), ('external_status', '=', 'received')]"/>
+                    <filter string="مكتمل" name="completed" domain="[('is_external', '=', True), ('external_status', '=', 'completed')]"/>
+                    <group expand="0" string="تجميع حسب">
+                        <filter string="المختبر الخارجي" name="group_by_lab" domain="[]" context="{'group_by': 'external_laboratory_id'}"/>
+                        <filter string="حالة التحويل" name="group_by_status" domain="[]" context="{'group_by': 'external_status'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="lab_request_action" model="ir.actions.act_window">
+            <field name="name">طلب تحليل</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">lab.request</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <menuitem id="lab_request_menu"
+                  name="طلب تحليل"
+                  parent="hospital_base.hospital_base_laboratory_menu"
+                  action="lab_request_action"
+                  sequence="0"/>
+
+        <!-- External Lab Transfer Report Menu -->
+        <record id="lab_external_transfer_action" model="ir.actions.act_window">
+            <field name="name">تحويلات المختبرات الخارجية</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">lab.request</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[('is_external', '=', True)]</field>
+            <field name="context">{'search_default_external_labs': 1}</field>
+        </record>
+        <record id="lab_external_price_action" model="ir.actions.act_window">
+            <field name="name">قائمة الاسعار الخارجية</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">lab.external.price</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <menuitem id="lab_external_price_menu"
+                  name="قائمة الاسعار الخارجية"
+                  parent="hospital_base.hospital_base_laboratory_menu"
+                  action="lab_external_price_action"
+                  sequence="10"/>
+        <menuitem id="lab_external_transfer_menu"
+                  name="تحويلات المختبرات الخارجية"
+                  parent="hospital_base.hospital_base_laboratory_menu"
+                  action="lab_external_transfer_action"
+                  sequence="10"/>
+
+        <record id="clinic_visit_lab_form" model="ir.ui.view">
+            <field name="name">clinic_visit_lab_form</field>
+            <field name="model">clinic.visit</field>
+            <field name="arch" type="xml">
+                <form string="التحاليل">
+                    <sheet>
+                        <field name="can_be_installment" invisible="1"/>
+                        <field name="show_deposit" invisible="1"/>
+                        <field name="pay_deposit" invisible="not show_deposit"/>
+                        <group>
+                            <group>
+                                <field name="name" readonly="1" force_save="1"/>
+                                <field name="doctor_id"/>
+                                <field name="patient_id"
+                                       context="{'form_view_ref': 'hospital_base.res_partner_patient_form', 'default_is_patient': True,
+                                        'default_company_type': 'patient', 'default_patient_account': patient_account,
+                                         'default_employer': patient_employer, 'default_contract_company': patient_contract_company,
+                                          'default_nat_id': patient_nat_id, 'default_phone': patient_phone, 'default_mobile': patient_mobile}"/>
+                                <field name="patient_account" required="1"/>
+                                <field name="patient_employer" required="patient_account=='contract'"
+                                       invisible="patient_account!='contract'"/>
+                                <field name="patient_contract_company" required="patient_account=='contract'"
+                                       invisible="patient_account!='contract'"/>
+                                <field name="notes"/>
+                            </group>
+                            <group>
+                                <field name="reservation_date" readonly="1" force_save="1"/>
+                                <field name="patient_amount"/>
+                                <field name="amount"/>
+                                <field name="service_exp_amount"/>
+                                <field name="service_tax_amount"/>
+                                <field name="patient_per" invisible="patient_account!='contract'"/>
+                                <field name="total_amount"/>
+                                <field name="deposit_amount" invisible="not pay_deposit"/>
+                                <field name="patient_amount" readonly="not can_be_installment" force_save="1"/>
+                                <field name="section_id" invisible="1"/>
+                            </group>
+                        </group>
+                        <notebook colspan="4" invisible="not patient_id">
+                            <page name="lab_services" string="التحاليل">
+                                <field name="lab_services" mode="list" context="{'default_section_id': section_id}">
+                                    <list editable="bottom">
+                                        <field name="clinic_visit_id" column_invisible="1"/>
+                                        <field name="product_id" options="{'no_open': True, 'no_create': True}"/>
+                                        <field name="amount"/>
+                                        <field name="section_id" column_invisible="1"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page name="patient_info" string="بيانات المريض">
+                                <group>
+                                    <group>
+                                        <field name="patient_nat_id" invisible="1"/>
+                                        <field name="patient_phone" invisible="1"/>
+                                        <field name="patient_mobile"/>
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                        <footer>
+                            <button name="print_receipt_confirm_lab_services" string="طباعة" type="object" class="btn-primary" groups="hospital_base.hospital_management,hospital_base.reception_user"/>
+                            <button string="الغاء" class="btn-secondary" special="cancel"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

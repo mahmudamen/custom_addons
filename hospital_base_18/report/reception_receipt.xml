@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- POS Receipt Paper Format -->
+        <record id="receipt_print" model="report.paperformat">
+            <field name="name">POS Receipt Format</field>
+            <field name="default" eval="False"/>
+            <field name="format">custom</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">3</field>
+            <field name="margin_bottom">3</field>
+            <field name="margin_left">3</field>
+            <field name="margin_right">3</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">3</field>
+            <field name="page_width">80</field>
+            <field name="page_height">210</field>
+            <field name="dpi">90</field>
+        </record>
+        <!-- Report Action Definition -->
+        <record id="report_receipt_report" model="ir.actions.report">
+            <field name="name">Receipt</field>
+            <field name="model">clinic.visit</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">hospital_base.report_receipt</field>
+            <field name="binding_model_id" ref="hospital_base.model_clinic_visit"/>
+            <field name="binding_type">report</field>
+            <field name="paperformat_id" ref="hospital_base.receipt_print"/>
+        </record>
+        <!-- Receipt Template with POS Styling -->
+        <template id="report_receipt">
+            <t t-call="web.basic_layout">
+                <div class="page" style="font-size: 17px; font-family: 'Noto Sans Arabic', 'Segoe UI Historic', 'Tahoma', 'Arial Unicode MS', Arial, sans-serif !important; max-width: 300px; margin: 0 auto; padding: 0;">
+                    <style>
+                        /* POS Receipt Styling */
+                        .pos-receipt {
+                            width: 100%;
+                            direction: rtl;
+                            text-align: right;
+                            font-size: 17px;
+                            font-family: 'Noto Sans Arabic', 'Segoe UI Historic', 'Tahoma', 'Arial Unicode MS', Arial, sans-serif !important;
+                        }
+                        .pos-receipt * {
+                            font-size: 17px;
+                            font-family: 'Noto Sans Arabic', 'Segoe UI Historic', 'Tahoma', 'Arial Unicode MS', Arial, sans-serif !important;
+                        }
+                        .receipt-header {
+                            text-align: center;
+                            font-size: 17px;
+                            font-family: 'Noto Sans Arabic', 'Segoe UI Historic', 'Tahoma', 'Arial Unicode MS', Arial, sans-serif !important;
+                            font-weight: bold;
+                            border-bottom: 1px dashed #000;
+                            margin-bottom: 10px;
+                            padding-bottom: 5px;
+                        }
+                        .receipt-subheader {
+                            text-align: center;
+                            font-size: 17px;
+                            font-family: 'Noto Sans Arabic', 'Segoe UI Historic', 'Tahoma', 'Arial Unicode MS', Arial, sans-serif !important;
+                            margin-bottom: 10px;
+                        }
+                        .queue-number {
+                            border: 2px solid #000;
+                            width: 50px;
+                            height: 50px;
+                            text-align: center;
+                            font-size: 24px;
+                            font-weight: bold;
+                            line-height: 50px;
+                            margin: 0 auto 10px auto;
+                        }
+                        .receipt-line {
+                            margin: 8px 0;
+                            font-size: 17px;
+                            font-family: 'Noto Sans Arabic', 'Segoe UI Historic', 'Tahoma', 'Arial Unicode MS', Arial, sans-serif !important;
+                            display: flex;
+                            justify-content: space-between;
+                        }
+                        .receipt-line .label {
+                            font-weight: bold;
+                            font-size: 17px;
+                            font-family: 'Noto Sans Arabic', 'Segoe UI Historic', 'Tahoma', 'Arial Unicode MS', Arial, sans-serif !important;
+                        }
+                        .receipt-section {
+                            margin-top: 15px;
+                            border-top: 1px dashed #ccc;
+                            padding-top: 10px;
+                        }
+                        .receipt-total {
+                            font-size: 17px;
+                            font-weight: bold;
+                            margin: 10px 0;
+                        }
+                        .receipt-footer {
+                            text-align: center;
+                            border-top: 1px dashed #000;
+                            border-bottom: 1px dashed #000;
+                            margin: 15px 0;
+                            padding: 8px 0;
+                            font-size: 17px;
+                            font-family: 'Noto Sans Arabic', 'Segoe UI Historic', 'Tahoma', 'Arial Unicode MS', Arial, sans-serif !important;
+                        }
+                        .receipt-date {
+                            text-align: center;
+                            font-size: 17px;
+                            font-family: 'Noto Sans Arabic', 'Segoe UI Historic', 'Tahoma', 'Arial Unicode MS', Arial, sans-serif !important;
+                            margin-top: 10px;
+                        }
+                        .receipt-table {
+                            width: 100%;
+                            border-collapse: collapse;
+                            margin: 10px 0;
+                        }
+                        .receipt-table th, .receipt-table td {
+                            padding: 5px;
+                            text-align: right;
+                            border-bottom: 1px dashed #ccc;
+                        }
+                        .receipt-table th:last-child, .receipt-table td:last-child,
+                        .receipt-table th:nth-last-child(2), .receipt-table td:nth-last-child(2) {
+                            text-align: center;
+                        }
+                    </style>
+
+                    <div class="pos-receipt">
+                        <div class="receipt-header">
+                            مركز الفرقان التخصصي
+                        </div>
+                        <!-- Clinic or Nursing Header -->
+                        <t t-if="section_id=='clinic'">
+                            <div class="receipt-subheader">
+                                عيادة <span t-esc="clinic_id"/>
+                                <br/>
+                            </div>
+                            <div class="queue-number">
+                                <span t-esc="queue_number"/>
+                            </div>
+                        </t>
+                        <t t-elif="section_id=='nursing'">
+                            <div class="receipt-subheader">
+                                <strong>خدمات تمريض</strong>
+                            </div>
+                        </t>
+                        <t t-elif="section_id=='laboratory'">
+                            <div class="receipt-subheader">
+                                <strong>معمل التحاليل</strong>
+                            </div>
+                        </t>
+
+                        <!-- Visit Information -->
+                        <div class="receipt-section">
+                            <div class="receipt-line">
+                                <span class="label">مسلسل:</span>
+                                <span class="value"><t t-esc="name"/> <t t-esc="shift"/></span>
+                            </div>
+
+                            <div class="receipt-line">
+                                <span class="label">اسم المريض:</span>
+                                <span class="value"><t t-esc="patient_id"/></span>
+                            </div>
+                            <div class="receipt-line">
+                                <span class="label">الكود الموحد:</span>
+                                <span class="value"><t t-esc="patient_code"/></span>
+                            </div>
+
+                            <!-- Service Information -->
+                            <t t-if="section_id=='clinic'">
+                                <div class="receipt-line">
+                                    <span class="label">الخدمة:</span>
+                                    <span class="value"><t t-esc="service_id"/></span>
+                                </div>
+                            </t>
+                            <t t-elif="section_id=='nursing'">
+                                <table class="receipt-table">
+                                    <thead>
+                                        <tr>
+                                            <th>الخدمة</th>
+                                            <th>الكمية</th>
+                                            <th>المبلغ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="nursing_service" t-as="nurse">
+                                            <tr>
+                                                <td><t t-esc="nurse.product_id.name"/></td>
+                                                <td style="text-align: center"><t t-esc="'{0:,.0f}'.format(nurse.quantity)"/></td>
+                                                <td style="text-align: center"><t t-esc="nurse.total"/></td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </t>
+                            <t t-elif="section_id=='laboratory'">
+                                <table class="receipt-table">
+                                    <thead>
+                                        <tr>
+                                            <th>الخدمة</th>
+                                            <th>الكمية</th>
+                                            <th>المبلغ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="lab_services" t-as="lab">
+                                            <tr>
+                                                <td><t t-esc="lab.product_id.name"/></td>
+                                                <td style="text-align: center"><t t-esc="'{0:,.0f}'.format(lab.quantity)"/></td>
+                                                <td style="text-align: center"><t t-esc="lab.total"/></td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </t>
+
+                        </div>
+
+                        <!-- Financial Information -->
+                        <div class="receipt-section">
+                            <div class="receipt-line">
+                                <span class="label">تاريخ الخدمة:</span>
+                                <span class="value"><t t-esc="date"/></span>
+                            </div>
+                            <div class="receipt-line">
+                                <span class="label">القيمة:</span>
+                                <span class="value"><t t-esc="patient_amount"/> ج</span>
+                            </div>
+                            <div class="receipt-line">
+                                <span class="label">مصاريف ادارية:</span>
+                                <span class="value"><t t-esc="service_exp_amount"/></span>
+                            </div>
+                            <div class="receipt-line receipt-total">
+                                <span class="label">الاجمالي:</span>
+                                <span class="value"><t t-esc="total_amount"/></span>
+                            </div>
+                        </div>
+
+                        <!-- Additional Information -->
+                        <div class="receipt-section">
+                            <div class="receipt-line">
+                                <span class="label">الحساب:</span>
+                                <span class="value"><t t-esc="patient_account"/></span>
+                            </div>
+                            <div class="receipt-line">
+                                <span class="label">الموظف:</span>
+                                <span class="value"><t t-esc="employee_id"/></span>
+                            </div>
+                        </div>
+
+                        <!-- Footer -->
+                        <div class="receipt-footer">
+                            في حالة فقد الايصال
+                            <br/>
+                            لا تؤدي الخدمة و لا تسترد القيمة
+                        </div>
+
+                        <div class="receipt-date">
+                            <span>تاريخ: <t t-esc="print_date"/></span>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+    </data>
+</odoo>

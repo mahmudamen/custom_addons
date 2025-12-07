@@ -1,0 +1,364 @@
+/* Main RTL and Arabic support */
+.arabic-invoice-container {
+  direction: rtl;
+  font-family: 'Cairo', 'Tajawal', sans-serif;
+  text-align: right;
+  overflow-x: hidden;
+  position: relative;
+
+  * {
+    direction: rtl;
+  }
+
+  .page.arabic-report {
+    padding: 0.5rem;
+    background-color: #ffffff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+  }
+
+  /* Enhanced Watermark */
+  .watermark {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    opacity: 0.08 !important;
+    z-index: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    pointer-events: none !important;
+
+    img {
+      width: 300px !important;
+      height: 300px !important;
+      object-fit: contain !important;
+      filter: grayscale(30%) !important;
+
+      @media (max-width: 767px) {
+        width: 200px !important;
+        height: 200px !important;
+      }
+    }
+  }
+
+  /* Header styling with icons */
+  .header-section {
+    border-bottom: 3px solid #FF8C00 !important;
+    margin-bottom: 2rem !important;
+    padding-bottom: 1rem !important;
+    position: relative;
+
+    &:before {
+      content: '';
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      width: 40px;
+      height: 40px;
+      background-image: url('/hospital_base/static/src/img/alfurkan_logo.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      opacity: 0.3;
+      z-index: 1;
+    }
+
+    &:after {
+      content: '';
+      position: absolute;
+      top: -10px;
+      left: -10px;
+      width: 40px;
+      height: 40px;
+      background-image: url('/hospital_base/static/src/img/alfurkan_logo.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      opacity: 0.3;
+      z-index: 1;
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+
+      @media (max-width: 767px) {
+        flex-direction: column-reverse;
+
+        .col-4 {
+          width: 100%;
+          text-align: center !important;
+          margin-bottom: 1rem;
+        }
+      }
+    }
+
+    /* Decorative icons in header */
+    .col-4 {
+      position: relative;
+
+      &.text-start:before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        right: 10px;
+        transform: translateY(-50%);
+        width: 20px;
+        height: 20px;
+        background-image: url('/hospital_base/static/src/img/alfurkan_logo.png');
+        background-size: contain;
+        background-repeat: no-repeat;
+        opacity: 0.5;
+      }
+
+      &.text-end:after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 10px;
+        transform: translateY(-50%);
+        width: 20px;
+        height: 20px;
+        background-image: url('/hospital_base/static/src/img/alfurkan_logo.png');
+        background-size: contain;
+        background-repeat: no-repeat;
+        opacity: 0.5;
+      }
+    }
+  }
+
+  /* Enhanced Logo styling */
+  .text-center img {
+    height: 70px;
+    max-width: 100%;
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    border-radius: 5px;
+    padding: 5px;
+    background-color: white;
+
+    @media (max-width: 767px) {
+      height: 50px;
+      margin: 0.5rem auto;
+    }
+  }
+
+  /* Patient and Doctor Info section with icon indicators */
+  .mb-4 {
+    margin-bottom: 1.5rem !important;
+
+    .col-6 {
+      @media (max-width: 767px) {
+        width: 100%;
+        margin-bottom: 1rem;
+      }
+
+      strong {
+        color: #1e40af;
+        font-weight: 700;
+        position: relative;
+        padding-right: 22px;
+
+        &:before {
+          content: '';
+          position: absolute;
+          right: 0;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 16px;
+          height: 16px;
+          background-image: url('/hospital_base/static/src/img/alfurkan_logo.png');
+          background-size: contain;
+          background-repeat: no-repeat;
+        }
+      }
+
+      .mb-2 {
+        margin-bottom: 0.75rem !important;
+      }
+    }
+  }
+
+  /* Table styling */
+  .prescription-section {
+    margin-top: 2rem !important;
+    overflow-x: auto;
+    position: relative;
+    z-index: 2;
+
+    /* Add mini logo to table corner */
+    &:before {
+      content: '';
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      width: 30px;
+      height: 30px;
+      background-image: url('/hospital_base/static/src/img/alfurkan_logo.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      opacity: 0.3;
+      z-index: 1;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1rem;
+      position: relative;
+
+      th {
+        background-color: #1e40af !important;
+        color: white !important;
+        font-weight: bold;
+        text-align: center;
+        padding: 0.75rem !important;
+      }
+
+      td {
+        padding: 0.75rem !important;
+        vertical-align: middle;
+        border: 1px solid #dee2e6 !important;
+      }
+
+      tr:nth-child(even) {
+        background-color: #f8f9fa;
+      }
+
+      tr:hover {
+        background-color: #f0f4f8;
+      }
+    }
+  }
+
+  /* Footer styling with logo accents */
+  .footer-section {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    background: white !important;
+    border-top: 2px solid #1e40af !important;
+    padding: 1rem !important;
+    font-size: 12px !important;
+    text-align: center !important;
+    z-index: 100;
+
+    &:before, &:after {
+      content: '';
+      position: absolute;
+      bottom: 5px;
+      width: 20px;
+      height: 20px;
+      background-image: url('/hospital_base/static/src/img/alfurkan_logo.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      opacity: 0.3;
+    }
+
+    &:before {
+      right: 10px;
+    }
+
+    &:after {
+      left: 10px;
+    }
+
+    @media (max-width: 767px) {
+      font-size: 10px !important;
+      padding: 0.5rem !important;
+
+      span {
+        display: block;
+        margin: 0.25rem 0 !important;
+      }
+    }
+  }
+
+  /* Special styling for lab and radiology sections */
+  tr td[colspan="4"] {
+    &:has(strong) {
+      background-color: #e6f7ff !important;
+      font-weight: bold;
+      border-bottom: 2px solid #1e40af !important;
+      position: relative;
+
+      &:before {
+        content: '';
+        position: absolute;
+        right: 5px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 15px;
+        height: 15px;
+        background-image: url('/hospital_base/static/src/img/alfurkan_logo.png');
+        background-size: contain;
+        background-repeat: no-repeat;
+        opacity: 0.3;
+      }
+    }
+  }
+
+  /* Arabic text specific styling */
+  [lang="ar"] {
+    font-family: 'Cairo', 'Tajawal', sans-serif !important;
+    letter-spacing: 0;
+    line-height: 1.5;
+
+    strong {
+      font-weight: 700;
+    }
+  }
+
+  /* Responsive adjustments */
+  @media print {
+    .page {
+      margin: 0;
+      border: initial;
+      border-radius: initial;
+      width: initial;
+      min-height: initial;
+      box-shadow: initial;
+      background: initial;
+    }
+
+    .footer-section {
+      position: fixed;
+      bottom: 0;
+    }
+
+    .watermark {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  }
+
+  @media (max-width: 576px) {
+    .text-end, .text-start {
+      text-align: center !important;
+    }
+
+    table th, table td {
+      padding: 0.5rem !important;
+      font-size: 12px !important;
+    }
+  }
+}
+
+/* Add CSS resets to ensure consistency */
+.arabic-invoice-container {
+  box-sizing: border-box;
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: inherit;
+  }
+
+  /* Font imports for better Arabic typography */
+  @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Tajawal:wght@400;700&display=swap');
+}

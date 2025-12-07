@@ -1,0 +1,1453 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Print Report Definition -->
+        <record id="action_report_inpatient" model="ir.actions.report">
+            <field name="name">تقرير المريض الداخلي</field>
+            <field name="model">patient.file</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">hospital_base.report_inpatient_template</field>
+            <field name="report_file">hospital_base.report_inpatient_template</field>
+            <field name="binding_model_id" ref="model_patient_file"/>
+            <field name="binding_type">report</field>
+        </record>
+        <record id="inpatient_form" model="ir.ui.view">
+            <field name="name">inpatient_form</field>
+            <field name="model">patient.file</field>
+            <field name="arch" type="xml">
+                <form string="In-Patient" class="inpatient_form_view o_form_compact">
+                    <header>
+                        <button name="action_open_exit_wizard"
+                                string="تقرير الخروج"
+                                class="btn-warning"
+                                type="object"
+                                icon="fa-sign-out"
+                                invisible="state == 'closed'"/>
+
+                        <!-- Print Exit Report (for closed files) -->
+                        <button name="action_print_exit_report_only"
+                                string="طباعة تقرير الخروج"
+                                class="btn-info"
+                                type="object"
+                                icon="fa-print"
+                                invisible="state == 'open'"/>
+                        <button name="approve_request"
+                                string="طلب موافقة"
+                                class="oe_highlight"
+                                invisible="patient_account == 'cash' or state == 'closed'"
+                                type="object"/>
+                        <button name="patient_payment"
+                                string="سداد"
+                                class="oe_highlight"
+                                type="object"/>
+                        <button name="action_close"
+                                string="اغلاق الملف"
+                                class="oe_highlight"
+                                invisible="state != 'open'"
+                                type="object"/>
+                        <button name="action_re_open"
+                                string="إعادة فتح الملف"
+                                class="oe_highlight"
+                                invisible="state != 'closed'"
+                                type="object"/>
+                        <button name="create_account_move"
+                                string="قيد الايراد"
+                                class="oe_highlight"
+                                invisible="state != 'closed'"
+                                type="object"/>
+                        <!-- Print Button -->
+                        <button name="%(action_report_inpatient)d"
+                                string="طباعة"
+                                type="action"
+                                class="btn-primary"
+                                icon="fa-print"/>
+                        <!-- Excel Export Button -->
+                        <button name="action_export_excel"
+                                string="تصدير Excel"
+                                type="object"
+                                class="btn-success"
+                                icon="fa-file-excel-o"/>
+                        <field name="state" widget="statusbar" statusbar_visible="open,closed"/>
+                    </header>
+                    <sheet class="o_sheet_compact">
+                        <field name="avatar_128" invisible="1"/>
+                        <field name="previous_visits_ids" invisible="1"/>
+                        <field name="previous_visits_count" invisible="1"/>
+                        <field name="previous_inpatient_ids" invisible="1"/>
+                        <field name="previous_inpatient_count" invisible="1"/>
+                        <field name="image"
+                               options="{'zoom': true, 'zoom_delay': 1000, 'background': true, 'preventClicks': true}"
+                               widget='image'
+                               class="oe_avatar o_avatar_small" />
+
+                        <div class="oe_button_box o_button_box_compact" name="button_box">
+                            <button name="action_download_image"
+                                    type="object"
+                                    string="تحميل"
+                                    class="oe_stat_button o_stat_button_small"
+                                    icon="fa-download"/>
+                            <button class="oe_stat_button o_stat_button_small"
+                                    name="patient_to_surgeries"
+                                    string="عمليات"
+                                    type="object"
+                                    icon="fa-scissors">
+                            </button>
+                            <button class="oe_stat_button o_stat_button_small"
+                                    name="patient_payments"
+                                    string="مدفوعات"
+                                    type="object"
+                                    icon="fa-credit-card">
+                            </button>
+                            <button class="oe_stat_button o_stat_button_small"
+                                    name="patient_approves"
+                                    invisible="patient_account == 'cash' or state == 'closed'"
+                                    string="موافقات"
+                                    type="object"
+                                    icon="fa-check">
+                            </button>
+                            <button name="action_view_attachments"
+                                    type="object"
+                                    class="oe_stat_button o_stat_button_small"
+                                    icon="fa-files-o">
+                                <field name="attachment_count" widget="statinfo" string="مرفقات"/>
+                            </button>
+                        </div>
+
+                        <field name="type" invisible="1"/>
+
+                        <div class="oe_title o_title_compact">
+                            <h1 class="o_form_title_compact">
+                                <field name="name" placeholder="Draft" readonly="1"/>
+                            </h1>
+                        </div>
+
+                        <group class="o_group_compact">
+                            <group string="معلومات أساسية" class="o_group_col_4">
+                                <field name="patient_id"
+                                       context="{'default_company_type': 'patient', 'default_is_patient': True}"
+                                       readonly="state == 'closed'"/>
+                                <field name="date_in" readonly="state == 'closed'"/>
+                                <field name="diagnosis" readonly="state == 'closed'"/>
+                                <field name="note" readonly="state == 'closed'" widget="text"/>
+                                <field name="remark" readonly="state == 'closed'" widget="text"/>
+                            </group>
+                            <group string="معلومات الإقامة" class="o_group_col_4">
+                                <field name="room_id"
+                                       options="{'no_open': True, 'no_create': True}"
+                                       readonly="state == 'closed'"/>
+                                <field name="bed_id"
+                                       options="{'no_open': True, 'no_create': True}"
+                                       readonly="state == 'closed'"/>
+                                <field name="surgery_slot_id" invisible="surgery_slot_id == False"/>
+                                <button name="view_surgery_slot"
+                                        string="عرض الجدول"
+                                        type="object"
+                                        icon="fa-calendar"
+                                        class="btn btn-sm btn-link"
+                                        invisible="surgery_slot_id == False"/>
+                            </group>
+                            <group string="معلومات طبية" class="o_group_col_4">
+                                <field name="doctor_id"
+                                       options="{'no_open': True, 'no_create': True}"
+                                       readonly="state == 'closed'" />
+                                <field name="doctor_drags_id" options="{'no_open': True, 'no_create': True}"
+                                       readonly="state == 'closed'"/>
+                                <field name="date_out" readonly="1" force_save="1"/>
+                                <field name="room_surgery_id"/>
+                            </group>
+                        </group>
+
+                        <notebook class="o_notebook_compact">
+                            <!-- Patient History Tab -->
+                            <page name="patient_history" string="تاريخ المريض"
+                                  invisible="previous_visits_count == 0 and previous_inpatient_count == 0">
+                                <!-- Statistics Header -->
+                                <div class="row mb-3">
+                                    <div class="col-6">
+                                        <div class="alert alert-success text-center py-2">
+                                            <strong>إجمالي ملفات الداخلي: <field name="previous_inpatient_count"/></strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="alert alert-info text-center py-2">
+                                            <strong>إجمالي الزيارات: <field name="previous_visits_count"/></strong>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Full Width Clinic Visits Table -->
+                                <div invisible="previous_visits_count == 0">
+                                    <h5 class="mb-2">زيارات العيادات الخارجية السابقة</h5>
+                                    <field name="previous_visits_ids"
+                                           mode="list"
+                                           readonly="1"
+                                           nolabel="1"
+                                           options="{'no_create': True, 'no_edit': True}">
+                                        <list
+                                              create="false"
+                                              edit="false"
+                                              delete="false"
+                                              limit="3"
+                                              decoration-muted="state == 'cancelled'"
+                                              decoration-success="state == 'done'">
+                                            <field name="name" string="رقم الزيارة"/>
+                                            <field name="date" string="التاريخ"/>
+                                            <field name="doctor_id" string="الطبيب المعالج"/>
+                                            <field name="clinic_id" string="العيادة"/>
+                                            <field name="service_id" string="الخدمة"/>
+                                            <field name="diagnosis" string="التشخيص"/>
+                                            <field name="state" string="الحالة"/>
+                                            <button name="action_view_visit_details"
+                                                    type="object"
+                                                    icon="fa-eye"
+                                                    string="عرض"
+                                                    class="btn-primary"/>
+                                        </list>
+                                    </field>
+                                </div>
+                                <!-- Spacer -->
+                                <div class="mb-4"></div>
+                                <!-- Full Width Inpatient Files Table -->
+                                <div invisible="previous_inpatient_count == 0">
+                                    <h5 class="mb-2">ملفات الداخلي السابقة</h5>
+                                    <field name="previous_inpatient_ids"
+                                           mode="list"
+                                           readonly="1"
+                                           nolabel="1"
+                                           options="{'no_create': True, 'no_edit': True}">
+                                        <list
+                                              create="false"
+                                              edit="false"
+                                              delete="false"
+                                              limit="3"
+                                              decoration-muted="state == 'discharged'"
+                                              decoration-info="state == 'admitted'">
+                                            <field name="name" string="رقم الملف"/>
+                                            <field name="date_in" string="تاريخ الدخول"/>
+                                            <field name="date_out" string="تاريخ الخروج"/>
+                                            <field name="doctor_id" string="الطبيب المعالج"/>
+                                            <field name="type" string="نوع الإقامة"/>
+                                            <field name="diagnosis" string="التشخيص"/>
+                                            <field name="state" string="الحالة"/>
+                                            <button name="action_view_inpatient_details"
+                                                    type="object"
+                                                    icon="fa-eye"
+                                                    string="عرض"
+                                                    class="btn-success"/>
+                                        </list>
+                                    </field>
+                                </div>
+                            </page>
+                            <page string="بيانات المريض" name="other_info">
+                                <group class="o_group_compact">
+                                    <group class="o_group_col_6">
+                                        <field name="patient_age"/>
+                                        <field name="patient_street"/>
+                                        <field name="patient_nat_id" invisible="1"/>
+                                        <field name="patient_phone" invisible="1"/>
+                                        <field name="patient_mobile"/>
+                                        <field name="attachment"/>
+                                    </group>
+                                    <group class="o_group_col_6">
+                                        <field name="patient_account"
+                                               readonly="state == 'closed'"
+                                               options="{'no_open': True, 'no_create': True}"/>
+                                        <field name="employer"
+                                               readonly="state == 'closed'"
+                                               invisible="patient_account != 'contract'"
+                                               options="{'no_open': True, 'no_create': True}"/>
+                                        <field name="contract_company"
+                                               readonly="state == 'closed'"
+                                               invisible="patient_account != 'contract'"
+                                               options="{'no_open': True, 'no_create': True}"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="بيانات مرافق المريض">
+                                <group class="o_group_compact o_group_col_12">
+                                    <field name="relative_partner" readonly="state == 'closed'"/>
+                                    <field name="relative_partner_mobile" readonly="state == 'closed'"/>
+                                    <field name="relative_partner_phone" readonly="state == 'closed'"/>
+                                    <field name="relative_partner_nat_id" readonly="state == 'closed'"/>
+                                </group>
+                            </page>
+                            <page name="medicament" string="الأدوية">
+                                <field name="medicament_line_ids" mode="list" readonly="state == 'closed'" class="o_list_compact">
+                                    <list editable="bottom" class="o_tree_compact">
+                                        <field name="product_id"
+                                               options="{'no_open': True, 'no_create': True}"
+                                               domain="[('hospital_product_type', '=', 'medicament')]"
+                                               required="1"/>
+                                        <field name="hospital_product_type" invisible="1"/>
+                                        <field name="account_id" optional="hide"/>
+                                        <field name="description"/>
+                                        <field name="date" readonly="1" force_save="1"/>
+                                        <field name="quantity" required="1"/>
+                                        <field name="package_qty" optional="hide"/>
+                                        <field name="amount" required="1"/>
+                                        <field name="total"/>
+                                        <field name="section_id" optional="hide"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page name="consumable" string="المستهلكات">
+                                <field name="consumable_line_ids" mode="list" readonly="state == 'closed'" class="o_list_compact">
+                                    <list editable="bottom" class="o_tree_compact">
+                                        <field name="product_id"
+                                               options="{'no_open': True, 'no_create': True}"
+                                               domain="[('hospital_product_type', '=', 'consumable')]"
+                                               required="1"/>
+                                        <field name="hospital_product_type" invisible="1"/>
+                                        <field name="account_id" optional="hide"/>
+                                        <field name="description"/>
+                                        <field name="date" readonly="1" force_save="1"/>
+                                        <field name="quantity"/>
+                                        <field name="package_qty" readonly="1" force_save="1" optional="hide"/>
+                                        <field name="amount"/>
+                                        <field name="total"/>
+                                        <field name="section_id" optional="hide"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page name="services" string="خدمات">
+                                <field name="services_line_ids" mode="list" readonly="state == 'closed'" class="o_list_compact">
+                                    <list editable="bottom" class="o_tree_compact">
+                                        <field name="product_id"
+                                               options="{'no_open': True, 'no_create': True}"
+                                               domain="[('hospital_product_type', 'in', ('medical_service','os', 'accommodation')), ('available_in', 'in', ('inpatient','nursing'))]"
+                                               required="1"/>
+                                        <field name="hospital_product_type" invisible="1"/>
+                                        <field name="account_id" optional="hide"/>
+                                        <field name="doctor_id" optional="show"/>
+                                        <field name="description"/>
+                                        <field name="date" readonly="1" force_save="1"/>
+                                        <field name="quantity"/>
+                                        <field name="package_qty" readonly="1" force_save="1" optional="hide"/>
+                                        <field name="amount"/>
+                                        <field name="total"/>
+                                        <field name="section_id" optional="hide"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page name="laboratory" string="تحاليل">
+                                <field name="laboratory_line_ids" mode="list" readonly="state == 'closed'" class="o_list_compact">
+                                    <list editable="bottom" class="o_tree_compact">
+                                        <field name="product_id"
+                                               options="{'no_open': True, 'no_create': True}"
+                                               domain="[('hospital_product_type', '=', 'medical_service'), ('available_in', '=', 'laboratory')]"
+                                               required="1"/>
+                                        <field name="hospital_product_type" invisible="1"/>
+                                        <field name="account_id" optional="hide"/>
+                                        <field name="doctor_id" optional="show"/>
+                                        <field name="description"/>
+                                        <field name="date" readonly="1" force_save="1"/>
+                                        <field name="total"/>
+                                        <field name="section_id" optional="hide"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page name="radiology" string="أشعة">
+                                <field name="radiology_line_ids" mode="list" readonly="state == 'closed'" class="o_list_compact">
+                                    <list editable="bottom" class="o_tree_compact" limit="20">
+                                        <field name="product_id"
+                                               options="{'no_open': True, 'no_create': True}"
+                                               domain="[('hospital_product_type', '=', 'medical_service'), ('available_in', '=', 'radiology')]"
+                                               required="1"/>
+                                        <field name="hospital_product_type" invisible="1"/>
+                                        <field name="account_id" optional="hide"/>
+                                        <field name="doctor_id" optional="show"/>
+                                        <field name="description"/>
+                                        <field name="date" readonly="1" force_save="1"/>
+                                        <field name="total"/>
+                                        <field name="section_id" optional="hide"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="الحسابات" name="acc_info">
+                                <group class="o_group_compact">
+                                    <group class="o_group_col_6">
+                                        <field name="doctor_account" readonly="state == 'closed'"/>
+                                        <field name="doctor_id_account"
+                                               invisible="doctor_account == False"
+                                               string="حساب الطبيب"
+                                               readonly="state == 'closed'"/>
+                                        <field name="total_medicament"/>
+                                        <field name="total_consumable"/>
+                                        <field name="total_services"/>
+                                    </group>
+                                    <group class="o_group_col_6">
+                                        <field name="total_laboratory"/>
+                                        <field name="total_radiology"/>
+                                        <field name="move_id" readonly="1" force_save="1"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="ملفات المريض الإضافية">
+                                <field name="attachment_ids"
+                                       widget="many2many_binary"
+                                       options="{
+                                           'accepted_file_types': 'image/*,application/pdf,.doc,.docx,.xls,.xlsx',
+                                           'upload_text': 'اسحب الملفات هنا أو اضغط للتحميل',
+                                           'max_file_size': 25,
+                                           'preview': true
+                                       }"/>
+                            </page>
+                            <page string="المستخدمين">
+                                <group class="o_group_compact">
+                                    <group class="o_group_col_6">
+                                        <field name="create_uid" string="انشاء بواسطة" readonly="1" force_save="1"/>
+                                        <field name="create_date" string="انشاء في تاريخ" readonly="1" force_save="1"/>
+                                    </group>
+                                    <group class="o_group_col_6">
+                                        <field name="write_uid" string="اخر تعديل بواسطة" readonly="1" force_save="1"/>
+                                        <field name="write_date" string="اخر تعديل في" readonly="1" force_save="1"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="تقرير الخروج" name="discharge_report" invisible="state == 'open'">
+                                <group>
+                                    <group string="معلومات الخروج">
+                                        <field name="discharge_condition" readonly="1"/>
+                                        <field name="length_of_stay" readonly="1"/>
+                                    </group>
+                                </group>
+                                <group string="التوصيات الطبية">
+                                    <field name="discharge_summary" nolabel="1" readonly="1" widget="text"/>
+                                </group>
+                            </page>
+                        </notebook>
+                        <!-- Compact Summary Section -->
+                    <div class="o_summary_compact inpatient_summary">
+                        <div class="row">
+                            <div class="col-md-8"></div>
+                            <div class="col-md-4">
+                                <div class="inpatient_summary_card">
+                                    <table class="table table-sm o_table_summary inpatient_summary_table">
+                                        <tr invisible="total_medicament &lt;= 0" class="inpatient_summary_row">
+                                            <td><i class="fa fa-pills text-primary"></i> إجمالي الأدوية</td>
+                                            <td class="text-right">
+                                                <field name="total_medicament" widget="monetary" nolabel="1"/>
+                                            </td>
+                                        </tr>
+                                        <tr invisible="total_consumable &lt;= 0" class="inpatient_summary_row">
+                                            <td><i class="fa fa-cubes text-info"></i> إجمالي المستهلكات</td>
+                                            <td class="text-right">
+                                                <field name="total_consumable" widget="monetary" nolabel="1"/>
+                                            </td>
+                                        </tr>
+                                        <tr invisible="total_services &lt;= 0" class="inpatient_summary_row">
+                                            <td><i class="fa fa-cogs text-warning"></i> إجمالي الخدمات</td>
+                                            <td class="text-right">
+                                                <field name="total_services" widget="monetary" nolabel="1"/>
+                                            </td>
+                                        </tr>
+                                        <tr invisible="total_laboratory &lt;= 0" class="inpatient_summary_row">
+                                            <td><i class="fa fa-flask text-success"></i> إجمالي التحاليل</td>
+                                            <td class="text-right">
+                                                <field name="total_laboratory" widget="monetary" nolabel="1"/>
+                                            </td>
+                                        </tr>
+                                        <tr invisible="total_radiology &lt;= 0" class="inpatient_summary_row">
+                                            <td><i class="fa fa-x-ray text-danger"></i> إجمالي الأشعة</td>
+                                            <td class="text-right">
+                                                <field name="total_radiology" widget="monetary" nolabel="1"/>
+                                            </td>
+                                        </tr>
+
+                                        <tr invisible="total_medicament &lt;= 0 and total_consumable &lt;= 0 and total_services &lt;= 0 and total_laboratory &lt;= 0 and total_radiology &lt;= 0" class="inpatient_separator">
+                                            <td colspan="2"><hr class="inpatient_divider"/></td>
+                                        </tr>
+
+                                        <tr invisible="package_discount == 0" class="inpatient_summary_row">
+                                            <td><i class="fa fa-gift text-purple"></i> خصم الباقة</td>
+                                            <td class="text-right">
+                                                <field name="package_discount" widget="monetary" nolabel="1"/>
+                                            </td>
+                                        </tr>
+
+                                        <tr class="inpatient_total_row">
+                                            <td><i class="fa fa-calculator text-primary"></i> الإجمالي</td>
+                                            <td class="text-right">
+                                                <field name="total" widget="monetary" nolabel="1"/>
+                                            </td>
+                                        </tr>
+
+                                        <tr class="inpatient_summary_row">
+                                            <td><i class="fa fa-user-md text-info"></i> خصم الطبيب</td>
+                                            <td class="text-right">
+                                                <field name="doctor_discount" widget="monetary" nolabel="1"/>
+                                            </td>
+                                        </tr>
+
+                                        <tr class="inpatient_summary_row">
+                                            <td><i class="fa fa-building text-warning"></i> المصاريف الادارية</td>
+                                            <td class="text-right">
+                                                <field name="surgery_tax" widget="monetary" nolabel="1"/>
+                                            </td>
+                                        </tr>
+
+                                        <tr class="inpatient_summary_row">
+                                            <td><i class="fa fa-money text-success" title=""></i> المبلغ المدفوع</td>
+                                            <td class="text-right">
+                                                <field name="paid_amount" readonly="1" force_save="1" widget="monetary" nolabel="1"/>
+                                            </td>
+                                        </tr>
+
+                                        <tr class="inpatient_final_row">
+                                            <td><strong><i class="fa fa-credit-card text-danger" title="credit-card"></i> المستحق على المريض</strong></td>
+                                            <td class="text-right">
+                                                <field name="patient_due" readonly="1" force_save="1" widget="monetary" nolabel="1"/>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </sheet>
+
+                    <div class="o_attachment_preview"/>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+        <record id="patient_file_kanban_view" model="ir.ui.view">
+        <field name="name">patient.file.kanban.enhanced</field>
+        <field name="model">patient.file</field>
+        <field name="arch" type="xml">
+            <kanban js_class="patient_file_enhanced_kanban"
+                    class="o_patient_file_enhanced_kanban"
+                    create="true"
+                    sample="1"
+                    quick_create="false" limit="20">
+
+                <!-- Fields -->
+                <field name="name"/>
+                <field name="patient_id"/>
+                <field name="doctor_id"/>
+                <field name="room_id"/>
+                <field name="bed_id"/>
+                <field name="state"/>
+                <field name="type"/>
+                <field name="date_in"/>
+                <field name="date_out"/>
+                <field name="total"/>
+                <field name="paid_amount"/>
+                <field name="patient_due"/>
+                <field name="diagnosis"/>
+                <field name="patient_age"/>
+                <field name="patient_street"/>
+                <field name="patient_phone" />
+                <field name="patient_mobile"/>
+                <field name="total_consumable"/>
+                <field name="total_medicament"/>
+                <field name="total_services"/>
+                <field name="total_laboratory"/>
+                <field name="total_radiology"/>
+                <field name="patient_account"/>
+                <field name="image"/>
+                <field name="currency_id"/>
+
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_global_click o_patient_enhanced_card"
+                             t-attf-data-state="#{record.state.raw_value}"
+                             t-attf-data-type="#{record.type.raw_value}">
+
+                            <!-- Card Header with Status Indicator -->
+                            <div class="card-header">
+                                <div class="patient-avatar">
+                                    <img t-if="record.image.raw_value"
+                                         t-att-src="kanban_image('patient.file', 'image', record.id.raw_value)"
+                                         alt="Patient Avatar"
+                                         class="patient-img"/>
+                                    <div t-else="" class="patient-placeholder">
+                                        <i class="fa fa-user-md" title="user"></i>
+                                    </div>
+                                    <div class="status-indicator"
+                                         t-attf-class="status-#{record.state.raw_value}">
+                                        <i t-if="record.state.raw_value == 'open'" title="state" class="fa fa-heartbeat"></i>
+                                        <i t-else="" class="fa fa-check-circle" title="check"></i>
+                                    </div>
+                                </div>
+
+                                <div class="patient-basic-info">
+                                    <div class="file-number">
+                                        <span class="file-id"><t t-esc="record.name.value"/></span>
+                                        <span t-attf-class="type-badge type-#{record.type.raw_value}">
+                                            <t t-esc="record.type.value"/>
+                                        </span>
+                                    </div>
+                                    <div class="patient-name">
+                                        <strong><t t-esc="record.patient_id.value"/></strong>
+                                    </div>
+                                    <div class="patient-details">
+                                        <span class="age" t-if="record.patient_age.value">
+                                            <i class="fa fa-birthday-cake" title="age"></i>
+                                            <t t-esc="record.patient_age.value"/> years
+                                        </span>
+                                        <span class="account-type"
+                                              t-attf-class="account-#{record.patient_account.raw_value}">
+                                            <t t-esc="record.patient_account.value"/>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="card-actions">
+                                    <span t-attf-class="state-badge state-#{record.state.raw_value}">
+                                        <t t-esc="record.state.value"/>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Medical Information -->
+                            <div class="medical-section">
+                                <div class="medical-row">
+                                    <div class="medical-item doctor-info">
+                                        <i class="fa fa-user-md" title="user"></i>
+                                        <div class="info-content">
+                                            <span class="label">Doctor</span>
+                                            <span class="value"><t t-esc="record.doctor_id.value or 'Not Assigned'"/></span>
+                                        </div>
+                                    </div>
+                                    <div class="medical-item room-info">
+                                        <i class="fa fa-bed" title="bed"></i>
+                                        <div class="info-content">
+                                            <span class="label">Room/Bed</span>
+                                            <span class="value">
+                                                <t t-esc="record.room_id.value or 'N/A'"/>
+                                                <t t-if="record.bed_id.value"> - <t t-esc="record.bed_id.value"/></t>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="medical-row">
+                                    <div class="medical-item date-info">
+                                        <i class="fa fa-calendar" title="date"></i>
+                                        <div class="info-content">
+                                            <span class="label">Admission Date</span>
+                                            <span class="value"><t t-esc="record.date_in.value"/></span>
+                                        </div>
+                                    </div>
+                                    <div class="medical-item contact-info">
+                                        <i class="fa fa-phone" title="phone"></i>
+                                        <div class="info-content">
+                                            <span class="label">Contact</span>
+                                            <span class="value phone-numbers">
+                                                <span t-if="record.patient_mobile.value" class="mobile-number">
+                                                    <t t-esc="record.patient_mobile.value"/>
+                                                </span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="address-row" t-if="record.patient_street.value">
+                                    <div class="medical-item address-info">
+                                        <i class="fa fa-map-marker" title="address"></i>
+                                        <div class="info-content">
+                                            <span class="label">Address</span>
+                                            <span class="value address-text"><t t-esc="record.patient_street.value"/></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Diagnosis Section -->
+                            <div class="diagnosis-section" t-if="record.diagnosis.value">
+                                <div class="section-header">
+                                    <i class="fa fa-stethoscope" title="diagnosis"></i>
+                                    <span class="section-title">Diagnosis</span>
+                                </div>
+                                <div class="diagnosis-content">
+                                    <t t-esc="record.diagnosis.value"/>
+                                </div>
+                            </div>
+
+                            <!-- Financial Breakdown -->
+                            <div class="financial-section">
+                                <div class="section-header">
+                                    <i class="fa fa-calculator" title="calculator"></i>
+                                    <span class="section-title">Financial Summary</span>
+                                </div>
+
+                                <div class="financial-grid">
+                                    <div class="financial-item total-item">
+                                        <div class="amount-container">
+                                            <span class="amount"><field name="total" widget="monetary"/></span>
+                                            <span class="label">Total</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="financial-item paid-item">
+                                        <div class="amount-container">
+                                            <span class="amount"><field name="paid_amount" widget="monetary"/></span>
+                                            <span class="label">Paid</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="financial-item due-item">
+                                        <div class="amount-container">
+                                            <span class="amount"><field name="patient_due" widget="monetary"/></span>
+                                            <span class="label">Due</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Detailed Breakdown -->
+                                <div class="breakdown-details">
+                                    <div class="breakdown-row">
+                                        <div class="breakdown-item">
+                                            <span class="breakdown-label">Medicines</span>
+                                            <span class="breakdown-amount">
+                                                <field name="total_medicament" widget="monetary"/>
+                                            </span>
+                                        </div>
+                                        <div class="breakdown-item">
+                                            <span class="breakdown-label">Consumables</span>
+                                            <span class="breakdown-amount">
+                                                <field name="total_consumable" widget="monetary"/>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="breakdown-row">
+                                        <div class="breakdown-item">
+                                            <span class="breakdown-label">Services</span>
+                                            <span class="breakdown-amount">
+                                                <field name="total_services" widget="monetary"/>
+                                            </span>
+                                        </div>
+                                        <div class="breakdown-item">
+                                            <span class="breakdown-label">Laboratory</span>
+                                            <span class="breakdown-amount">
+                                                <field name="total_laboratory" widget="monetary"/>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Action Menu -->
+                            <div class="o_dropdown_kanban dropdown">
+                                <a role="button" class="dropdown-toggle o-no-caret btn" data-toggle="dropdown" href="#" aria-label="Dropdown menu" title="Dropdown menu">
+                                    <span class="fa fa-ellipsis-v" title="ellipsis"/>
+                                </a>
+                                <div class="dropdown-menu" role="menu">
+                                    <a role="menuitem" type="edit" class="dropdown-item">
+                                        <i class="fa fa-edit" title="edit"></i> Edit
+                                    </a>
+                                    <a role="menuitem" type="object" name="action_print_report" class="dropdown-item">
+                                        <i class="fa fa-print" title="print"></i> Print Report
+                                    </a>
+                                    <div role="separator" class="dropdown-divider"></div>
+                                    <a role="menuitem" type="delete" class="dropdown-item text-danger">
+                                        <i class="fa fa-trash" title="trash"></i> Delete
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+        <!-- Search View with Group By -->
+        <record id="view_patient_file_search" model="ir.ui.view">
+        <field name="name">patient.file.search</field>
+        <field name="model">patient.file</field>
+        <field name="arch" type="xml">
+            <search string="Patient Files">
+                <field name="name"/>
+                <field name="patient_id"/>
+                <field name="doctor_id"/>
+                <field name="patient_account"/>
+                <field name="employer"/>
+                <field name="room_id"/>
+                <field name="bed_id"/>
+                <field name="diagnosis"/>
+                <field name="total" filter_domain="[('total','>=',self)]"/>
+
+                <!-- Predefined Filters -->
+                <filter string="Open Files" name="open_files" domain="[('state','=','open')]"/>
+                <filter string="Closed Files" name="closed_files" domain="[('state','=','closed')]"/>
+                <filter string="In-Patient" name="inpatient_type" domain="[('type','=','inpatient')]"/>
+                <filter string="ICU" name="icu_type" domain="[('type','=','icu')]"/>
+                <filter string="Cash Patients" name="cash_patients" domain="[('patient_account','=','cash')]"/>
+                <filter string="Today's Admissions" name="today"
+                        domain="[('date_in','=',context_today().strftime('%Y-%m-%d'))]"/>
+
+                <!-- Group By -->
+                <group expand="0" string="Group By">
+                    <filter string="Patient" name="patient_groupby" context="{'group_by': 'patient_id'}"/>
+                    <filter string="Doctor" name="doctor_groupby" context="{'group_by': 'doctor_id'}"/>
+                    <filter string="Room" name="room_groupby" context="{'group_by': 'room_id'}"/>
+                    <filter string="State" name="state_groupby" context="{'group_by': 'state'}"/>
+                    <filter string="Type" name="type_groupby" context="{'group_by': 'type'}"/>
+                    <filter string="Account Type" name="account_groupby" context="{'group_by': 'patient_account'}"/>
+                    <filter string="Employer" name="employer_groupby" context="{'group_by': 'employer'}"/>
+                    <filter string="Admission Day" name="date_in_day" context="{'group_by': 'date_in:day'}"/>
+                    <filter string="Admission Month" name="date_in_month" context="{'group_by': 'date_in:month'}"/>
+                    <filter string="Admission Year" name="date_in_year" context="{'group_by': 'date_in:year'}"/>
+                    <filter string="Discharge Date" name="date_out_groupby" context="{'group_by': 'date_out'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+        <!-- List View -->
+        <record id="view_patient_file_tree" model="ir.ui.view">
+            <field name="name">patient.file.list</field>
+            <field name="model">patient.file</field>
+            <field name="arch" type="xml">
+                <list decoration-info="state=='open'" decoration-muted="state=='closed'" sample="1" limit="20">
+                    <field name="name"/>
+                    <field name="patient_id"/>
+                    <field name="date_in"/>
+                    <field name="date_out"/>
+                    <field name="doctor_id"/>
+                    <field name="room_id"/>
+                    <field name="bed_id"/>
+                    <field name="type"/>
+                    <field name="patient_account"/>
+                    <field name="total" sum="Total Amount"/>
+                    <field name="paid_amount" sum="Total Paid"/>
+                    <field name="patient_due" sum="Total Due"/>
+                    <field name="state"/>
+                    <field name="currency_id" invisible="1"/>
+                </list>
+            </field>
+        </record>
+        <record id="view_patient_file_graph" model="ir.ui.view">
+            <field name="name">patient.file.graph</field>
+            <field name="model">patient.file</field>
+            <field name="arch" type="xml">
+                <graph string="Patient Analysis" sample="1" stacked="True">
+                    <field name="date_in" interval="year"/>
+                    <field name="patient_account"/>
+                    <field name="total" type="measure"/>
+                </graph>
+            </field>
+        </record>
+        <!-- Pivot View -->
+        <record id="view_patient_file_pivot" model="ir.ui.view">
+            <field name="name">patient.file.pivot</field>
+            <field name="model">patient.file</field>
+            <field name="arch" type="xml">
+                <pivot string="Patient Analysis" sample="1">
+                    <field name="date_in" interval="year" type="row"/>
+                    <field name="patient_account" type="col"/>
+                    <field name="total" type="measure"/>
+                    <field name="total_medicament" type="measure"/>
+                    <field name="total_consumable" type="measure"/>
+                    <field name="total_services" type="measure"/>
+                    <field name="total_laboratory" type="measure"/>
+                    <field name="total_radiology" type="measure"/>
+                    <field name="doctor_discount" type="measure"/>
+                    <field name="surgery_tax" type="measure"/>
+                    <field name="package_discount" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <record id="inpatient_action" model="ir.actions.act_window">
+            <field name="name">الداخلي</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">patient.file</field>
+            <field name="view_mode">list,kanban,pivot,graph,form</field>
+            <field name="domain">[('type', '=', 'inpatient')]</field>
+            <field name="context">{'default_type': 'inpatient'}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                            (0, 0, {'view_mode': 'list', 'view_id': ref('view_patient_file_tree')}),
+                            (0, 0, {'view_mode': 'kanban', 'view_id': ref('patient_file_kanban_view')}),
+                            (0, 0, {'view_mode': 'pivot', 'view_id': ref('view_patient_file_pivot')}),
+                            (0, 0, {'view_mode': 'graph', 'view_id': ref('view_patient_file_graph')}),
+                            (0, 0, {'view_mode': 'form', 'view_id': ref('inpatient_form')})]"/>
+
+        </record>
+        <!-- List View -->
+    <record id="view_patient_file_line_tree" model="ir.ui.view">
+        <field name="name">patient.file.line.list</field>
+        <field name="model">patient.file.line</field>
+        <field name="arch" type="xml">
+            <list create="true" delete="true" edit="true" export_xlsx="true" limit="20">
+                <field name="name" string="الاسم"/>
+                <field name="patient_file_id" string="رقم الملف"/>
+                <field name="patient_account" string="نوع الحساب" widget="badge"/>
+                <field name="contract_company" string="شركة التعاقد" optional="hide"/>
+                <field name="product_id" string="الصنف"/>
+                <field name="doctor_id" string="الطبيب" optional="show"/>
+                <field name="doctor_id_account" string="علي حساب" optional="hide"/>
+                <field name="date" string="التاريخ"/>
+                <field name="section_id" string="القسم" optional="show"/>
+                <field name="quantity" string="الكمية" sum="Total Quantity"/>
+                <field name="amount" string="القيمة" widget="monetary"/>
+                <field name="total" string="الاجمالي" widget="monetary" sum="Total Amount"/>
+                <field name="hospital_product_type" string="نوع المنتج" optional="hide"/>
+                <field name="available_in" string="متاح في" optional="hide"/>
+                <field name="package_line" string="شاملة" optional="hide"/>
+                <field name="package_qty" string="الكمية داخل الشاملة" optional="hide"/>
+                <field name="item_bill" string="ItemBill" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_patient_file_line_form" model="ir.ui.view">
+        <field name="name">patient.file.line.form</field>
+        <field name="model">patient.file.line</field>
+        <field name="arch" type="xml">
+            <form string=" الملف الطبي">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="اسم ..." required="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="معلومات أساسية">
+                            <field name="patient_file_id" required="1"/>
+                            <field name="patient_account" widget="radio"/>
+                            <field name="contract_company" invisible="patient_account != 'insurance'"/>
+                            <field name="account_id"/>
+                            <field name="date"/>
+                            <field name="section_id"/>
+                        </group>
+                        <group string="تفاصيل المنتج والطبيب">
+                            <field name="product_id" required="1"/>
+                            <field name="hospital_product_type" readonly="1"/>
+                            <field name="available_in" readonly="1"/>
+                            <field name="doctor_id"/>
+                            <field name="doctor_id_account"/>
+                            <field name="description"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="الكميات والمبالغ">
+                            <field name="quantity"/>
+                            <field name="amount" readonly="1"/>
+                            <field name="total" readonly="1" widget="monetary"/>
+                        </group>
+                        <group string="معلومات الشاملة">
+                            <field name="package_line"/>
+                            <field name="package_qty" invisible="not package_line"/>
+                            <field name="item_bill"/>
+                        </group>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Kanban View -->
+    <record id="view_patient_file_line_kanban" model="ir.ui.view">
+        <field name="name">patient.file.line.kanban</field>
+        <field name="model">patient.file.line</field>
+        <field name="arch" type="xml">
+            <kanban string=" الملفات الطبية" class="o_kanban_mobile" create="true" edit="true" delete="true" limit="20">
+                <field name="name"/>
+                <field name="patient_file_id"/>
+                <field name="patient_account"/>
+                <field name="product_id"/>
+                <field name="doctor_id"/>
+                <field name="date"/>
+                <field name="quantity"/>
+                <field name="total"/>
+                <field name="section_id"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_card oe_kanban_global_click">
+                            <div class="o_kanban_record_top">
+                                <div class="o_kanban_record_headings">
+                                    <strong class="o_kanban_record_title">
+                                        <field name="name"/>
+                                    </strong>
+                                </div>
+                                <div class="o_kanban_manage_button_section">
+                                    <span class="badge badge-pill" t-att-class="record.patient_account.raw_value == 'cash' ? 'badge-success' : record.patient_account.raw_value == 'insurance' ? 'badge-info' : 'badge-warning'">
+                                        <field name="patient_account"/>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="o_kanban_record_body">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <strong>الملف: </strong><field name="patient_file_id"/>
+                                    </div>
+                                    <div class="col-6">
+                                        <strong>التاريخ: </strong><field name="date"/>
+                                    </div>
+                                </div>
+                                <div class="row mt8">
+                                    <div class="col-12">
+                                        <strong>المنتج: </strong><field name="product_id"/>
+                                    </div>
+                                </div>
+                                <div class="row mt8" t-if="record.doctor_id.value">
+                                    <div class="col-12">
+                                        <strong>الطبيب: </strong><field name="doctor_id"/>
+                                    </div>
+                                </div>
+                                <div class="row mt8" t-if="record.section_id.value">
+                                    <div class="col-12">
+                                        <strong>القسم: </strong><field name="section_id"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="o_kanban_record_bottom">
+                                <div class="oe_kanban_bottom_left">
+                                    <strong>الكمية: </strong><field name="quantity"/>
+                                </div>
+                                <div class="oe_kanban_bottom_right">
+                                    <strong>الإجمالي: </strong><field name="total" widget="monetary"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Graph View -->
+    <record id="view_patient_file_line_graph" model="ir.ui.view">
+        <field name="name">patient.file.line.graph</field>
+        <field name="model">patient.file.line</field>
+        <field name="arch" type="xml">
+            <graph string="تحليل حركة الاصناف الطبية" type="bar" sample="1">
+                <field name="date" type="row" interval="year"/>
+                <field name="product_id" type="row"/>
+                <field name="doctor_id" type="row"/>
+                <field name="total" type="measure"/>
+                <field name="quantity" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Pivot View -->
+    <record id="view_patient_file_line_pivot" model="ir.ui.view">
+        <field name="name">patient.file.line.pivot</field>
+        <field name="model">patient.file.line</field>
+        <field name="arch" type="xml">
+            <pivot string="تحليل البيانات المحورية" sample="1" display_quantity="true">
+                <field name="date" type="row" interval="year"/>
+                <field name="doctor_id" type="col"/>
+                <field name="product_id" type="col"/>
+                <field name="total" type="measure"/>
+                <field name="quantity" type="measure"/>
+                <field name="amount" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <!-- Search View - Fixed version with proper parentheses -->
+    <record id="view_patient_file_line_search" model="ir.ui.view">
+        <field name="name">patient.file.line.search</field>
+        <field name="model">patient.file.line</field>
+        <field name="arch" type="xml">
+            <search string="بحث حركة اصناف الداخلي الطبية">
+                <!-- Search Fields -->
+                <field name="name" string="الاسم" filter_domain="[('name','ilike',self)]"/>
+                <field name="patient_file_id" string="رقم الملف"/>
+                <field name="product_id" string="المنتج"/>
+                <field name="doctor_id" string="الطبيب"/>
+                <field name="section_id" string="القسم"/>
+                <field name="description" string="البيان"/>
+                <field name="item_bill" string="رقم فاتورة قديم"/>
+
+                <!-- Date Range Filter -->
+                <filter name="filter_date_range" string="فترة مخصصة" date="date" default_period="this_month"/>
+
+                <!-- Quick Date Filters - FIXED PARENTHESES -->
+                <separator/>
+                <filter name="today" string="اليوم" domain="[('date', '=', context_today())]"/>
+                <filter name="yesterday" string="أمس" domain="[('date', '=', (context_today() + relativedelta(days=-1)))]"/>
+
+
+                <separator/>
+
+                <!-- Account Type Filters -->
+                <filter name="cash_accounts" string="الحسابات النقدية" domain="[('patient_account','=','cash')]"/>
+                <filter name="insurance_accounts" string="حسابات التأمين" domain="[('patient_account','=','insurance')]"/>
+                <filter name="credit_accounts" string="الحسابات الآجلة" domain="[('patient_account','=','credit')]"/>
+
+                <separator/>
+
+                <!-- Product Type Filters -->
+                <filter name="has_product" string="لديه منتج" domain="[('product_id','!=', False)]"/>
+                <filter name="no_product" string="بدون منتج" domain="[('product_id','=', False)]"/>
+                <filter name="has_doctor" string="لديه طبيب" domain="[('doctor_id','!=', False)]"/>
+                <filter name="no_doctor" string="بدون طبيب" domain="[('doctor_id','=', False)]"/>
+
+                <separator/>
+
+                <!-- Package Filters -->
+                <filter name="in_package" string="ضمن شاملة" domain="[('package_line','!=', False)]"/>
+                <filter name="not_in_package" string="خارج الشاملة" domain="[('package_line','=', False)]"/>
+
+                <separator/>
+
+                <!-- Group By Options -->
+                <group expand="0" string="تجميع حسب">
+                    <filter string="نوع الحساب" name="group_patient_account" context="{'group_by':'patient_account'}"/>
+                    <filter string="ملف المريض" name="group_patient_file" context="{'group_by':'patient_file_id'}"/>
+                    <filter string="المنتج" name="group_product" context="{'group_by':'product_id'}"/>
+                    <filter string="الطبيب" name="group_doctor" context="{'group_by':'doctor_id'}"/>
+                    <filter string="القسم" name="group_section" context="{'group_by':'section_id'}"/>
+                    <filter string="شركة التعاقد" name="group_contract_company" context="{'group_by':'contract_company'}"/>
+                    <filter string="نوع المنتج بالمستشفى" name="group_hospital_product_type" context="{'group_by':'hospital_product_type'}"/>
+                    <filter string="متاح في" name="group_available_in" context="{'group_by':'available_in'}"/>
+                    <filter string="الشاملة" name="group_package_line" context="{'group_by':'package_line'}"/>
+                    <separator/>
+                    <filter string="التاريخ" name="group_date" context="{'group_by':'date'}"/>
+                    <filter string="التاريخ (يوم)" name="group_date_day" context="{'group_by':'date:day'}"/>
+                    <filter string="التاريخ (أسبوع)" name="group_date_week" context="{'group_by':'date:week'}"/>
+                    <filter string="التاريخ (شهر)" name="group_date_month" context="{'group_by':'date:month'}"/>
+                    <filter string="التاريخ (ربع سنة)" name="group_date_quarter" context="{'group_by':'date:quarter'}"/>
+                    <filter string="التاريخ (سنة)" name="group_date_year" context="{'group_by':'date:year'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    <!-- Action -->
+    <record id="inpatient_line_action" model="ir.actions.act_window">
+        <field name="name">خطوط الملفات الطبية</field>
+        <field name="res_model">patient.file.line</field>
+        <field name="view_mode">list,form,kanban,graph,pivot</field>
+        <field name="search_view_id" ref="view_patient_file_line_search"/>
+        <field name="context">{
+            'search_default_this_month': 1,
+            'search_default_group_patient_account': 1,
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                إنشاء خط ملف طبي جديد
+            </p>
+            <p>
+                قم بإنشاء وإدارة خطوط الملفات الطبية للمرضى.<br/>
+                يمكنك تتبع المنتجات والخدمات والأطباء والمبالغ لكل مريض.
+            </p>
+        </field>
+    </record>
+
+
+        <menuitem id="inpatient_menu"
+                  name="الداخلي"
+                  parent="hospital_base.hospital_base_inpatient_menu"
+                  action="inpatient_action"
+                  sequence="0"/>
+        <menuitem id="inpatient_line_menu"
+                  name="حركة اصناف الداخلي"
+                  parent="hospital_base.hospital_base_inpatient_menu"
+                  action="inpatient_line_action"
+                  sequence="0"/>
+
+        <record id="icu_action" model="ir.actions.act_window">
+            <field name="name">العناية</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">patient.file</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[('type', '=', 'icu')]</field>
+            <field name="context">{'default_type': 'icu'}</field>
+        </record>
+
+        <menuitem id="icu_menu"
+                  name="العناية"
+                  parent="hospital_base.hospital_base_icu_menu"
+                  action="icu_action"
+                  sequence="0"/>
+
+        <record id="reception_bed_list" model="ir.ui.view">
+            <field name="name">reception_bed_list</field>
+            <field name="model">res.beds</field>
+            <field name="arch" type="xml">
+                <list create="false" edit="false" duplicate="false" delete="false">
+                    <field name="name"/>
+                    <field name="room_id"/>
+                    <field name="service_id"/>
+                    <field name="state"/>
+                    <button name="add_new_patient"
+                            type="object"
+                            string="جديد"
+                            context="{'room_id': room_id, 'bed_id': active_id}"
+                            class="oe_highlight"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="reception_inpatient_form" model="ir.ui.view">
+            <field name="name">reception_inpatient_form</field>
+            <field name="model">patient.file</field>
+            <field name="arch" type="xml">
+                <form string="In-Patient">
+                    <header>
+                        <button name="approve_request" string="طلب موافقة" class="oe_highlight"
+                                    invisible="patient_account == 'cash' or state == 'closed'"
+                                type="object"/>
+                        <button name="patient_payment" string="سداد" class="oe_highlight"
+                                type="object"/>
+                        <button name="action_close" string="اغلاق الملف" class="oe_highlight"
+                                invisible="state != 'open'"
+                                type="object"/>
+                        <button name="action_re_open" string="إعادة فتح الملف" class="oe_highlight"
+                                invisible="state != 'closed'"
+                                type="object"/>
+                        <button name="create_account_move" string="إنشاء القيد" class="oe_highlight"
+                                invisible="state != 'closed'"
+                                type="object"/>
+                        <field name="state" widget="statusbar" statusbar_visible="open,closed"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button class="oe_stat_button" name="patient_to_surgeries"
+                                    string="العمليات"
+                                    type="object" icon="fa-credit-card">
+                            </button>
+                            <button class="oe_stat_button" name="patient_payments"
+                                    string="المدفوعات"
+                                    type="object" icon="fa-credit-card">
+                            </button>
+                            <button class="oe_stat_button" name="patient_approves"
+                                    invisible="patient_account == 'cash' or state == 'closed'"
+                                    string="الموافقات"
+                                    type="object" icon="fa-credit-card">
+                            </button>
+                        </div>
+                        <field name="type" invisible="1"/>
+                        <div class="oe_title">
+                            <h5>
+                                <field name="name" placeholder="Draft" readonly="1"/>
+                            </h5>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="patient_id" context="{'default_company_type': 'patient', 'default_is_patient': True}" readonly="state == 'closed'"/>
+                                <field name="date_in" readonly="state == 'closed'"/>
+                                <field name="room_id" options="{'no_open': True, 'no_create': True}" readonly="state == 'closed'"/>
+                                <field name="diagnosis" readonly="state == 'closed'"/>
+                            </group>
+                            <group>
+                                <field name="doctor_id" options="{'no_open': True, 'no_create': True}" readonly="state == 'closed'"/>
+                                <field name="date_out" readonly="1" force_save="1"/>
+                                <field name="bed_id" options="{'no_open': True, 'no_create': True}" readonly="state == 'closed'"/>
+                                <field name="note" readonly="state == 'closed'"/>
+                                <field name="remark" readonly="state == 'closed'"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="بيانات المريض" name="other_info">
+                                <group>
+                                    <group>
+                                        <field name="patient_account" readonly="state == 'closed'" options="{'no_open': True, 'no_create': True}"/>
+                                        <field name="employer" readonly="state == 'closed'" invisible="patient_account != 'contract'" options="{'no_open': True, 'no_create': True}"/>
+                                        <field name="contract_company" readonly="state == 'closed'" invisible="patient_account != 'contract'" options="{'no_open': True, 'no_create': True}"/>
+                                    </group>
+                                    <group>
+                                        <field name="relative_partner" readonly="state == 'closed'"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page name="medicament" string="اﻷدوية">
+                                <field name="medicament_line_ids" mode="list" readonly="state == 'closed'">
+                                    <list editable="bottom">
+                                        <field name="product_id" options="{'no_open': True, 'no_create': True}"
+                                               domain="[('hospital_product_type', '=', 'medicament')]"
+                                                required="1"/>
+                                        <field name="hospital_product_type" invisible="1"/>
+                                        <field name="account_id"/>
+                                        <field name="description"/>
+                                        <field name="date" readonly="1" force_save="1"/>
+                                        <field name="quantity" required="1"/>
+                                        <field name="package_qty" optional="show"/>
+                                        <field name="amount" required="1"/>
+                                        <field name="total"/>
+                                        <field name="section_id" optional="show"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page name="consumable" string="المستهلكات" readonly="state == 'closed'">
+                                <field name="consumable_line_ids" mode="list" readonly="state == 'closed'">
+                                    <list editable="bottom">
+                                        <field name="product_id" options="{'no_open': True, 'no_create': True}"
+                                               domain="[('hospital_product_type', '=', 'consumable')]"
+                                               required="1"/>
+                                        <field name="hospital_product_type" invisible="1"/>
+                                        <field name="account_id"/>
+                                        <field name="description"/>
+                                        <field name="date" readonly="1" force_save="1"/>
+                                        <field name="quantity"/>
+                                        <field name="package_qty" readonly="1" force_save="1" optional="show"/>
+                                        <field name="amount"/>
+                                        <field name="total"/>
+                                        <field name="section_id" optional="show"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page name="services" string="الخدمات الطبية">
+                                <field name="services_line_ids" mode="list" readonly="state == 'closed'">
+                                    <list editable="bottom">
+                                        <field name="product_id" options="{'no_open': True, 'no_create': True}"
+                                                domain="[('hospital_product_type', 'in', ('medical_service','os', 'accommodation')), ('available_in', 'in', ('inpatient','nursing'))]"
+                                                required="1"/>
+                                        <field name="hospital_product_type" invisible="1"/>
+                                        <field name="account_id"/>
+                                        <field name="doctor_id"/>
+                                        <field name="description"/>
+                                        <field name="date" readonly="1" force_save="1"/>
+                                        <field name="quantity"/>
+                                        <field name="package_qty" readonly="1" force_save="1" optional="show"/>
+                                        <field name="amount"/>
+                                        <field name="total"/>
+                                        <field name="section_id" optional="show"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page name="laboratory" string="التحاليلي">
+                                <field name="laboratory_line_ids" mode="list" readonly="state == 'closed'">
+                                    <list editable="bottom">
+                                        <field name="product_id" options="{'no_open': True, 'no_create': True}"
+                                        domain="[('hospital_product_type', '=', 'medical_service'), ('available_in', '=', 'laboratory')]"
+                                        required="1"/>
+                                        <field name="hospital_product_type" invisible="1"/>
+                                        <field name="account_id"/>
+                                        <field name="doctor_id"/>
+                                        <field name="doctor_drags_id"/>
+                                        <field name="description"/>
+                                        <field name="date" readonly="1" force_save="1"/>
+                                        <field name="total"/>
+                                        <field name="section_id" optional="show"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page name="radiology" string="الاشعة">
+                                <field name="radiology_line_ids" mode="list" readonly="state == 'closed'">
+                                    <list editable="bottom">
+                                        <field name="product_id" options="{'no_open': True, 'no_create': True}"
+                                               domain="[('hospital_product_type', '=', 'medical_service'), ('available_in', '=', 'radiology')]"
+                                               required="1"/>
+                                        <field name="hospital_product_type" invisible="1"/>
+                                        <field name="account_id"/>
+                                        <field name="doctor_id"/>
+                                        <field name="doctor_drags_id"/>
+                                        <field name="description"/>
+                                        <field name="date" readonly="1" force_save="1"/>
+                                        <field name="total"/>
+                                        <field name="section_id" optional="show"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="الحسابات" name="acc_info">
+                                <group>
+                                    <group>
+                                        <field name="doctor_account" readonly="state == 'closed'"/>
+                                        <field name="total_medicament"/>
+                                        <field name="total_consumable"/>
+                                        <field name="total_services"/>
+                                        <field name="total_laboratory"/>
+                                        <field name="total_radiology"/>
+                                    </group>
+                                    <group>
+                                        <field name="move_id" readonly="1" force_save="1"/>
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                        <group col="12" class="oe_invoice_lines_tab">
+                            <group colspan="8"/>
+                            <group colspan="4">
+                                <group class="oe_subtotal_footer oe_right">
+                                    <field name="package_discount" invisible="package_discount == 0"/>
+                                    <field name="total"/>
+                                    <field name="doctor_discount"/>
+                                    <field name="surgery_tax"/>
+                                    <field name="paid_amount" readonly="1" force_save="1"/>
+                                    <field name="patient_due" readonly="1" force_save="1" class="oe_subtotal_footer_separator"/>
+                                </group>
+                            </group>
+                        </group>
+                    </sheet>
+                    <div class="o_attachment_preview"/>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <record id="reception_inpatient_tree" model="ir.ui.view">
+            <field name="name">reception_inpatient_tree</field>
+            <field name="model">patient.file</field>
+            <field name="arch" type="xml">
+                <list limit="20">
+                    <field name="name"/>
+                    <field name="patient_id"/>
+                    <field name="doctor_id"/>
+                    <field name="doctor_drags_id"/>
+                    <field name="date_in"/>
+                    <field name="date_out"/>
+                    <field name="room_id"/>
+                    <field name="bed_id"/>
+                    <field name="room_surgery_id"/>
+                    <field name="total"/>
+                    <field name="type" column_invisible="1"/>
+                </list>
+            </field>
+        </record>
+        <record id="reception_inpatient_action" model="ir.actions.act_window">
+            <field name="name">reception_inpatient_action</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">patient.file</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[('type', '=', 'inpatient')]</field>
+            <field name="context">{'default_type': 'inpatient'}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                            (0, 0, {'view_mode': 'list', 'view_id': ref('reception_inpatient_tree')}),
+                            (0, 0, {'view_mode': 'form', 'view_id': ref('reception_inpatient_form')})]"/>
+        </record>
+
+        <record id="inpatient_payment_form" model="ir.ui.view">
+            <field name="name">inpatient_payment_form</field>
+            <field name="model">clinic.visit</field>
+            <field name="arch" type="xml">
+                <form string="Patient Payment">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name" readonly="1" force_save="1"/>
+                                <field name="patient_amount"/>
+                                <field name="patient_file"/>
+                                <field name="patient_room"/>
+                                <field name="patient_bed"/>
+                                <field name="doctor_id"/>
+
+                            </group>
+                            <group>
+                                <field name="date"/>
+                                <field name="patient_id" readonly="1" force_save="1"/>
+                                <field name="patient_account"/>
+                                <field name="patient_employer"/>
+                                <field name="patient_contract_company"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="inpatient_payment_tree" model="ir.ui.view">
+            <field name="name">inpatient_payment_tree</field>
+            <field name="model">clinic.visit</field>
+            <field name="arch" type="xml">
+                <list limit="20">
+                    <field name="name"/>
+                    <field name="patient_id"/>
+                    <field name="date"/>
+                    <field name="patient_amount"/>
+                    <field name="patient_file" optional="hide"/>
+                    <field name="patient_room" optional="hide"/>
+                    <field name="patient_bed" optional="hide"/>
+                    <field name="doctor_id" optional="hide"/>
+                </list>
+            </field>
+        </record>
+    </data>
+</odoo>

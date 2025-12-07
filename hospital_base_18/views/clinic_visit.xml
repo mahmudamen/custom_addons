@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="clinic_visit_search" model="ir.ui.view">
+            <field name="name">clinic_visit_search</field>
+            <field name="model">clinic.visit</field>
+            <field name="arch" type="xml">
+                <search string="العيادة الخارجية ">
+                    <field name="name"/>
+                    <field name="queue_number"/>
+                    <field name="doctor_id"/>
+                    <field name="patient_id"/>
+                    <field name="patient_code" />
+                    <field name="service_id"/>
+                    <field name="date"/>
+                    <field name="state"/>
+                    <filter string="في الانتظار" name="state" domain="[('state', '=','waiting')]"/>
+                    <filter string="منتهي" name="done" domain="[('state', '=','done')]"/>
+                    <filter string="ملغي" name="cancelled" domain="[('state', '=','cancelled')]"/>
+                    <filter string="اليوم" name="today" domain="[('date', '=', context_today())]"/>
+                    <filter string="تاريخ" name="filter_date" date="date"/>
+                    <group expand="0" string="Group By">
+                        <filter string="الطبيب" name="doctor" domain="[]" context="{'group_by': 'doctor_id'}"/>
+                        <filter name="الخدمة الطبية" string="Service" domain="[]" context="{'group_by': 'service_id'}"/>
+                        <filter string="التاريخ" name="date" domain="[]" context="{'group_by': 'date'}"/>
+                        <filter name="الحالة" string="State" domain="[]" context="{'group_by': 'state'}"/>
+                    </group>
+                </search>
+            </field>
+
+        </record>
+        <record id="clinic_visit_form" model="ir.ui.view">
+            <field name="name">clinic_visit_form</field>
+            <field name="model">clinic.visit</field>
+            <field name="arch" type="xml">
+                <form string="العيادة الخارجية">
+                    <header>
+                        <field name="state" invisible="1"/>
+                        <button name="action_done" string="منتهي" class="oe_highlight"
+                                invisible="state != 'waiting'"
+                                type="object"/>
+                        <button name="action_cancel" string="الغاء" class="oe_highlight"
+                                invisible="state != 'waiting'"
+                                type="object"/>
+                        <button name="action_waiting" string="اعادة للانتظار" class="oe_highlight"
+                                invisible="state == 'waiting'"
+                                type="object"/>
+                        <button name="print_clinic_report" string="طباعة" class="oe_highlight"
+                                invisible="state != 'done'"
+                                type="object"/>
+                        <field name="state" widget="statusbar" statusbar_visible="waiting,done,cancelled"/>
+                    </header>
+                    <sheet>
+                        <field name="previous_visits_ids" invisible="1"/>
+                        <field name="previous_visits_count" invisible="1"/>
+                        <field name="lab_request_id" invisible="1"/>
+                        <field name="state" invisible="1"/>
+                        <group>
+                            <group >
+                                <field name="name"/>
+                                <field name="doctor_id" options="{'no_create': True}"/>
+                                <field name="patient_id" options="{'no_create': True}"/>
+                                <field name="patient_age"/>
+                                <field name="patient_street"/>
+                                <field name="reservation_date" required="1" readonly="1"/>
+                                <field name="template_id" domain="[('doctor_id', '=', doctor_id)]"/>
+                            </group>
+                            <group >
+                                <field name="queue_number" readonly="1"/>
+                                <field name="clinic_id" options="{'no_create': True}"/>
+                                <field name="service_id" options="{'no_create': True}"
+                                       domain="[('doctor_id', '=', doctor_id)]"/>
+                                <field name="date"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="diagnosis"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <!-- Patient History Tab -->
+                            <page name="patient_history" string="تاريخ المريض"
+                                  invisible="previous_visits_count == 0 and previous_inpatient_count == 0">
+                                <!-- Statistics Header -->
+                                <div class="row mb-3">
+                                    <div class="col-6">
+                                        <div class="alert alert-success text-center py-2">
+                                            <strong>إجمالي ملفات الداخلي: <field name="previous_inpatient_count"/></strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="alert alert-info text-center py-2">
+                                            <strong>إجمالي الزيارات: <field name="previous_visits_count"/></strong>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Full Width Clinic Visits Table -->
+                                <div invisible="previous_visits_count == 0">
+                                    <h5 class="mb-2">زيارات العيادات الخارجية السابقة</h5>
+                                    <field name="previous_visits_ids"
+                                           mode="list"
+                                           readonly="1"
+                                           nolabel="1"
+                                           options="{'no_create': True, 'no_edit': True}">
+                                        <list
+                                              create="false"
+                                              edit="false"
+                                              delete="false"
+                                              limit="3"
+                                              decoration-muted="state == 'cancelled'"
+                                              decoration-success="state == 'done'">
+                                            <field name="name" string="رقم الزيارة"/>
+                                            <field name="date" string="التاريخ"/>
+                                            <field name="doctor_id" string="الطبيب المعالج"/>
+                                            <field name="clinic_id" string="العيادة"/>
+                                            <field name="service_id" string="الخدمة"/>
+                                            <field name="diagnosis" string="التشخيص"/>
+                                            <field name="state" string="الحالة"/>
+                                            <button name="action_view_visit_details"
+                                                    type="object"
+                                                    icon="fa-eye"
+                                                    string="عرض"
+                                                    class="btn-primary"/>
+                                        </list>
+                                    </field>
+                                </div>
+                                <!-- Spacer -->
+                                <div class="mb-4"></div>
+                                <!-- Full Width Inpatient Files Table -->
+                                <div invisible="previous_inpatient_count == 0">
+                                    <h5 class="mb-2">ملفات الداخلي السابقة</h5>
+                                    <field name="previous_inpatient_ids"
+                                           mode="list"
+                                           readonly="1"
+                                           nolabel="1"
+                                           options="{'no_create': True, 'no_edit': True}">
+                                        <list
+                                              create="false"
+                                              edit="false"
+                                              delete="false"
+                                              limit="3"
+                                              decoration-muted="state == 'discharged'"
+                                              decoration-info="state == 'admitted'">
+                                            <field name="name" string="رقم الملف"/>
+                                            <field name="date_in" string="تاريخ الدخول"/>
+                                            <field name="date_out" string="تاريخ الخروج"/>
+                                            <field name="doctor_id" string="الطبيب المعالج"/>
+                                            <field name="type" string="نوع الإقامة"/>
+                                            <field name="diagnosis" string="التشخيص"/>
+                                            <field name="state" string="الحالة"/>
+                                            <button name="action_view_inpatient_details"
+                                                    type="object"
+                                                    icon="fa-eye"
+                                                    string="عرض"
+                                                    class="btn-success"/>
+                                        </list>
+                                    </field>
+                                </div>
+                            </page>
+                            <page name="medicament" string="ادوية">
+                                <field name="medicament_lines" mode="list">
+                                    <list editable="bottom" limit="20">
+                                        <field name="medicament_id" context="{'default_hospital_product_type': 'medicament', 'default_detailed_type': 'product'}"/>
+                                        <field name="notes"/>
+                                        <field name="qty"/>
+                                        <field name="dosage_id"/>
+                                        <field name="duration_id"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page name="laboratory" string="المعمل">
+                                <field name="laboratory_lines" mode="list">
+                                    <list editable="bottom" limit="20">
+                                        <field name="laboratory_id"
+                                               context="{'default_available_in': 'laboratory', 'default_detailed_type': 'service'}"/>
+                                        <field name="notes"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page name="radiology" string="الاشعة">
+                                <field name="radiology_lines" mode="list">
+                                    <list editable="bottom" limit="20">
+                                        <field name="radiology_id"
+                                               context="{'default_available_in': 'radiology', 'default_detailed_type': 'service'}"/>
+                                        <field name="notes"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page name="Patient Contact">
+                                <group string="تعاقد">
+                                    <field name="patient_code" />
+                                    <field name="patient_nat_id" invisible="1"/>
+                                    <field name="patient_phone" invisible="1"/>
+                                    <field name="patient_mobile"/>
+                                </group>
+                            </page>
+                            <page name="other_info" string="معلومات اخري">
+                                <group>
+                                    <group>
+                                        <field name="reservation_date" required="1"/>
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="o_attachment_preview"/>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+        <record id="clinic_visit_tree" model="ir.ui.view">
+            <field name="name">clinic_visit_tree</field>
+            <field name="model">clinic.visit</field>
+            <field name="arch" type="xml">
+                <list create="false" edit="false" delete="false" duplicate="false" limit="20">
+                    <field name="state" column_invisible="1"/>
+                    <field name="name"/>
+                    <field name="queue_number"/>
+                    <field name="doctor_id"/>
+                    <field name="patient_id"/>
+                    <field name="patient_code"/>
+                    <field name="patient_age"/>
+                    <field name="patient_street"/>
+                    <field name="patient_nat_id" column_invisible="1"/>
+                    <field name="patient_phone" column_invisible="1"/>
+                    <field name="patient_mobile"/>
+                    <field name="service_id"/>
+                    <field name="date"/>
+                    <field name="state" decoration-success="state == 'done'" decoration-info="state == 'waiting'"
+                           decoration-danger="state == 'cancelled'" widget="badge"/>
+                </list>
+            </field>
+        </record>
+        <record id="clinic_visit_action" model="ir.actions.act_window">
+            <field name="name">Clinic Visit</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">clinic.visit</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="clinic_visit_search"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'list', 'view_id': ref('clinic_visit_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('clinic_visit_form')}),
+            ]"/>
+            <field name="context">{'create': False, 'delete': False, 'search_default_today': 1}</field>
+        </record>
+        <record id="reception_patient_clinic_action" model="ir.actions.act_window">
+            <field name="name">reception_patient_clinic_action</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">clinic.visit</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="clinic_visit_search"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                            (0, 0, {'view_mode': 'list', 'view_id': ref('clinic_visit_tree')}),
+                            (0, 0, {'view_mode': 'form', 'view_id': ref('clinic_visit_form')})]"/>
+        </record>
+        <menuitem id="clinic_visit_menu"
+                  name="الكشف"
+                  parent="hospital_base.hospital_base_clinic_menu"
+                  action="clinic_visit_action"
+                  sequence="0"/>
+        <record id="visit_template_form" model="ir.ui.view">
+            <field name="name">visit_template_form</field>
+            <field name="model">visit.template</field>
+            <field name="arch" type="xml">
+                <form string="قالب روشتة طبية">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                            </group>
+                            <group>
+                                <field name="doctor_id" options="{'no_create': True}"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="diagnosis"/>
+                            </group>
+                            <group>
+                                <field name="notes"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page name="medicament" string="الادوية">
+                                <field name="medicament_lines" mode="list">
+                                    <list editable="bottom" limit="20">
+                                        <field name="medicament_id"
+                                               context="{'default_hospital_product_type': 'medicament', 'default_detailed_type': 'product'}"/>
+                                        <field name="notes"/>
+                                        <field name="dosage_id"/>
+                                        <field name="duration_id"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page name="laboratory" string="التحاليل">
+                                <field name="laboratory_lines" mode="list">
+                                    <list editable="bottom">
+                                        <field name="laboratory_id"
+                                               context="{'default_available_in': 'laboratory', 'default_detailed_type': 'service'}"/>
+                                        <field name="notes"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page name="radiology" string="الاشعة">
+                                <field name="radiology_lines" mode="list">
+                                    <list editable="bottom">
+                                        <field name="radiology_id"
+                                               context="{'default_available_in': 'radiology', 'default_detailed_type': 'service'}"/>
+                                        <field name="notes"/>
+                                    </list>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="visit_template_tree" model="ir.ui.view">
+            <field name="name">visit_template_tree</field>
+            <field name="model">visit.template</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="name"/>
+                    <field name="doctor_id"/>
+                    <field name="diagnosis"/>
+                    <field name="notes"/>
+                </list>
+            </field>
+        </record>
+        <record id="visit_template_action" model="ir.actions.act_window">
+            <field name="name">النماذج</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">visit.template</field>
+            <field name="view_mode">list,form</field>
+        </record>
+        <menuitem id="visit_template_menu"
+                  name="النماذج"
+                  parent="hospital_base.hospital_base_clinic_menu"
+                  action="visit_template_action"
+                  sequence="20"/>
+        <record id="accounting_clinic_visit_tree" model="ir.ui.view">
+            <field name="name">accounting.clinic.visit.list</field>
+            <field name="model">clinic.visit</field>
+            <field name="arch" type="xml">
+                <list
+                      create="false"
+                      edit="false"
+                      delete="false"
+                      duplicate="false"
+                      default_group_by="doctor_id"
+                      decoration-success="state == 'done'"
+                      decoration-info="state == 'waiting'"
+                      decoration-warning="state == 'cancelled'"
+                      decoration-danger="not doctor_posted">
+                    <field name="state" column_invisible="1"/>
+                    <field name="name" string="رقم الزيارة"/>
+                    <field name="queue_number" string="رقم الدور" optional="hide"/>
+                    <field name="doctor_id" string="الطبيب"/>
+                    <field name="patient_id" string="المريض"/>
+                    <field name="patient_code" string="كود المريض"/>
+                    <field name="patient_account" string="حساب المريض"/>
+                    <field name="patient_contract_company" string="شركة التأمين"/>
+                    <field name="service_id" string="الخدمة"/>
+                    <field name="date" string="التاريخ"/>
+                    <!-- المبلغ مع المجموع الإجمالي والفرعي -->
+                    <field name="doctor_amount"
+                           string="مبلغ الطبيب"
+                           sum="إجمالي المبلغ"
+                           widget="monetary"
+                           decoration-bf="1"/>
+                    <field name="doctor_posted" string="مرحل للطبيب" widget="boolean_toggle" optional="hide"/>
+                    <field name="cash_posted" string="مرحل نقدي" widget="boolean_toggle" optional="hide"/>
+                    <field name="doctor_paid" string="مدفوع للطبيب" widget="boolean_toggle" optional="hide"/>
+                    <field name="pay_deposit" string="دفع عربون" widget="boolean_toggle" optional="hide"/>
+                    <field name="state" string="الحالة" widget="badge" optional="hide"/>
+                    <!-- حقل العملة المخفي للـ monetary widget -->
+                    <field name="currency_id" invisible="1"/>
+                </list>
+            </field>
+        </record>
+        <record id="accounting_clinic_visit_search" model="ir.ui.view">
+            <field name="name">accounting_clinic_visit_search</field>
+            <field name="model">clinic.visit</field>
+            <field name="arch" type="xml">
+                <search string="Clinic Visit">
+                    <field name="name"/>
+                    <field name="queue_number"/>
+                    <field name="doctor_id"/>
+                    <field name="patient_id"/>
+                    <field name="patient_code"/>
+                    <field name="patient_account"/>
+                    <field name="patient_contract_company"/>
+                    <field name="service_id"/>
+                    <field name="cash_posted"/>
+                    <field name="doctor_posted"/>
+                    <field name="doctor_paid"/>
+                    <field name="pay_deposit"/>
+                    <field name="date"/>
+                    <field name="state"/>
+                    <filter string="Waiting" name="state" domain="[('state', '=','waiting')]"/>
+                    <filter string="Done" name="done" domain="[('state', '=','done')]"/>
+                    <filter string="Cancelled" name="cancelled" domain="[('state', '=','cancelled')]"/>
+                    <filter string="Today" name="today" domain="[('date', '=', context_today())]"/>
+                    <filter string="Date" name="filter_date" date="date"/>
+                    <filter string="Cash Patient" name="doctor_not_paid" domain="[('patient_account', '=', 'cash')]"/>
+                    <filter string="Contract Patient" name="doctor_not_paid" domain="[('patient_account', '=', 'contract')]"/>
+                    <filter string="Deposit" name="pay_deposit" domain="[('pay_deposit', '=', True)]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Doctor" name="doctor" domain="[]" context="{'group_by': 'doctor_id'}"/>
+                        <filter name="service" string="Service" domain="[]" context="{'group_by': 'service_id'}"/>
+                        <filter string="Date" name="date" domain="[]" context="{'group_by': 'date'}"/>
+                        <filter name="state" string="State" domain="[]" context="{'group_by': 'state'}"/>
+                        <filter name="patient_account" string="Patient Account" domain="[]" context="{'group_by': 'patient_account'}"/>
+                        <filter name="patient_contract_company" string="Contract Company" domain="[]" context="{'group_by': 'patient_contract_company'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <record id="accounting_clinic_visit_action" model="ir.actions.act_window">
+            <field name="name">حسابات الاستقبال</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">clinic.visit</field>
+            <field name="view_mode">list</field>
+            <field name="search_view_id" ref="accounting_clinic_visit_search"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'list', 'view_id': ref('accounting_clinic_visit_tree')})
+            ]"/>
+            <field name="context">{
+                'group_by': ['doctor_id'],
+                'search_default_group_by_doctor': 1,
+                'search_default_filter_today': 1
+            }</field>
+        </record>
+        <menuitem id="accounting_clinic_visit_menu"
+                  name="حسابات الاستقبال"
+                  parent="hospital_base.hospital_doctor_menu"
+                  action="accounting_clinic_visit_action"
+                  sequence="40"/>
+        <menuitem id="accounting_clinic_menu"
+                  name="حسابات الاطباء"
+                  parent="hospital_base.hospital_base_clinic_menu"
+                  action="accounting_clinic_visit_action"
+                  sequence="40"/>
+    </data>
+</odoo>

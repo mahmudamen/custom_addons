@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="clinic_visit_lab_services_form" model="ir.ui.view">
+            <field name="name">clinic_visit_lab_services_form</field>
+            <field name="model">clinic.visit</field>
+            <field name="arch" type="xml">
+                <form string="التحاليل">
+                    <sheet>
+                        <field name="can_be_installment" invisible="1"/>
+                        <field name="show_deposit" invisible="1"/>
+                        <field name="pay_deposit" invisible="not show_deposit"/>
+                        <group>
+                            <group>
+                                <field name="name" readonly="1" force_save="1"/>
+                                <field name="patient_id"
+                                       context="{'form_view_ref': 'hospital_base.res_partner_patient_form', 'default_is_patient': True,
+                                        'default_company_type': 'patient', 'default_patient_account': patient_account,
+                                         'default_employer': patient_employer, 'default_contract_company': patient_contract_company,
+                                          'default_nat_id': patient_nat_id, 'default_phone': patient_phone, 'default_mobile': patient_mobile}"/>
+                                <field name="patient_nat_id" invisible="1"/>
+                                <field name="patient_phone" invisible="1"/>
+                                <field name="patient_mobile"/>
+                                <field name="on_site"/>
+                                <field name="notes"/>
+
+                            </group>
+                            <group>
+                                <field name="reservation_date" readonly="1" force_save="1"/>
+                                <field name="patient_account" required="1"/>
+                                <field name="patient_employer" required="patient_account=='contract'" invisible="patient_account!='contract'"/>
+                                <field name="patient_contract_company" required="patient_account=='contract'" invisible="patient_account!='contract'"/>
+                                <field name="patient_amount"/>
+                                <field name="amount" readonly="0"/>
+                                <field name="service_exp_amount"/>
+                                <field name="service_tax_amount"/>
+                                <field name="patient_per" invisible="patient_account!='contract'"/>
+                                <field name="total_amount" />
+                                <field name="deposit_amount" invisible="not pay_deposit"/>
+                                <field name="patient_amount" readonly="not can_be_installment" force_save="1"/>
+                                <field name="section_id" invisible="1"/>
+                            </group>
+                        </group>
+                        <notebook colspan="4" invisible="not patient_id">
+                            <page name="lab_services" string="خدمات التحاليل">
+                                <field name="lab_services" mode="list" context="{'default_section_id': section_id}">
+                                    <list editable="bottom" limit="20">
+                                        <field name="clinic_visit_id" column_invisible="1"/>
+                                        <field name="product_id" domain="[('detailed_type', '=', 'service'),('available_in', '=', 'laboratory')]" options="{'no_open': True, 'no_create': True}"/>
+                                        <field name="description"/>
+                                        <field name="quantity"/>
+                                        <field name="amount" readonly="0"/>
+                                        <field name="total"/>
+                                        <field name="section_id" invisible="1"/>
+                                    </list>
+                                </field>
+                            </page>
+                        </notebook>
+                        <footer>
+                            <button name="print_receipt_confirm_lab" string="طباعة" type="object" class="btn-primary"/>
+                            <button string="الغاء" class="btn-secondary" special="cancel"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="clinic_visit_lab_services_tree" model="ir.ui.view">
+            <field name="name">clinic_visit_lab_services_tree</field>
+            <field name="model">clinic.visit</field>
+            <field name="arch" type="xml">
+                <list limit="20">
+                    <field name="name" readonly="1" force_save="1"/>
+                    <field name="patient_id" readonly="1" force_save="1"/>
+                    <field name="patient_account" readonly="1" force_save="1"/>
+                    <field name="patient_employer" readonly="1" force_save="1"/>
+                    <field name="patient_contract_company" readonly="1" force_save="1"/>
+                    <field name="patient_phone" column_invisible="1" readonly="1" force_save="1"/>
+                    <field name="reservation_date" readonly="1" force_save="1"/>
+                    <field name="patient_amount" sum="total"/>
+                    <field name="on_site"/>
+                    <button name="open_lab_rec"
+                            type="object"
+                            string="فتح"
+                            context="{'clinic_visit_id': active_id}"
+                            class="oe_highlight"/>
+                </list>
+            </field>
+        </record>
+        <record id="clinic_visit_lab_services_action" model="ir.actions.act_window">
+            <field name="name">خدمات التحاليل الطبية</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">clinic.visit</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+    </data>
+</odoo>

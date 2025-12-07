@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    <!-- Surgery Room Form View -->
+    <record id="surgery_room_form_view" model="ir.ui.view">
+        <field name="name">surgery.room.form</field>
+        <field name="model">surgery.room</field>
+        <field name="arch" type="xml">
+            <form string="Surgery Room">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_surgery_slots" type="object" class="oe_stat_button" icon="fa-calendar-o">
+                            <field name="surgery_slot_count" widget="statinfo" string="Surgeries"/>
+                        </button>
+                    </div>
+                    <field name="color" widget="color_picker" invisible="1"/>
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only"/>
+                        <h1><field name="name" placeholder="e.g. Operating Room 1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="room_type"/>
+                            <field name="location" placeholder="e.g. 3rd Floor, West Wing"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                        <group>
+                            <field name="is_available_now" readonly="1"/>
+                            <field name="upcoming_surgery_count" readonly="1"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Notes" name="notes">
+                            <field name="notes" placeholder="Add any notes about equipment, special features, or room policies..."/>
+                        </page>
+                        <page string="Recent Surgeries" name="surgeries">
+                            <field name="surgery_slot_ids" readonly="1">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="start_datetime"/>
+                                    <field name="end_datetime"/>
+                                    <field name="patient_id"/>
+                                    <field name="responsible_doctor_id"/>
+                                    <field name="state" decoration-success="state == 'done'" decoration-info="state == 'draft'" decoration-warning="state == 'in_progress'" decoration-danger="state == 'cancelled'"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Surgery Room List View -->
+    <record id="surgery_room_tree_view" model="ir.ui.view">
+        <field name="name">surgery.room.list</field>
+        <field name="model">surgery.room</field>
+        <field name="arch" type="xml">
+            <list decoration-success="is_available_now" decoration-danger="not is_available_now">
+                <field name="name"/>
+                <field name="room_type"/>
+                <field name="location"/>
+                <field name="is_available_now"/>
+                <field name="upcoming_surgery_count"/>
+                <field name="active" invisible="1"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Surgery Room Kanban View is already provided in your code -->
+
+    <!-- Surgery Room Search View -->
+
+        <!-- Updated Surgery Room Action -->
+        <record id="action_surgery_room" model="ir.actions.act_window">
+            <field name="name">غرف العمليات</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">surgery.room</field>
+            <field name="view_mode">kanban,list,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first surgery room!
+                </p>
+                <p>
+                    Create surgery rooms to schedule and track surgeries efficiently.
+                </p>
+            </field>
+        </record>
+
+        <!-- Surgery Slot Form View -->
+        <record id="surgery_slot_form_view" model="ir.ui.view">
+        <field name="name">surgery.slot.form</field>
+        <field name="model">surgery.slot</field>
+        <field name="arch" type="xml">
+            <form string="Surgery Schedule">
+                <header>
+                    <button name="action_confirm" type="object" string="Confirm" class="btn-primary" invisible="state !=  'draft'"/>
+                    <button name="action_mark_in_progress" type="object" string="Start Surgery" class="btn-success" invisible="state !=  'confirmed'" />
+                    <button name="action_mark_done" type="object" string="Complete" class="btn-success" invisible="state !=  'in_progress'" />
+                    <button name="action_cancel" type="object" string="Cancel" class="btn-danger" confirm="Are you sure you want to cancel this surgery?" invisible="state in  ['done','cancelled']" />
+                    <button name="action_reset_to_draft" type="object" string="Reset to Draft" invisible="state !=  'cancelled'" />
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,in_progress,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Surgery Title"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="patient_id" options="{'no_create': True}"/>
+                            <field name="responsible_doctor_id" options="{'no_create': True}"/>
+                            <field name="room_id" options="{'no_create': True}"/>
+                            <field name="surgery_type"/>
+                            <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"/>
+                        </group>
+                        <group>
+                            <field name="start_datetime"/>
+                            <field name="end_datetime"/>
+                            <field name="duration" widget="float_time" readonly="1"/>
+                            <field name="is_planned" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Notes" name="notes">
+                            <field name="notes" placeholder="Add pre-op instructions, special equipment needs, etc."/>
+                        </page>
+                        <page string="Planning Slots" name="planning" >
+                            <field name="planning_slot_ids" readonly="1">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="employee_id"/>
+                                    <field name="start_datetime"/>
+                                    <field name="end_datetime"/>
+                                    <field name="allocated_hours" widget="float_time"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+        <record id="surgery_slot_calendar" model="ir.ui.view">
+            <field name="name">surgery_slot_calendar</field>
+            <field name="model">surgery.slot</field>
+            <field name="arch" type="xml">
+                <calendar string="جدول العمليات" date_start="start_datetime">
+                    <field name="name"/>
+                    <field name="doctor_id"/>
+                    <field name="patient_id"/>
+                    <field name="room_id"/>
+                    <field name="surgery_type"/>
+                </calendar>
+            </field>
+        </record>
+
+        <!-- Surgery Slot List View -->
+
+        <!-- Surgery Slot Kanban View -->
+        <record id="surgery_slot_kanban_view" model="ir.ui.view">
+            <field name="name">surgery.slot.kanban</field>
+            <field name="model">surgery.slot</field>
+            <field name="arch" type="xml">
+                <kanban class="o_surgery_slot_kanban" default_group_by="state" quick_create="false" sample="1">
+                    <field name="name"/>
+                    <field name="patient_id"/>
+                    <field name="room_id"/>
+                    <field name="start_datetime"/>
+                    <field name="end_datetime"/>
+                    <field name="duration"/>
+                    <field name="responsible_doctor_id"/>
+                    <field name="surgery_type"/>
+                    <field name="state"/>
+                    <field name="color"/>
+                    <field name="is_planned"/>
+                    <field name="company_id"/>
+
+                    <progressbar field="state" colors='{"draft": "info", "confirmed": "success", "in_progress": "warning", "done": "success", "cancelled": "danger"}'/>
+
+                    <templates>
+                        <t t-name="card">
+                            <div t-attf-class="oe_kanban_card oe_kanban_global_click surgery_card #{record.state.raw_value == 'cancelled' ? 'surgery_cancelled' : ''} #{record.state.raw_value == 'in_progress' ? 'surgery_in_progress' : ''} #{record.state.raw_value == 'confirmed' ? 'surgery_confirmed' : ''} #{record.state.raw_value == 'done' ? 'surgery_done' : ''}">
+                                <div class="o_kanban_card_header">
+                                    <div class="o_kanban_card_header_title">
+                                        <div class="o_primary">
+                                            <span class="surgery_title"><field name="name"/></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="o_kanban_card_content">
+                                    <div class="surgery_info">
+                                        <div class="surgery_patient">
+                                            <i class="fa fa-user" title="user" role="img" aria-label="Patient"/> <field name="patient_id"/>
+                                        </div>
+                                        <div class="surgery_room">
+                                            <i class="fa fa-hospital-o" title="hospital" role="img" aria-label="Room"/> <field name="room_id"/>
+                                        </div>
+                                        <div class="surgery_time">
+                                            <i class="fa fa-clock-o" title="time" role="img" aria-label="Time"/> <field name="start_datetime" widget="datetime"/> - <field name="duration" widget="float_time"/>h
+                                        </div>
+                                        <div class="surgery_doctor">
+                                            <i class="fa fa-user-md" title="doctor" role="img" aria-label="Doctor"/> <field name="responsible_doctor_id"/>
+                                        </div>
+                                        <div class="surgery_type">
+                                            <i class="fa fa-tag" title="type" role="img" aria-label="Type"/> <field name="surgery_type"/>
+                                        </div>
+                                    </div>
+                                    <div class="surgery_status">
+                                        <span t-attf-class="badge badge-pill surgery_status_badge #{record.state.raw_value == 'draft' ? 'badge-info' : ''} #{record.state.raw_value == 'confirmed' ? 'badge-primary' : ''} #{record.state.raw_value == 'in_progress' ? 'badge-warning' : ''} #{record.state.raw_value == 'done' ? 'badge-success' : ''} #{record.state.raw_value == 'cancelled' ? 'badge-danger' : ''}">
+                                            <field name="state"/>
+                                        </span>
+                                        <span t-if="record.is_planned.raw_value" class="badge badge-pill badge-success">
+                                            <i class="fa fa-calendar-check-o" title="team"/> Team Planned
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="o_kanban_card_bottom">
+                                    <!-- Actions based on state -->
+                                    <div class="surgery_buttons">
+                                        <button t-if="record.state.raw_value == 'draft'" name="action_confirm" type="object" class="btn btn-sm btn-primary">Confirm</button>
+                                        <button t-if="record.state.raw_value == 'confirmed'" name="action_mark_in_progress" type="object" class="btn btn-sm btn-success">Start</button>
+                                        <button t-if="record.state.raw_value == 'in_progress'" name="action_mark_done" type="object" class="btn btn-sm btn-success">Complete</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <!-- Gantt View for Surgery Slots -->
+        <record id="view_surgery_slot_gantt" model="ir.ui.view">
+            <field name="name">surgery.slot.gantt</field>
+            <field name="model">surgery.slot</field>
+            <field name="arch" type="xml">
+                <gantt
+                    js_class="surgery_slot_gantt"
+                    date_start="start_datetime"
+                    date_stop="end_datetime"
+                    default_group_by="room_id"
+                    color="state"
+                    string="Surgery Schedule"
+                    scales="day,week,month"
+                    default_scale="day">
+                    <field name="name"/>
+                    <field name="room_id"/>
+                    <field name="responsible_doctor_id"/>
+                    <field name="patient_id"/>
+                    <field name="state"/>
+                    <field name="surgery_type"/>
+                    <templates>
+                        <div t-name="gantt-popover" class="container-fluid">
+                            <div class="row g-0">
+                                <div class="col">
+                                    <ul class="ps-1 mb-0 list-unstyled">
+                                        <li><strong>العملية: </strong> <t t-esc="name"/></li>
+                                        <li><strong>ينتهي في: </strong> <t t-esc="end_datetime.toFormat('F')"/></li>
+                                        <li><strong>يبداء في: </strong> <t t-esc="start_datetime.toFormat('F')"/></li>
+                                        <li><strong>ينتهي في: </strong> <t t-esc="end_datetime.toFormat('F')"/></li>
+                                        <li><strong>الطبيب: </strong> <t t-esc="responsible_doctor_id[1]"/></li>
+                                        <li><strong>المريض: </strong> <t t-esc="patient_id[1]"/></li>
+                                        <li><strong>غرفة العمليات: </strong> <t t-esc="room_id[1]"/></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </templates>
+
+                </gantt>
+            </field>
+        </record>
+
+
+    <record id="action_surgery_slot" model="ir.actions.act_window">
+        <field name="name">جدول العمليات</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">surgery.slot</field>
+        <field name="view_mode">gantt,calendar,kanban,list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first surgery Slot!
+            </p>
+            <p>
+                Create surgery slot to schedule and track surgeries efficiently.
+            </p>
+        </field>
+    </record>
+    <menuitem id="menu_surgery_rooms"
+                  name="غرفة العمليات"
+                  parent="hospital_base.hospital_base_surgeries_menu"
+                  action="action_surgery_room"
+                  sequence="2"/>
+    <menuitem id="menu_surgery_schedule"
+                  name="جدول العمليات"
+                  parent="hospital_base.hospital_base_surgeries_menu"
+                  action="action_surgery_slot"
+                  sequence="3"/>
+    </data>
+</odoo>

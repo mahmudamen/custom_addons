@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+missing_days_wizard,missing.days.wizard,model_missing_days_wizard,base.group_user,1,1,1,1
+missing_days_report,missing_days_report,model_missing_days_report,base.group_user,1,1,1,1

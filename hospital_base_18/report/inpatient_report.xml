@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_inpatient_template">
+        <t t-call="web.html_container">
+        <t t-foreach="docs" t-as="doc">
+            <t t-call="web.basic_layout">
+                <style>
+                    /* Universal font family for Arabic and Latin text */
+                    * {
+                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Tahoma', 'Arial', 'Helvetica Neue', sans-serif;
+                    }
+
+                    .page {
+                        page-break-after: always;
+                        page-break-inside: avoid;
+                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Tahoma', 'Arial', 'Helvetica Neue', sans-serif;
+                    }
+                    .page:last-child {
+                        page-break-after: auto;
+                    }
+                </style>
+                <!-- Page 1: Patient Information & Room Information -->
+                <div class="page" style=" direction: rtl; padding: 20px;">
+                    <!-- Patient Information -->
+                    <div style="margin-bottom: 25px;">
+                        <div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding: 25px; border-radius: 12px; border-right: 5px solid #007bff; box-shadow: 0 2px 8px rgba(0,123,255,0.1);">
+                            <h3 style="color: #007bff; margin-bottom: 20px; font-weight: bold; text-align: center; border-bottom: 2px solid #007bff; padding-bottom: 10px;">معلومات المريض</h3>
+                            <div style="display: flex; flex-wrap: wrap;">
+                                <div style="flex: 1; min-width: 300px; padding: 0 15px;">
+                                    <div style="margin-bottom: 12px;">
+                                        <span style="font-weight: bold; color: #495057; display: inline-block; width: 120px;">اسم المريض:</span>
+                                        <span style="color: #212529;" t-field="doc.patient_id.name"/>
+                                    </div>
+                                    <div style="margin-bottom: 12px;">
+                                        <span style="font-weight: bold; color: #495057; display: inline-block; width: 120px;">الرقم القومي:</span>
+                                        <span style="color: #212529;" t-field="doc.patient_nat_id"/>
+                                    </div>
+                                    <div style="margin-bottom: 12px;">
+                                        <span style="font-weight: bold; color: #495057; display: inline-block; width: 120px;">الهاتف:</span>
+                                        <span style="color: #212529;" t-field="doc.patient_phone"/>
+                                    </div>
+                                </div>
+                                <div style="flex: 1; min-width: 300px; padding: 0 15px;">
+                                    <div style="margin-bottom: 12px;">
+                                        <span style="font-weight: bold; color: #495057; display: inline-block; width: 120px;">تاريخ الدخول:</span>
+                                        <span style="color: #212529;" t-field="doc.date_in"/>
+                                    </div>
+                                    <div style="margin-bottom: 12px;">
+                                        <span style="font-weight: bold; color: #495057; display: inline-block; width: 120px;">تاريخ الخروج:</span>
+                                        <span style="color: #212529;" t-field="doc.date_out"/>
+                                    </div>
+                                    <div style="margin-bottom: 12px;">
+                                        <span style="font-weight: bold; color: #495057; display: inline-block; width: 120px;">الطبيب المعالج:</span>
+                                        <span style="color: #212529;" t-field="doc.doctor_id.name"/>
+                                    </div>
+                                    <div style="margin-bottom: 12px;">
+                                        <span style="font-weight: bold; color: #495057; display: inline-block; width: 250px;">طبيب التخدير:</span>
+                                        <span style="color: #212529;" t-field="doc.doctor_drags_id.name"/>
+                                    </div>
+                                    <div style="margin-bottom: 12px;">
+                                        <span style="font-weight: bold; color: #495057; display: inline-block; width: 120px;">نوع الحساب:</span>
+                                        <span style="color: #212529;" t-field="doc.patient_account"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Room Information -->
+                    <div style="margin-bottom: 25px;">
+                        <div style="background: linear-gradient(135deg, #e8f5e8 0%, #d4edda 100%); padding: 25px; border-radius: 12px; border-right: 5px solid #28a745; box-shadow: 0 2px 8px rgba(40,167,69,0.1);">
+                            <h3 style="color: #28a745; margin-bottom: 20px; font-weight: bold; text-align: center;">معلومات الإقامة</h3>
+                            <div style="display: flex; flex-wrap: wrap; margin-bottom: 15px;">
+                                <div style="flex: 1; min-width: 200px; padding: 0 10px;">
+                                    <span style="font-weight: bold; color: #495057;">الغرفة:</span>
+                                    <span style="color: #212529;" t-field="doc.room_id.name"/>
+                                </div>
+                                <div style="flex: 1; min-width: 200px; padding: 0 10px;">
+                                    <span style="font-weight: bold; color: #495057;">السرير:</span>
+                                    <span style="color: #212529;" t-field="doc.bed_id.name"/>
+                                </div>
+                                <div style="flex: 1; min-width: 200px; padding: 0 10px;">
+                                    <span style="font-weight: bold; color: #495057;">غرفة العمليات:</span>
+                                    <span style="color: #212529;" t-field="doc.room_surgery_id.name"/>
+                                </div>
+                            </div>
+                            <div style="margin-bottom: 10px;">
+                                <span style="font-weight: bold; color: #495057;">التشخيص:</span>
+                                <span style="color: #212529;" t-field="doc.diagnosis"/>
+                            </div>
+                            <div>
+                                <span style="font-weight: bold; color: #495057;">العملية:</span>
+                                <span style="color: #212529;" t-field="doc.note"/>
+                            </div>
+                            <div>
+                                <span style="font-weight: bold; color: #495057;">الملاحظات:</span>
+                                <span style="color: #212529;" t-field="doc.remark"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Page 2: Medications -->
+                <div t-if="doc.medicament_line_ids" class="page" style=" direction: rtl; padding: 20px;">
+                    <h3 style="color: #dc3545; border-bottom: 3px solid #dc3545; padding-bottom: 8px; margin-bottom: 15px; font-weight: bold; text-align: center; font-size: 24px;">الأدوية</h3>
+                    <table style="width: 100%; border-collapse: collapse; font-size: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <thead>
+                            <tr style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white;">
+                                <th style="padding: 12px 8px; text-align: center; border: 1px solid #dee2e6; font-weight: bold; color: black;">المنتج</th>
+                                <th style="padding: 12px 8px; text-align: center; border: 1px solid #dee2e6; font-weight: bold; color: black;">الوصف</th>
+                                <th style="padding: 12px 8px; text-align: center; border: 1px solid #dee2e6; font-weight: bold; color: black;">التاريخ</th>
+                                <th style="padding: 12px 8px; text-align: center; border: 1px solid #dee2e6; font-weight: bold; color: black;">الكمية</th>
+                                <th style="padding: 12px 8px; text-align: center; border: 1px solid #dee2e6; font-weight: bold; color: black;">السعر</th>
+                                <th style="padding: 12px 8px; text-align: center; border: 1px solid #dee2e6; font-weight: bold; color: black;">الإجمالي</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="doc.medicament_line_ids" t-as="line" style="background: #fff; border-bottom: 1px solid #dee2e6;">
+                                <td style="padding: 10px 8px; border: 1px solid #dee2e6; text-align: right;"><span t-field="line.product_id.name"/></td>
+                                <td style="padding: 10px 8px; border: 1px solid #dee2e6; text-align: right;"><span t-field="line.description"/></td>
+                                <td style="padding: 10px 8px; border: 1px solid #dee2e6; text-align: center;"><span t-field="line.date"/></td>
+                                <td style="padding: 10px 8px; border: 1px solid #dee2e6; text-align: center; font-weight: bold; color: black;"><span t-field="line.quantity"/></td>
+                                <td style="padding: 10px 8px; border: 1px solid #dee2e6; text-align: left;"><span t-field="line.amount" t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/></td>
+                                <td style="padding: 10px 8px; border: 1px solid #dee2e6; text-align: left; font-weight: bold; color: black;"><span t-field="line.amount" t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/></td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); font-weight: bold; color: black;">
+                                <td colspan="5" style="padding: 12px 8px; border: 1px solid #dee2e6; text-align: right; color: #495057;">إجمالي الأدوية:</td>
+                                <td style="padding: 12px 8px; border: 1px solid #dee2e6; text-align: left; color: #dc3545; font-size: 14px;"><span t-field="doc.total_medicament" t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <!-- Page 3: Consumables -->
+                <div t-if="doc.consumable_line_ids" class="page" style=" direction: rtl; padding: 20px;">
+                    <h3 style="color: #ff6b35; border-bottom: 3px solid #ff6b35; padding-bottom: 8px; margin-bottom: 15px; font-weight: bold; text-align: center; font-size: 24px;">المستهلكات</h3>
+                    <table style="width: 100%; border-collapse: collapse; font-size: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <thead>
+                            <tr style="background: linear-gradient(135deg, #ff6b35 0%, #e55d2d 100%); color: white;">
+                                <th style="padding: 12px 8px; text-align: center; border: 1px solid #dee2e6; font-weight: bold; color: black;">المنتج</th>
+                                <th style="padding: 12px 8px; text-align: center; border: 1px solid #dee2e6; font-weight: bold; color: black;">الوصف</th>
+                                <th style="padding: 12px 8px; text-align: center; border: 1px solid #dee2e6; font-weight: bold; color: black;">التاريخ</th>
+                                <th style="padding: 12px 8px; text-align: center; border: 1px solid #dee2e6; font-weight: bold; color: black;">الكمية</th>
+                                <th style="padding: 12px 8px; text-align: center; border: 1px solid #dee2e6; font-weight: bold; color: black;">السعر</th>
+                                <th style="padding: 12px 8px; text-align: center; border: 1px solid #dee2e6; font-weight: bold; color: black;">الإجمالي</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="doc.consumable_line_ids" t-as="line" style="background: #fff; border-bottom: 1px solid #dee2e6;">
+                                <td style="padding: 10px 8px; border: 1px solid #dee2e6; text-align: right;"><span t-field="line.product_id.name"/></td>
+                                <td style="padding: 10px 8px; border: 1px solid #dee2e6; text-align: right;"><span t-field="line.description"/></td>
+                                <td style="padding: 10px 8px; border: 1px solid #dee2e6; text-align: center;"><span t-field="line.date"/></td>
+                                <td style="padding: 10px 8px; border: 1px solid #dee2e6; text-align: center; font-weight: bold; color: black;"><span t-field="line.quantity"/></td>
+                                <td style="padding: 10px 8px; border: 1px solid #dee2e6; text-align: left;"><span t-field="line.amount" t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/></td>
+                                <td style="padding: 10px 8px; border: 1px solid #dee2e6; text-align: left; font-weight: bold; color: black;"><span t-field="line.amount" t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/></td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); font-weight: bold; color: black;">
+                                <td colspan="5" style="padding: 12px 8px; border: 1px solid #dee2e6; text-align: right; color: #495057;">إجمالي المستهلكات:</td>
+                                <td style="padding: 12px 8px; border: 1px solid #dee2e6; text-align: left; color: #ff6b35; font-size: 14px;"><span t-field="doc.total_consumable" t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <!-- Page 4: Services -->
+                <div t-if="doc.services_line_ids" class="page" style=" direction: rtl; padding: 20px;">
+                    <h3 style="color: #6f42c1; border-bottom: 3px solid #6f42c1; padding-bottom: 8px; margin-bottom: 15px; font-weight: bold; text-align: center; font-size: 24px;">الخدمات</h3>
+                    <table style="width: 100%; border-collapse: collapse; font-size: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <thead>
+                            <tr style="background: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%); color: white;">
+                                <th style="padding: 12px 8px; text-align: center; border: 1px solid #dee2e6; font-weight: bold; color: black;">الخدمة</th>
+                                <th style="padding: 12px 8px; text-align: center; border: 1px solid #dee2e6; font-weight: bold; color: black;">الطبيب</th>
+                                <th style="padding: 12px 8px; text-align: center; border: 1px solid #dee2e6; font-weight: bold; color: black;">طبيب الأدوية</th>
+                                <th style="padding: 12px 8px; text-align: center; border: 1px solid #dee2e6; font-weight: bold; color: black;">الوصف</th>
+                                <th style="padding: 12px 8px; text-align: center; border: 1px solid #dee2e6; font-weight: bold; color: black;">التاريخ</th>
+                                <th style="padding: 12px 8px; text-align: center; border: 1px solid #dee2e6; font-weight: bold; color: black;">الكمية</th>
+                                <th style="padding: 12px 8px; text-align: center; border: 1px solid #dee2e6; font-weight: bold; color: black;">السعر</th>
+                                <th style="padding: 12px 8px; text-align: center; border: 1px solid #dee2e6; font-weight: bold; color: black;">الإجمالي</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="doc.services_line_ids" t-as="line" style="background: #fff; border-bottom: 1px solid #dee2e6;">
+                                <td style="padding: 10px 8px; border: 1px solid #dee2e6; text-align: right;"><span t-field="line.product_id.name"/></td>
+                                <td style="padding: 10px 8px; border: 1px solid #dee2e6; text-align: right;"><span t-field="line.doctor_id.name"/></td>
+                                <td style="padding: 10px 8px; border: 1px solid #dee2e6; text-align: right;"><span t-field="line.doctor_drags_id.name"/></td>
+                                <td style="padding: 10px 8px; border: 1px solid #dee2e6; text-align: right;"><span t-field="line.description"/></td>
+                                <td style="padding: 10px 8px; border: 1px solid #dee2e6; text-align: center;"><span t-field="line.date"/></td>
+                                <td style="padding: 10px 8px; border: 1px solid #dee2e6; text-align: center; font-weight: bold; color: black;"><span t-field="line.quantity"/></td>
+                                <td style="padding: 10px 8px; border: 1px solid #dee2e6; text-align: left;"><span t-field="line.amount" t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/></td>
+                                <td style="padding: 10px 8px; border: 1px solid #dee2e6; text-align: left; font-weight: bold; color: black;"><span t-field="line.amount" t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/></td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); font-weight: bold; color: black;">
+                                <td colspan="7" style="padding: 12px 8px; border: 1px solid #dee2e6; text-align: right; color: #495057;">إجمالي الخدمات:</td>
+                                <td style="padding: 12px 8px; border: 1px solid #dee2e6; text-align: left; color: #6f42c1; font-size: 14px;"><span t-field="doc.total_services" t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <!-- Page 5: Laboratory -->
+                <!-- Page 5: Laboratory -->
+                <div t-if="doc.laboratory_line_ids" class="page" style=" direction: rtl; padding: 20px;">
+                    <h3 style="color: #20c997; border-bottom: 3px solid #20c997; padding-bottom: 8px; margin-bottom: 15px; font-weight: bold; text-align: center; font-size: 24px;">التحاليل</h3>
+                    <table style="width: 100%; border-collapse: collapse; font-size: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <thead>
+                            <tr style="background: linear-gradient(135deg, #20c997 0%, #17a2b8 100%); color: white;">
+                                <th style="padding: 12px 8px; text-align: center; border: 1px solid #dee2e6; font-weight: bold; color: black;">التحليل</th>
+                                <th style="padding: 12px 8px; text-align: center; border: 1px solid #dee2e6; font-weight: bold; color: black;">الطبيب</th>
+                                <th style="padding: 12px 8px; text-align: center; border: 1px solid #dee2e6; font-weight: bold; color: black;">طبيب الأدوية</th>
+                                <th style="padding: 12px 8px; text-align: center; border: 1px solid #dee2e6; font-weight: bold; color: black;">الوصف</th>
+                                <th style="padding: 12px 8px; text-align: center; border: 1px solid #dee2e6; font-weight: bold; color: black;">التاريخ</th>
+                                <th style="padding: 12px 8px; text-align: center; border: 1px solid #dee2e6; font-weight: bold; color: black;">الإجمالي</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="doc.laboratory_line_ids" t-as="line" style="background: #fff; border-bottom: 1px solid #dee2e6;">
+                                <td style="padding: 10px 8px; border: 1px solid #dee2e6; text-align: right;"><span t-field="line.product_id.name"/></td>
+                                <td style="padding: 10px 8px; border: 1px solid #dee2e6; text-align: right;"><span t-field="line.doctor_id.name"/></td>
+                                <td style="padding: 10px 8px; border: 1px solid #dee2e6; text-align: right;"><span t-field="line.doctor_drags_id.name"/></td>
+                                <td style="padding: 10px 8px; border: 1px solid #dee2e6; text-align: right;"><span t-field="line.description"/></td>
+                                <td style="padding: 10px 8px; border: 1px solid #dee2e6; text-align: center;"><span t-field="line.date"/></td>
+                                <td style="padding: 10px 8px; border: 1px solid #dee2e6; text-align: left; font-weight: bold; color: black;"><span t-field="line.amount" t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/></td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); font-weight: bold; color: black;">
+                                <td colspan="5" style="padding: 12px 8px; border: 1px solid #dee2e6; text-align: right; color: #495057;">إجمالي التحاليل:</td>
+                                <td style="padding: 12px 8px; border: 1px solid #dee2e6; text-align: left; color: #20c997; font-size: 14px;"><span t-field="doc.total_laboratory" t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <!-- Page 6: Radiology -->
+                <div t-if="doc.radiology_line_ids" class="page" style=" direction: rtl; padding: 20px;">
+                    <h3 style="color: #fd7e14; border-bottom: 3px solid #fd7e14; padding-bottom: 8px; margin-bottom: 15px; font-weight: bold; text-align: center; font-size: 24px;">الأشعة</h3>
+                    <table style="width: 100%; border-collapse: collapse; font-size: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <thead>
+                            <tr style="background: linear-gradient(135deg, #fd7e14 0%, #e8650e 100%); color: white;">
+                                <th style="padding: 12px 8px; text-align: center; border: 1px solid #dee2e6; font-weight: bold; color: black;">نوع الأشعة</th>
+                                <th style="padding: 12px 8px; text-align: center; border: 1px solid #dee2e6; font-weight: bold; color: black;">الطبيب</th>
+                                <th style="padding: 12px 8px; text-align: center; border: 1px solid #dee2e6; font-weight: bold; color: black;">طبيب الأدوية</th>
+                                <th style="padding: 12px 8px; text-align: center; border: 1px solid #dee2e6; font-weight: bold; color: black;">الوصف</th>
+                                <th style="padding: 12px 8px; text-align: center; border: 1px solid #dee2e6; font-weight: bold; color: black;">التاريخ</th>
+                                <th style="padding: 12px 8px; text-align: center; border: 1px solid #dee2e6; font-weight: bold; color: black;">الإجمالي</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="doc.radiology_line_ids" t-as="line" style="background: #fff; border-bottom: 1px solid #dee2e6;">
+                                <td style="padding: 10px 8px; border: 1px solid #dee2e6; text-align: right;"><span t-field="line.product_id.name"/></td>
+                                <td style="padding: 10px 8px; border: 1px solid #dee2e6; text-align: right;"><span t-field="line.doctor_id.name"/></td>
+                                <td style="padding: 10px 8px; border: 1px solid #dee2e6; text-align: right;"><span t-field="line.doctor_drags_id.name"/></td>
+                                <td style="padding: 10px 8px; border: 1px solid #dee2e6; text-align: right;"><span t-field="line.description"/></td>
+                                <td style="padding: 10px 8px; border: 1px solid #dee2e6; text-align: center;"><span t-field="line.date"/></td>
+                                <td style="padding: 10px 8px; border: 1px solid #dee2e6; text-align: left; font-weight: bold; color: black;"><span t-field="line.amount" t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/></td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); font-weight: bold; color: black;">
+                                <td colspan="5" style="padding: 12px 8px; border: 1px solid #dee2e6; text-align: right; color: #495057;">إجمالي الأشعة:</td>
+                                <td style="padding: 12px 8px; border: 1px solid #dee2e6; text-align: left; color: #fd7e14; font-size: 14px;"><span t-field="doc.total_radiology" t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <!-- Page 7: Financial Summary -->
+                <div class="page" style=" direction: rtl; padding: 20px;">
+                    <div style="background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); padding: 25px; border-radius: 12px; border: 3px solid #ffc107; box-shadow: 0 4px 12px rgba(255,193,7,0.2);">
+                        <h3 style="color: #856404; margin-bottom: 25px; text-align: center; font-weight: bold; font-size: 24px;">الملخص المالي</h3>
+                        <div style="display: flex; flex-wrap: wrap; margin-bottom: 20px;">
+                            <div style="flex: 1; min-width: 300px; padding: 0 15px;">
+                                <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+                                    <tr style="border-bottom: 1px solid #ffc107;">
+                                        <td style="padding: 8px 0; font-weight: bold; color: #495057;">إجمالي الأدوية:</td>
+                                        <td style="padding: 8px 0; text-align: left; color: #dc3545; font-weight: bold; color: black;"><span t-field="doc.total_medicament" t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/></td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid #ffc107;">
+                                        <td style="padding: 8px 0; font-weight: bold; color: #495057;">إجمالي المستهلكات:</td>
+                                        <td style="padding: 8px 0; text-align: left; color: #ff6b35; font-weight: bold; color: black;"><span t-field="doc.total_consumable" t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/></td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid #ffc107;">
+                                        <td style="padding: 8px 0; font-weight: bold; color: #495057;">إجمالي الخدمات:</td>
+                                        <td style="padding: 8px 0; text-align: left; color: #6f42c1; font-weight: bold; color: black;"><span t-field="doc.total_services" t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div style="flex: 1; min-width: 300px; padding: 0 15px;">
+                                <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+                                    <tr style="border-bottom: 1px solid #ffc107;">
+                                        <td style="padding: 8px 0; font-weight: bold; color: #495057;">إجمالي التحاليل:</td>
+                                        <td style="padding: 8px 0; text-align: left; color: #20c997; font-weight: bold; color: black;"><span t-field="doc.total_laboratory" t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/></td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid #ffc107;">
+                                        <td style="padding: 8px 0; font-weight: bold; color: #495057;">إجمالي الأشعة:</td>
+                                        <td style="padding: 8px 0; text-align: left; color: #fd7e14; font-weight: bold; color: black;"><span t-field="doc.total_radiology" t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/></td>
+                                    </tr>
+                                    <tr t-if="doc.package_discount &gt; 0" style="border-bottom: 1px solid #ffc107;">
+                                        <td style="padding: 8px 0; font-weight: bold; color: #495057;">خصم الباقة:</td>
+                                        <td style="padding: 8px 0; text-align: left; color: #dc3545; font-weight: bold; color: black;">-<span t-field="doc.package_discount" t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <hr style="border: 0; border-top: 2px solid #ffc107; margin: 20px 0;"/>
+                        <div>
+                            <table style="width: 100%; border-collapse: collapse; font-size: 16px; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                <tr style="background: linear-gradient(135deg, #ffc107 0%, #ffb300 100%); color: #856404;">
+                                    <td style="padding: 15px; font-weight: bold; font-size: 18px;">الإجمالي الكلي:</td>
+                                    <td style="padding: 15px; text-align: left; font-weight: bold; font-size: 18px;"><span t-field="doc.total" t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/></td>
+                                </tr>
+                                <tr style="background: #f8f9fa; border-bottom: 1px solid #dee2e6;">
+                                    <td style="padding: 12px; font-weight: bold; color: #495057;">خصم الطبيب:</td>
+                                    <td style="padding: 12px; text-align: left; color: #17a2b8; font-weight: bold; color: black;"><span t-field="doc.doctor_discount" t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/></td>
+                                </tr>
+                                <tr style="background: #f8f9fa; border-bottom: 1px solid #dee2e6;">
+                                    <td style="padding: 12px; font-weight: bold; color: #495057;">المصاريف الادارية:</td>
+                                    <td style="padding: 12px; text-align: left; color: #495057; font-weight: bold; color: black;"><span t-field="doc.surgery_tax" t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/></td>
+                                </tr>
+                                <tr style="background: #f8f9fa; border-bottom: 1px solid #dee2e6;">
+                                    <td style="padding: 12px; font-weight: bold; color: #495057;">المبلغ المدفوع:</td>
+                                    <td style="padding: 12px; text-align: left; color: #28a745; font-weight: bold; color: black;"><span t-field="doc.paid_amount" t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/></td>
+                                </tr>
+                                <tr style="background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%); border: 2px solid #17a2b8;">
+                                    <td style="padding: 15px; font-weight: bold; color: #0c5460; font-size: 18px;">المستحق على المريض:</td>
+                                    <td style="padding: 15px; text-align: left; font-weight: bold; color: #0c5460; font-size: 20px;"><span t-field="doc.patient_due" t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- Page 8: Relative Information -->
+                <div t-if="doc.relative_partner" class="page" style=" direction: rtl; padding: 20px;">
+                    <div style="background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 100%); padding: 25px; border-radius: 12px; border-right: 5px solid #17a2b8; box-shadow: 0 2px 8px rgba(23,162,184,0.1); min-height: 300px;">
+                        <h3 style="color: #17a2b8; margin-bottom: 20px; font-weight: bold; text-align: center; font-size: 24px;">معلومات المرافق</h3>
+                        <div style="display: flex; flex-wrap: wrap;">
+                            <div style="flex: 1; min-width: 250px; padding: 0 15px;">
+                                <div style="margin-bottom: 20px; padding: 15px; background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                    <span style="font-weight: bold; color: #495057; display: block; margin-bottom: 8px; font-size: 16px;">اسم المرافق:</span>
+                                    <span style="color: #212529; font-size: 18px;" t-field="doc.relative_partner"/>
+                                </div>
+                                <div style="margin-bottom: 20px; padding: 15px; background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                    <span style="font-weight: bold; color: #495057; display: block; margin-bottom: 8px; font-size: 16px;">جوال المرافق:</span>
+                                    <span style="color: #212529; font-size: 18px;" t-field="doc.relative_partner_mobile"/>
+                                </div>
+                            </div>
+                            <div style="flex: 1; min-width: 250px; padding: 0 15px;">
+                                <div style="margin-bottom: 20px; padding: 15px; background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                    <span style="font-weight: bold; color: #495057; display: block; margin-bottom: 8px; font-size: 16px;">هاتف المرافق:</span>
+                                    <span style="color: #212529; font-size: 18px;" t-field="doc.relative_partner_phone"/>
+                                </div>
+                                <div style="margin-bottom: 20px; padding: 15px; background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                    <span style="font-weight: bold; color: #495057; display: block; margin-bottom: 8px; font-size: 16px;">الرقم القومي للمرافق:</span>
+                                    <span style="color: #212529; font-size: 18px;" t-field="doc.relative_partner_nat_id"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </t>
+    </template>
+</odoo>

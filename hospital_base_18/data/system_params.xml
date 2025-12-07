@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="default_list_limit" model="ir.config_parameter">
+            <field name="key">web.limit.page.size</field>
+            <field name="value">20</field>
+        </record>
+    </data>
+</odoo>

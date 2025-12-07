@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--
+        <record id="account_move_access_rights" model="ir.ui.view">
+            <field name="name">account_move_access_rights</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//button[@name='action_post'][1]" position="attributes">
+                    <attribute name="groups">hospital_base.post_journal_entry</attribute>
+                </xpath>
+
+                <xpath expr="//button[@name='action_post'][2]" position="attributes">
+                    <attribute name="groups">hospital_base.post_invoices</attribute>
+                </xpath>
+
+                <xpath expr="//button[@name='button_draft']" position="attributes">
+                    <attribute name="groups">hospital_base.set_draft_journal_entry</attribute>
+                </xpath>
+
+                <xpath expr="//button[@name='%(account.action_view_account_move_reversal)d']" position="attributes">
+                    <attribute name="groups">hospital_base.cancel_journal_entry</attribute>
+                </xpath>
+
+                <xpath expr="//button[@name='button_cancel'][1]" position="attributes">
+                    <attribute name="groups">hospital_base.cancel_invoices</attribute>
+                </xpath>
+
+                <xpath expr="//button[@name='button_cancel'][2]" position="attributes">
+                    <attribute name="groups">hospital_base.cancel_invoices</attribute>
+                </xpath>
+
+                <xpath expr="//button[@name='action_reverse']" position="attributes">
+                    <attribute name="groups">hospital_base.credit_invoices</attribute>
+                </xpath>
+
+            </field>
+        </record>
+        -->
+        <record id="account.action_validate_account_move" model="ir.actions.act_window">
+            <field name="name">Post entries</field>
+            <field name="res_model">validate.account.move</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="account.validate_account_move_view"/>
+            <field name="context">{}</field>
+            <field name="target">new</field>
+            <field name="help">This wizard will validate all journal entries selected. Once journal entries are validated, you can not update them anymore.</field>
+            <field name="groups_id" eval="[(6, 0, [ref('hospital_base.post_journal_entry')])]"/>
+            <field name="binding_model_id" ref="account.model_account_move" />
+            <field name="binding_view_types">list</field>
+        </record>
+
+        <record id="account.action_view_account_move_reversal" model="ir.actions.act_window">
+            <field name="name">Reverse</field>
+            <field name="res_model">account.move.reversal</field>
+            <field name="view_mode">list,form</field>
+            <field name="view_id" ref="account.view_account_move_reversal"/>
+            <field name="target">new</field>
+            <field name="groups_id" eval="[(6, 0, [ref('hospital_base.cancel_journal_entry')])]"/>
+            <field name="binding_model_id" ref="account.model_account_move" />
+            <field name="binding_view_types">list</field>
+        </record>
+
+        <record id="purchase_order_access_rights" model="ir.ui.view">
+            <field name="name">purchase_order_access_rights</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//button[@name='button_confirm'][1]" position="attributes">
+                    <attribute name="groups">hospital_base.purchase_order_confirm</attribute>
+                </xpath>
+
+                <xpath expr="//button[@name='button_confirm'][2]" position="attributes">
+                    <attribute name="groups">hospital_base.purchase_order_confirm</attribute>
+                </xpath>
+
+                <xpath expr="//button[@name='action_create_invoice']" position="attributes">
+                    <attribute name="groups">hospital_base.purchase_create_bill</attribute>
+                </xpath>
+
+                <xpath expr="//button[@name='button_cancel']" position="attributes">
+                    <attribute name="groups">hospital_base.purchase_create_bill</attribute>
+                </xpath>
+
+            </field>
+        </record>
+
+
+
+
+    </data>
+</odoo>

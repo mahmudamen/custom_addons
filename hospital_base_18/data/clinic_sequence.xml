@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="seq_clinic" model="ir.sequence">
+            <field name="name">Clinic Visit</field>
+            <field name="code">clinic</field>
+            <field name="prefix">clinic</field>
+            <field name="padding">5</field>
+        </record>
+
+        <record id="seq_doctor_visits" model="ir.sequence">
+            <field name="name">Doctor Visit Accounting</field>
+            <field name="code">dva</field>
+            <field name="prefix">DVA</field>
+            <field name="padding">5</field>
+        </record>
+        <record id="seq_res_partner_patient" model="ir.sequence">
+            <field name="name">Patient Code</field>
+            <field name="code">res.partner.patient</field>
+            <field name="prefix">FKN</field>
+            <field name="padding">6</field>
+            <field name="number_increment">1</field>
+            <field name="number_next">1</field>
+        </record>
+
+        <record id="seq_patient" model="ir.sequence">
+            <field name="name">Patient</field>
+            <field name="code">pat</field>
+            <field name="prefix">FKN</field>
+            <field name="padding">5</field>
+        </record>
+	    <record id="seq_in_patient" model="ir.sequence">
+            <field name="name">In Patient</field>
+            <field name="code">inpat</field>
+            <field name="prefix">INPAT</field>
+            <field name="padding">5</field>
+        </record>
+    </data>
+</odoo>

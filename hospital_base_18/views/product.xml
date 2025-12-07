@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Inherit Form View to Modify it -->
+        <record id="hospital_product_template_form_view" model="ir.ui.view">
+            <field name="name">hospital_product_template_form_view</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='options']" position="after">
+                    <div name="hospital_options" class="mb24">
+                        <field name="hospital_product_type" widget="radio" options="{'horizontal': true}"/>
+                    </div>
+                </xpath>
+                <xpath expr="//page[@name='general_information']" position="before">
+                    <page name="hospital_info" string="اعدادات">
+                        <group>
+                            <group>
+                                <field name="available_in"/>
+                                <field name="is_contract"/>
+                                <field name="can_be_installment"/>
+                            </group>
+                            <group>
+                                <field name="is_device"/>
+                                <field name="service_exp_amount"/>
+                                <field name="service_tax_amount"/>
+                            </group>
+                        </group>
+                    </page>
+                    <page name="hospital_pharma_info" string="صيدلية خارجية">
+                        <group>
+                            <group>
+                                <field name="is_pharma" />
+                            </group>
+                        </group>
+                    </page>
+                </xpath>
+
+            </field>
+        </record>
+
+        <record id="product_service_tree" model="ir.ui.view">
+            <field name="name">product_service_tree</field>
+            <field name="model">product.template</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="default_code"/>
+                    <field name="name"/>
+                    <field name="hospital_product_type"/>
+                    <field name="available_in"/>
+                    <field name="is_device"/>
+                    <field name="can_be_installment"/>
+                    <field name="service_exp_amount"/>
+                    <field name="service_tax_amount"/>
+                    <field name="list_price"/>
+                </list>
+            </field>
+        </record>
+        <!-- Search View for Product Services -->
+<record id="product_service_search" model="ir.ui.view">
+    <field name="name">product.template.service.search</field>
+    <field name="model">product.template</field>
+    <field name="arch" type="xml">
+        <search>
+            <!-- Search Fields -->
+            <field name="name" string="اسم المنتج"/>
+            <field name="default_code" string="الكود"/>
+            <field name="pro_barcode" string="الباركود"/>
+            <field name="producing_company" string="الشركة المنتجة"/>
+            <field name="brands" string="العلامة التجارية"/>
+            <field name="primary_supplier" string="المورد الرئيسي"/>
+            <field name="primary_supplier_code" string="كود المورد"/>
+
+            <!-- Filters -->
+            <filter name="is_pharma" string="منتجات صيدلانية" domain="[('is_pharma', '=', True)]"/>
+            <filter name="is_contract" string="تعاقد" domain="[('is_contract', '=', True)]"/>
+            <filter name="is_device" string="أجهزة" domain="[('is_device', '=', True)]"/>
+            <filter name="can_installment" string="قابل للتقسيط" domain="[('can_be_installment', '=', True)]"/>
+
+            <separator/>
+
+            <!-- Hospital Product Type Filters -->
+            <filter name="medicament" string="أدوية" domain="[('hospital_product_type', '=', 'medicament')]"/>
+            <filter name="consumable" string="مستهلكات" domain="[('hospital_product_type', '=', 'consumable')]"/>
+            <filter name="medical_service" string="خدمة طبية" domain="[('hospital_product_type', '=', 'medical_service')]"/>
+            <filter name="os" string="خدمات أخرى" domain="[('hospital_product_type', '=', 'os')]"/>
+            <filter name="accommodation" string="إقامة" domain="[('hospital_product_type', '=', 'accommodation')]"/>
+
+            <separator/>
+
+            <!-- Available In Filters -->
+            <filter name="surgeries" string="عمليات" domain="[('available_in', '=', 'surgeries')]"/>
+            <filter name="clinic" string="عيادات خارجية" domain="[('available_in', '=', 'clinic')]"/>
+            <filter name="inpatient" string="الداخلي" domain="[('available_in', '=', 'inpatient')]"/>
+            <filter name="icu" string="عناية مركزة" domain="[('available_in', '=', 'icu')]"/>
+            <filter name="laboratory" string="المعمل" domain="[('available_in', '=', 'laboratory')]"/>
+            <filter name="catheterization" string="القسطرة" domain="[('available_in', '=', 'catheterization')]"/>
+            <filter name="radiology" string="الأشعة" domain="[('available_in', '=', 'radiology')]"/>
+            <filter name="nursing" string="تمريض" domain="[('available_in', '=', 'nursing')]"/>
+
+            <separator/>
+
+            <!-- Price Range Filters -->
+            <filter name="has_exp_amount" string="يحتوي على مصروفات إدارية" domain="[('service_exp_amount', '>', 0)]"/>
+            <filter name="has_tax_amount" string="يحتوي على ضريبة" domain="[('service_tax_amount', '>', 0)]"/>
+
+            <!-- Group By -->
+            <group expand="0" string="تجميع حسب">
+                <filter name="group_hospital_product_type" string="نوع الصنف" context="{'group_by': 'hospital_product_type'}"/>
+                <filter name="group_available_in" string="متاح في" context="{'group_by': 'available_in'}"/>
+                <filter name="group_producing_company" string="الشركة المنتجة" context="{'group_by': 'producing_company'}"/>
+                <filter name="group_brands" string="العلامة التجارية" context="{'group_by': 'brands'}"/>
+                <filter name="group_primary_supplier" string="المورد الرئيسي" context="{'group_by': 'primary_supplier'}"/>
+                <filter name="group_is_contract" string="تعاقد" context="{'group_by': 'is_contract'}"/>
+                <filter name="group_is_device" string="جهاز" context="{'group_by': 'is_device'}"/>
+                <filter name="group_is_pharma" string="منتج صيدلاني" context="{'group_by': 'is_pharma'}"/>
+                <filter name="group_can_installment" string="قابل للتقسيط" context="{'group_by': 'can_be_installment'}"/>
+            </group>
+        </search>
+    </field>
+</record>
+
+
+        <record id="product_service_menu" model="ir.actions.act_window">
+            <field name="name">product_service_menu</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">product.template</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[('detailed_type', '=', 'service')]</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'list', 'view_id': ref('product_service_tree')})
+            ]"/>
+            <field name="search_view_id" ref="product_service_search"/>
+            <field name="context">{'default_detailed_type': 'service'}</field>
+        </record>
+        <record id="product_nursing_service_menu" model="ir.actions.act_window">
+            <field name="name">product_nursing_service_menu</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">product.template</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[('detailed_type', '=', 'service'),('available_in', '=', 'nursing')]</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'list', 'view_id': ref('product_service_tree')})
+            ]"/>
+            <field name="context">{'default_detailed_type': 'service','default_available_in':'nursing'}</field>
+        </record>
+        <menuitem id="service_menu"
+                  name="الخدمات"
+                  parent="hospital_base.hospital_service_menu"
+                  action="product_service_menu"
+                  sequence="0"/>
+        <menuitem id="nursing_service_menu"
+                  name="خدمات التمريض"
+                  parent="hospital_base.hospital_service_menu"
+                  action="product_nursing_service_menu"
+                  sequence="1"/>
+    </data>
+</odoo>

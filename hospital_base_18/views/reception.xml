@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="doctor_list_search_reception" model="ir.ui.view">
+            <field name="name">doctor_list_search_reception</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <search string="Doctors">
+                    <field name="name"/>
+                    <field name="clinic"/>
+                    <field name="degree"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Clinic" name="groupby_clinic" context="{'group_by': 'clinic'}"/>
+                        <filter string="Degree" name="groupby_degree" context="{'group_by': 'degree'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <record id="doctor_list_reception" model="ir.ui.view">
+            <field name="name">doctor_list_reception</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="name"/>
+                    <field name="degree"/>
+                    <field name="clinic"/>
+                    <button name="clinic_reservation_action"
+                            type="object"
+                            string="حجز"
+                            context="{'doctor_id': active_id}"
+                            class="oe_highlight"/>
+                </list>
+            </field>
+        </record>
+        <record id="sections_kanban" model="ir.ui.view">
+        <field name="name">Hospital Sections Kanban</field>
+        <field name="model">res.sections</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="type" class="hospital-sections-kanban" create="true" edit="true">
+                <field name="id"/>
+                <field name="name"/>
+                <field name="type"/>
+                <field name="active"/>
+                <field name="sequence"/>
+                <field name="journal_id"/>
+                <field name="income_account_id"/>
+                <field name="location_id"/>
+                <field name="analytic_account_id"/>
+                <field name="color" invisible="1"/>
+
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_card o_kanban_record" t-att-data-type="record.type.raw_value">
+                            <div class="o_kanban_card_header" t-att-data-type="record.type.raw_value">
+                                <div class="o_kanban_card_header_title">
+                                    <div class="o_primary">
+                                        <a type="edit">
+                                            <field name="name"/>
+                                        </a>
+                                        <span class="counter-badge">
+                                            <field name="sequence"/>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="o_kanban_manage_button_section">
+                                    <a class="o_kanban_manage_toggle_button" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fa fa-ellipsis-v" role="img" aria-label="Manage" title="Manage"/>
+                                    </a>
+                                    <div class="dropdown-menu" role="menu">
+                                        <a type="edit" class="dropdown-item">تعديل</a>
+                                        <a type="delete" class="dropdown-item">حذف</a>
+                                        <div class="dropdown-divider"/>
+                                        <a name="toggle_active" type="object" class="dropdown-item">
+                                            <t t-if="record.active.raw_value">إلغاء التفعيل</t>
+                                            <t t-else="">تفعيل</t>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="o_kanban_card_content">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="mb-3">
+                                            <span class="status-indicator" t-att-class="record.active.raw_value ? 'active' : 'inactive'"/>
+                                            <strong>الحالة: </strong>
+                                            <span t-if="record.active.raw_value" class="text-success">نشط</span>
+                                            <span t-else="" class="text-danger">غير نشط</span>
+                                        </div>
+
+                                        <div class="mb-2" t-if="record.journal_id.raw_value">
+                                            <button class="btn btn-link" name="action_view_journal" type="object">
+                                                <i class="fa fa-book" title="book"/> اليومية
+                                            </button>
+                                        </div>
+
+                                        <div class="mb-2" t-if="record.income_account_id.raw_value">
+                                            <button class="btn btn-link" name="action_view_income_account" type="object">
+                                                <i class="fa fa-money" title="money"/> حساب الإيراد
+                                            </button>
+                                        </div>
+
+                                        <div class="mb-2" t-if="record.location_id.raw_value">
+                                            <button class="btn btn-link" name="action_view_location" type="object">
+                                                <i class="fa fa-cube" title="cube"/> المخزن
+                                            </button>
+                                        </div>
+
+                                        <div class="mb-2" t-if="record.analytic_account_id.raw_value">
+                                            <button class="btn btn-link" name="action_view_analytic_account" type="object">
+                                                <i class="fa fa-pie-chart" title="pie-chert"/> مركز التكلفة
+                                            </button>
+                                        </div>
+
+                                        <div class="mt-3">
+                                            <button class="btn btn-link" name="get_section_action" type="object">
+                                                <i class="fa fa-arrow-right" title="arrow right"/> عرض التفاصيل
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="o_kanban_card_footer">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <small class="text-muted">الترتيب: <field name="sequence"/></small>
+                                    </div>
+                                    <div class="col-6 text-end">
+                                        <small class="text-muted">
+                                            <field name="type" invisible="1"/>
+                                            <span t-if="record.type.raw_value == 'clinic'">عيادة</span>
+                                            <span t-elif="record.type.raw_value == 'inpatient'">المرضى الداخليين</span>
+                                            <span t-elif="record.type.raw_value == 'icu'">العناية المركزة</span>
+                                            <span t-elif="record.type.raw_value == 'catheterization'">القسطرة</span>
+                                            <span t-elif="record.type.raw_value == 'surgeries'">العمليات</span>
+                                            <span t-elif="record.type.raw_value == 'laboratory'">المختبر</span>
+                                            <span t-elif="record.type.raw_value == 'bloodbank'">بنك الدم</span>
+                                            <span t-elif="record.type.raw_value == 'radiology'">الأشعة</span>
+                                            <span t-elif="record.type.raw_value == 'nursing'">التمريض</span>
+                                            <span t-elif="record.type.raw_value == 'pharmacy'">الصيدلية</span>
+                                            <span t-else="">أخرى</span>
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+        <record id="reception_sections_action" model="ir.actions.act_window">
+            <field name="name">الاستقبال</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.sections</field>
+            <field name="view_mode">kanban</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'kanban', 'view_id': ref('sections_kanban')})]"/>
+        </record>
+        <menuitem id="reception_sections_menu"
+                  name="الاستقبال"
+                  parent="hospital_base.hospital_base_reception_menu"
+                  action="reception_sections_action"
+                  sequence="0"/>
+
+        <record id="reception_clinic_visit_form" model="ir.ui.view">
+            <field name="name">reception_clinic_visit_form</field>
+            <field name="model">clinic.visit</field>
+            <field name="arch" type="xml">
+                <form string="Clinic Visit">
+                    <field name="show_deposit" invisible="1"/>
+                    <field name="doctor_shift" invisible="1"/>
+                    <field name="cash_posted" invisible="1"/>
+                    <div class="alert alert-danger mb-0" role="alert" invisible="not show_deposit">
+                       الخدمة تتطلب موافقة
+                    </div>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="doctor_id" readonly="1" force_save="1"/>
+                                <field name="patient_id"
+                                       context="{'form_view_ref': 'hospital_base.res_partner_patient_form', 'default_is_patient': True,
+                                        'default_company_type': 'patient', 'default_patient_account': patient_account,
+                                         'default_employer': patient_employer, 'default_contract_company': patient_contract_company,
+                                          'default_nat_id': patient_nat_id, 'default_phone': patient_phone, 'default_mobile': patient_mobile}"/>
+                                <field name="patient_account" required="1"/>
+                                <field name="patient_employer" required="patient_account=='contract'" invisible="patient_account!='contract'"/>
+                                <field name="patient_contract_company" required="patient_account=='contract'" invisible="patient_account!='contract'"/>
+                                <field name="pay_deposit" invisible="not show_deposit"/>
+                                <field name="approve_id" invisible="not approve_id" readonly="1" force_save="1"/>
+                                <field name="section_id" invisible="1"/>
+                            </group>
+                            <group>
+                                <field name="queue_number" readonly="1" force_save="1"/>
+                                <field name="clinic_id" options="{'no_create': True}"/>
+                                <field name="service_id" options="{'no_create': True}"
+                                       required="1"
+                                       domain="[('doctor_id', '=', doctor_id),
+                                       ('patient_account', '=', patient_account)]"/>
+                                <field name="product_id" invisible="1"/>
+                                <field name="can_be_installment" invisible="1"/>
+                                <field name="date"/>
+                                <field name="shift" invisible="not doctor_shift" required="doctor_shift"/>
+                                <field name="reservation_date" required="1" readonly="1" force_save="1"/>
+                            </group>
+                        </group>
+                        <notebook colspan="4">
+                            <page name="بيانات المريض" string="Patient Info">
+                                <group>
+                                    <group>
+                                        <field name="patient_nat_id" invisible="1"/>
+                                        <field name="patient_phone" invisible="1"/>
+                                        <field name="patient_mobile"/>
+                                    </group>
+                                    <group>
+                                        <field name="doctor_amount"/>
+                                        <field name="amount"/>
+                                        <field name="service_exp_amount"/>
+                                        <field name="service_tax_amount"/>
+                                        <field name="patient_per" invisible="patient_account!='contract'"/>
+                                        <field name="total_amount"/>
+                                        <field name="deposit_amount" invisible="not pay_deposit"/>
+                                        <field name="patient_amount" readonly="not can_be_installment" force_save="1"/>
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                        <footer>
+                            <button name="print_receipt_confirm" string="تأكيد وطباعة" type="object" class="btn-primary"/>
+                            <button name="print_receipt" string="حجز" type="object" class="btn-primary"/>
+                            <button string="Cancel" class="btn-secondary" special="cancel"/>
+                        </footer>
+                    </sheet>
+                    <div class="o_attachment_preview"/>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+        <record id="reception_clinic_visit_tree" model="ir.ui.view">
+            <field name="name">reception_clinic_visit_tree</field>
+            <field name="model">clinic.visit</field>
+            <field name="arch" type="xml">
+                <list duplicate="False" edit="False">
+                    <field name="name"/>
+                    <field name="queue_number"/>
+                    <field name="doctor_id"/>
+                    <field name="patient_id"/>
+                    <field name="patient_contract_company"/>
+                    <field name="service_id"/>
+                    <field name="date"/>
+                    <field name="shift"/>
+                    <field name="state"/>
+                    <field name="cash_posted" column_invisible="True"/>
+                    <field name="patient_amount"/>
+                    <field name="section_id"/>
+                    <button name="request_cancel_move"
+                            type="object"
+                            string="الغاء"
+                            context="{'move_id': active_id}"
+                            confirm="Cancel"
+                            class="oe_highlight"/>
+                </list>
+            </field>
+        </record>
+        <record id="reception_clinic_visit_action" model="ir.actions.act_window">
+            <field name="name">Clinic Visit</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">clinic.visit</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[('cash_posted', '=', False)]</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'list', 'view_id': ref('reception_clinic_visit_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('reception_clinic_visit_form')}),
+            ]"/>
+            <field name="context">{'create': False, 'edit': False, 'delete': False, 'duplicate': False}</field>
+        </record>
+        <menuitem id="reception_clinic_visit_menu"
+                  name="الايصالات"
+                  parent="hospital_base.hospital_base_reception_menu"
+                  action="reception_clinic_visit_action"
+                  sequence="10"/>
+
+        <record id="reception_service_approval_form" model="ir.ui.view">
+            <field name="name">service_approval_form</field>
+            <field name="model">service.approval</field>
+            <field name="arch" type="xml">
+                <form string="">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="visit_id" options="{'no_create': True}"/>
+                                <field name="patient_id" options="{'no_create': True}"/>
+                                <field name="patient_employer" options="{'no_create': True}"/>
+                                <field name="deposit_amount"/>
+                                <field name="approve_number"/>
+                            </group>
+                            <group>
+                                <field name="description"/>
+                                <field name="service_id" options="{'no_create': True}"/>
+                                <field name="doctor_id" options="{'no_create': True}"/>
+                                <field name="patient_account" options="{'no_create': True}"/>
+                                <field name="patient_contract_company" options="{'no_create': True}"/>
+                                <field name="service_provider" options="{'no_create': True}"/>
+                                <field name="section_id"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <div class="o_attachment_preview"/>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+        <record id="reception_service_approval_tree" model="ir.ui.view">
+            <field name="name">reception_service_approval_tree</field>
+            <field name="model">service.approval</field>
+            <field name="arch" type="xml">
+                <list duplicate="false" create="False" edit="False" delete="False">
+                    <field name="name"/>
+                    <field name="description"/>
+                    <field name="visit_id" options="{'no_create': True}"/>
+                    <field name="service_id" options="{'no_create': True}"/>
+                    <field name="doctor_id" options="{'no_create': True}"/>
+                    <field name="patient_id" options="{'no_create': True}"/>
+                    <field name="patient_account" options="{'no_create': True}"/>
+                    <field name="patient_employer" options="{'no_create': True}"/>
+                    <field name="patient_contract_company" options="{'no_create': True}"/>
+                    <field name="service_provider" options="{'no_create': True}"/>
+                    <field name="state"/>
+                    <field name="deposit_amount"/>
+                    <field name="patient_per"/>
+                    <field name="approve_number"/>
+                    <field name="section_id"/>
+                    <button name="create_reservation"
+                            type="object"
+                            string="انشاء حجز"
+                            invisible="state!='accepted' or service_provider"
+                            class="oe_highlight"/>
+                </list>
+            </field>
+        </record>
+        <record id="reception_service_approval_action" model="ir.actions.act_window">
+            <field name="name">الموافقات</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">service.approval</field>
+            <field name="view_mode">list</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'list', 'view_id': ref('reception_service_approval_tree')})
+            ]"/>
+        </record>
+        <menuitem id="reception_service_approval_menu"
+                  name="الموافقات"
+                  parent="hospital_base.hospital_base_reception_menu"
+                  action="hospital_base.reception_service_approval_action"
+                  sequence="20"/>
+    </data>
+</odoo>

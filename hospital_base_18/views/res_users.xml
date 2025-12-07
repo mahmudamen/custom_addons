@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="res_users_pin" model="ir.ui.view">
+            <field name="name">res_users_pin</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="base.view_users_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='action_id']" position="after">
+                    <field name="pin"/>
+                </xpath>
+                <xpath expr="//field[@name='action_id']" position="after">
+                    <field name="product_access_type" widget="selection" options="{'selection': [('all', 'All Products'), ('consumable', 'Consumable Products Only'), ('service', 'Service Products Only')]}"/>
+                </xpath>
+
+            </field>
+        </record>
+
+
+
+    </data>
+</odoo>

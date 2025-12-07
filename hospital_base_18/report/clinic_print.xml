@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Internal Layout Template -->
+        <template id="hospital_base.clinic_internal_layout">
+            <t t-if="not o" t-set="o" t-value="doc"/>
+
+            <t t-if="not company">
+                <!-- Multicompany -->
+                <t t-if="company_id">
+                    <t t-set="company" t-value="company_id"/>
+                </t>
+                <t t-elif="o and 'company_id' in o and o.company_id.sudo()">
+                    <t t-set="company" t-value="o.company_id.sudo()"/>
+                </t>
+                <t t-else="else">
+                    <t t-set="company" t-value="res_company"/>
+                </t>
+            </t>
+
+            <div class="article o_report_layout_standard arabic-report" t-att-data-oe-model="o and o._name"
+                 t-att-data-oe-id="o and o.id" t-att-data-oe-lang="o and o.env.context.get('lang')">
+                <t t-out="0"/>
+            </div>
+        </template>
+        <!-- Report Template -->
+
+        <template id="report_clinic_print">
+            <style>
+                /* Use system fonts with local font as primary */
+                body, * {
+                    font-size: 16px;
+                    font-family: 'Noto Sans Arabic', 'Segoe UI Historic', 'Tahoma', 'Arial Unicode MS', Arial, sans-serif !important;
+                }
+
+                /* A4 Page Setup */
+                @page {
+                    margin: 15mm 10mm 15mm 10mm;
+                    background: white;
+                    font-size: 16px;
+                    font-family: 'Noto Sans Arabic', 'Segoe UI Historic', 'Tahoma', 'Arial Unicode MS', Arial, sans-serif !important;
+
+                }
+
+                @media print {
+                    * {
+                        direction: rtl !important;
+                        -webkit-print-color-adjust: exact !important;
+                        print-color-adjust: exact !important;
+                    }
+
+                    body {
+                        font-family: 'Noto Sans Arabic', 'Tahoma', Arial, sans-serif !important;
+                        font-size: 16px;
+                        direction: rtl !important;
+                        font-size: 16px !important;
+                        line-height: 1.4 !important;
+                        margin: 0 !important;
+                        padding: 0 !important;
+                    }
+
+                    .arabic-invoice-container {
+                        direction: rtl !important;
+                        text-align: right !important;
+                        font-family: 'Noto Sans Arabic', Arial, sans-serif !important;
+                        font-size: 16px;
+                        width: 100% !important;
+                        max-width: 100% !important;
+                    }
+
+                    .arabic-report {
+                        position: relative !important;
+                        width: 100% !important;
+                        max-width: 100% !important;
+                        padding: 0 !important;
+                        margin: 0 !important;
+                        background-color: white !important;
+                        font-family: 'Noto Sans Arabic', Arial, sans-serif !important;
+                        min-height: calc(100vh - 30mm) !important;
+                    }
+
+                    .arabic-table th,
+                    .arabic-table td {
+                        text-align: right !important;
+                        direction: rtl !important;
+                        font-family:  'Noto Sans Arabic', Arial, sans-serif !important;
+                        font-size: 16px !important;
+                    }
+
+                    .row {
+                        direction: rtl !important;
+                        font-family: 'Noto Sans Arabic', Arial, sans-serif !important;
+                        font-size: 16px;
+                        margin: 0 !important;
+                    }
+
+                    .col-6, .col-4 {
+                        padding: 0 5px !important;
+                    }
+
+                    .contact-info {
+                        direction: rtl !important;
+                        font-family:  'Noto Sans Arabic', Arial, sans-serif !important;
+                        font-size: 16px;
+                    }
+
+                    .company-info,
+                    .customer-info {
+                        text-align: right !important;
+                    }
+
+                    /* Prevent page breaks */
+                    .header-section,
+                    .prescription-section table {
+                        page-break-inside: avoid !important;
+                    }
+
+                    .footer-section {
+                        position: fixed !important;
+                        bottom: 0 !important;
+                        left: 0 !important;
+                        right: 0 !important;
+                        width: 100% !important;
+                        page-break-inside: avoid !important;
+                    }
+                }
+            </style>
+            <div class="arabic-invoice-container" dir="rtl" lang="ar">
+                <t t-set="company" t-value="env.company"/>
+                <t t-call="web.html_container">
+                    <t t-call="hospital_base.clinic_internal_layout">
+                        <div class="page arabic-report" dir="rtl" style="position: relative; width: 100%; max-width: 100%;">
+                            <!-- Content Container -->
+                            <div style="position: relative; z-index: 1; padding-bottom: 60px;">
+                                <!-- Header Section -->
+                                <div class="header-section" style="
+                                    border-bottom: 2px solid #FF8C00;
+                                    padding-bottom: 15px;
+                                    margin-bottom: 20px;
+                                    direction: rtl !important;
+                                    font-family: 'Noto Sans Arabic', Arial, sans-serif !important;
+                                ">
+                                    <div class="row align-items-center" style="direction: rtl !important;">
+                                        <!-- Right Side - Arabic -->
+                                        <!-- Center - Logo -->
+                                        <!-- Left Side - English -->
+                                    </div>
+                                </div>
+                                <!-- Patient and Doctor Info - Updated with better layout -->
+                        <div class="row mb-3" style="margin-top: 20px; font-size: 16px; direction: rtl;">
+                            <!-- Right Side -->
+                            <div class="col-6" style="text-align: right; padding-left: 15px;">
+                                <div class="mb-2" style="margin-bottom: 8px;">
+                                    <strong style="font-size:20px;color: #333;">مركز الفرقان التخصصي</strong>
+                                </div>
+                                <div class="mb-2" style="margin-bottom: 8px;">
+                                    <strong style="color: #666;">دكتور:</strong>
+                                    <span t-esc="doctor_id" style="font-size:17px;color: #333;"/>
+                                </div>
+                                <div class="mb-2" style="margin-bottom: 8px;">
+                                    <strong style="color: #666;">اسم المريض:</strong>
+                                    <span t-esc="patient_id" style="color: #333;"/>
+                                </div>
+                                <div class="mb-2" style="margin-bottom: 8px;">
+                                    <strong style="color: #666;">الخدمة:</strong>
+                                    <span t-esc="service_id" style="color: #333;"/>
+                                </div>
+                                <div class="mb-2" style="margin-bottom: 8px;">
+                                    <strong style="color: #666;">التشخيص:</strong>
+                                    <span t-esc="diagnosis" style="color: #333;"/>
+                                </div>
+
+                            </div>
+
+                            <!-- Left Side -->
+                            <div class="col-6" style="text-align: right; padding-right: 15px;">
+                                <div class="mb-2" style="margin-bottom: 8px;">
+                                    <strong style="color: #666;"> </strong>
+                                    <span style="color: #333;"/>
+                                </div>
+                                <div class="mb-2" style="margin-bottom: 8px;">
+                                    <strong style="color: #666;">عيادة:</strong>
+                                    <span t-esc="clinic_id" style="color: #333;"/>
+                                </div>
+                                <div class="mb-2" style="margin-bottom: 8px;">
+                                    <strong style="color: #666;">تاريخ الزيارة:</strong>
+                                    <span t-esc="date" t-options="{'widget': 'date', 'format': 'dd/MM/yyyy'}" style="color: #333;"/>
+                                </div>
+                                <div class="mb-2" style="margin-bottom: 8px;">
+                                    <strong style="color: #666;">الرقم الموحد:</strong>
+                                    <span t-esc="patient_code" style="color: #333;"/>
+                                </div>
+                                <!-- New fields integrated here -->
+
+                            </div>
+                        </div>
+                        <!-- Add a separator line before prescription -->
+                        <div style="border-bottom: 1px solid #ddd; margin: 20px 0 30px 0;"></div>
+
+                                <!-- Prescription Table -->
+                                <div class="prescription-section" style="margin-top: 30px;">
+                                    <table class="table table-bordered" style="
+                                        font-size: 16px;
+                                        width: 100%;
+                                        border-collapse: collapse;
+                                        background-color: transparent;
+                                        font-family: 'Noto Sans Arabic', Arial, sans-serif !important;
+                                    ">
+                                        <thead>
+                                            <tr style="background-color: #f8f9fa;">
+
+                                                <th class="text-center" style="width: 50%; padding: 6px; border: 1px solid #dee2e6;">العلاج</th>
+                                                <th class="text-center" style="width: 10%; padding: 6px; border: 1px solid #dee2e6;">الكمية</th>
+                                                <th class="text-center" style="width: 20%; padding: 6px; border: 1px solid #dee2e6;">الجرعة</th>
+                                                <th class="text-center" style="width: 20%; padding: 6px; border: 1px solid #dee2e6;">المدة</th>
+
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-foreach="medicament_lines" t-as="medicament">
+                                                <tr>
+                                                    <td style="padding: 6px; border: 1px solid #dee2e6;">
+                                                        <span t-esc="medicament.medicament_id.name"/>
+                                                        <t t-if="medicament.notes">
+                                                            <br/>
+                                                            <small t-esc="medicament.notes"/>
+                                                        </t>
+                                                    </td>
+                                                    <td class="text-center" style="padding: 6px; border: 1px solid #dee2e6;">
+                                                        <span t-esc="int(medicament.qty)"/>
+                                                    </td>
+
+                                                    <td class="text-center" style="padding: 6px; border: 1px solid #dee2e6;">
+                                                        <span t-esc="medicament.dosage_id.name"/>
+                                                    </td>
+                                                    <td class="text-center" style="padding: 6px; border: 1px solid #dee2e6;">
+                                                        <span t-esc="medicament.duration_id.name"/>
+                                                    </td>
+
+
+                                                </tr>
+                                            </t>
+
+                                            <!-- Laboratory Section -->
+                                            <t t-if="laboratory_lines">
+                                                <tr>
+                                                    <td colspan="4" style="
+                                                        padding: 6px;
+                                                        border: 1px solid #dee2e6;
+                                                        font-weight: bold;
+                                                        background-color: #f8f9fa;
+                                                    ">
+                                                        <strong>تحاليل</strong>
+                                                    </td>
+                                                </tr>
+                                                <t t-foreach="laboratory_lines" t-as="lab">
+                                                    <tr>
+                                                        <td colspan="4" style="padding: 6px; border: 1px solid #dee2e6;">
+                                                            <span t-esc="lab.laboratory_id.name"/>
+                                                            <t t-if="lab.notes">
+                                                                <br/>
+                                                                <small t-esc="lab.notes"/>
+                                                            </t>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                            </t>
+
+                                            <!-- Radiology Section -->
+                                            <t t-if="radiology_lines">
+                                                <tr>
+                                                    <td colspan="4" style="
+                                                        padding: 6px;
+                                                        border: 1px solid #dee2e6;
+                                                        background-color: #f8f9fa;
+                                                        font-weight: bold;
+                                                    ">
+                                                        <strong>أشعة</strong>
+                                                    </td>
+                                                </tr>
+                                                <t t-foreach="radiology_lines" t-as="rad">
+                                                    <tr>
+                                                        <td colspan="4" style="padding: 6px; border: 1px solid #dee2e6;">
+                                                            <span t-esc="rad.radiology_id.name"/>
+                                                            <t t-if="rad.notes">
+                                                                <br/>
+                                                                <small t-esc="rad.notes"/>
+                                                            </t>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <!-- Footer with Contact Info -->
+                            <div class="footer-section" style="
+                                position: absolute;
+                                bottom: 0;
+                                left: 0;
+                                right: 0;
+                                width: 100%;
+                                font-family:  'Noto Sans Arabic', Arial, sans-serif !important;
+                                font-size: 16px;
+                                z-index: 2;
+                                print-color-adjust: exact;
+                                -webkit-print-color-adjust: exact;
+                                background: white;
+                                padding-top: 10px;
+                                border-top: 1px solid #dee2e6;
+                            ">
+                                <div style="
+                                    background-color: transparent;
+                                    font-family:  'Noto Sans Arabic', Arial, sans-serif !important;
+                                    padding: 6px;
+                                    font-size: 14px;
+                                    font-weight: 500;
+                                    print-color-adjust: exact;
+                                    -webkit-print-color-adjust: exact;
+                                ">
+                                    <!-- Top row - Location and Medical Center -->
+                                    <div style="
+                                        display: flex;
+                                        justify-content: space-between;
+                                        font-family: 'Noto Sans Arabic', Arial, sans-serif !important;
+                                        font-size: 14px;
+                                        align-items: center;
+                                        margin-bottom: 3px;
+                                        direction: rtl;
+                                    ">
+                                    </div>
+                                    <!-- Bottom row - Contact info -->
+                                    <div style="text-align: center; direction: ltr;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+            </div>
+        </template>
+        <record id="report_clinic_print_report" model="ir.actions.report">
+            <field name="name">Clinic Print</field>
+            <field name="model">clinic.visit</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">hospital_base.report_clinic_print</field>
+            <field name="binding_model_id" ref="hospital_base.model_clinic_visit"/>
+            <field name="binding_type">report</field>
+        </record>
+        <!-- Report Action -->
+        <record id="report_reception_receipt" model="ir.actions.report">
+            <field name="name">Reception Receipt</field>
+            <field name="model">clinic.visit</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">hospital_base.report_receipt</field>
+            <field name="report_file">hospital_base.report_receipt</field>
+            <field name="binding_model_id" ref="model_clinic_visit"/>
+            <field name="binding_type">report</field>
+
+        </record>
+        <record id="report_accounting_receipt" model="ir.actions.report">
+            <field name="name">Accounting Receipt</field>
+            <field name="model">clinic.visit</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">hospital_base.report_receipt</field>
+            <field name="report_file">hospital_base.report_receipt</field>
+            <field name="binding_model_id" ref="model_clinic_visit"/>
+            <field name="binding_type">report</field>
+        </record>
+        <record id="report_pharmacy_receipt" model="ir.actions.report">
+            <field name="name">Pharmacy Receipt</field>
+            <field name="model">clinic.visit</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">hospital_base.report_receipt</field>
+            <field name="report_file">hospital_base.report_receipt</field>
+            <field name="binding_model_id" ref="model_clinic_visit"/>
+            <field name="binding_type">report</field>
+        </record>
+    </data>
+</odoo>

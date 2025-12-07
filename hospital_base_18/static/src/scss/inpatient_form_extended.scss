@@ -1,0 +1,245 @@
+// Patient Info Styles - Simplified version without complex variables
+.patient-info-container {
+    font-family: 'Cairo', Arial, sans-serif;
+    direction: rtl;
+    background: #f8fafc;
+    min-height: 100vh;
+    padding: 2rem;
+}
+
+.patient-header {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+
+    .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .patient-identity {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+
+        .patient-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 3px solid #e5e7eb;
+        }
+
+        .patient-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin: 0;
+        }
+
+        .patient-id {
+            font-size: 1rem;
+            color: #64748b;
+            font-family: monospace;
+        }
+    }
+}
+
+// Action buttons
+.action-buttons {
+    display: flex;
+    gap: 0.75rem;
+    margin: 1.5rem 0;
+    flex-wrap: wrap;
+
+    button {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+
+        &.btn-excel {
+            background: #10b981;
+            color: white;
+
+            &:hover {
+                background: #059669;
+            }
+        }
+
+        &.btn-print {
+            background: #8b5cf6;
+            color: white;
+
+            &:hover {
+                background: #7c3aed;
+            }
+        }
+    }
+}
+
+// Info grid
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+
+    .info-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+
+        .info-icon {
+            width: 40px;
+            height: 40px;
+            background: #3b82f6;
+            color: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            i {
+                font-size: 1.2rem;
+            }
+        }
+
+        .info-content {
+            flex: 1;
+
+            label {
+                display: block;
+                font-size: 0.875rem;
+                color: #6b7280;
+                margin-bottom: 0.25rem;
+            }
+
+            span {
+                font-size: 1rem;
+                color: #1f2937;
+                font-weight: 500;
+            }
+        }
+    }
+}
+
+// Carousel styles
+.patient-carousel-wrapper {
+    position: relative;
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+
+    .carousel-container {
+        position: relative;
+        overflow: hidden;
+        height: 250px;
+    }
+
+    .carousel-item {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        transition: opacity 0.6s ease;
+
+        &.active {
+            opacity: 1;
+        }
+    }
+
+    .carousel-card {
+        height: 100%;
+        border-radius: 12px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: white;
+        padding: 2rem;
+
+        .carousel-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.9;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+    }
+
+    // Navigation buttons
+    .carousel-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: white;
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+
+        &:hover {
+            background: #f3f4f6;
+        }
+
+        &.carousel-nav-prev {
+            right: 1rem;
+        }
+
+        &.carousel-nav-next {
+            left: 1rem;
+        }
+    }
+}
+
+// Responsive
+@media (max-width: 768px) {
+    .patient-info-container {
+        padding: 1rem;
+    }
+
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .action-buttons {
+        justify-content: center;
+    }
+}
+
+// Print styles
+@media print {
+    .action-buttons,
+    .carousel-nav {
+        display: none !important;
+    }
+}

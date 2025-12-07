@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="seq_contract" model="ir.sequence">
+            <field name="name">Insurance Contract</field>
+            <field name="code">insurance.contract</field>
+            <field name="prefix">CON</field>
+            <field name="padding">2</field>
+        </record>
+        <record id="seq_approval_contract" model="ir.sequence">
+            <field name="name">Insurance Contract Approve</field>
+            <field name="code">insurance.contract.approve</field>
+            <field name="prefix">APR</field>
+            <field name="padding">6</field>
+        </record>
+        <record id="seq_contract_claim" model="ir.sequence">
+            <field name="name">Insurance Contract Claim</field>
+            <field name="code">insurance.contract.claim</field>
+            <field name="prefix">CC</field>
+            <field name="padding">6</field>
+        </record>
+
+    </data>
+</odoo>

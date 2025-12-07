@@ -1,0 +1,37 @@
+<odoo>
+    <data>
+        <record id="view_partner_type_tree" model="ir.ui.view">
+            <field name="name">view_partner_type_tree</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_tree"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='is_company']" position="after">
+                    <field name="is_patient" column_invisible="True"/>
+                    <field name="is_nurse" column_invisible="True"/>
+                    <field name="is_worker" column_invisible="True"/>
+                    <field name="is_doctor" column_invisible="True"/>
+                    <field name="is_laboratory" column_invisible="True"/>
+                    <field name="is_insurance" column_invisible="True"/>
+                </xpath>
+
+            </field>
+        </record>
+        <record id="view_res_partner_type_filter" model="ir.ui.view">
+            <field name="name">view_res_partner_type_filter</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_res_partner_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='type_person']" position="before">
+                    <filter string="Patient" name="type_patient" domain="[('is_patient', '=', True)]"/>
+                    <filter string="Doctor" name="type_doctor" domain="[('is_doctor', '=', True)]"/>
+                    <filter string="Nurse" name="type_nurse" domain="[('is_nurse', '=', True)]"/>
+                    <filter string="Worker" name="type_nurse" domain="[('is_worker', '=', True)]"/>
+                    <filter string="Laboratory" name="type_laboratory" domain="[('is_laboratory', '=', True)]"/>
+                    <filter string="Insurance Companies" name="type_insurance" domain="[('is_insurance', '=', True)]"/>
+                </xpath>
+
+            </field>
+        </record>
+    </data>
+</odoo>

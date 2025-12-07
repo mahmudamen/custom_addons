@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Doctor Degrees -->
+        <record id="doctor_degree_md" model="hospital_base.doctor_degrees">
+            <field name="name">MD</field>
+            <field name="description">Doctor of Medicine</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="doctor_degree_phd" model="hospital_base.doctor_degrees">
+            <field name="name">PhD</field>
+            <field name="description">Doctor of Philosophy in Medicine</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="doctor_degree_mbbs" model="hospital_base.doctor_degrees">
+            <field name="name">MBBS</field>
+            <field name="description">Bachelor of Medicine and Bachelor of Surgery</field>
+            <field name="active">True</field>
+        </record>
+
+        <!-- Hospital Sections -->
+        <record id="section_clinic" model="res.sections">
+            <field name="name">عيادات خارجية</field>
+            <field name="sequence">10</field>
+            <field name="type">clinic</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="section_inpatient" model="res.sections">
+            <field name="name">القسم الداخلي</field>
+            <field name="sequence">20</field>
+            <field name="type">inpatient</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="section_icu" model="res.sections">
+            <field name="name">العناية المركزة</field>
+            <field name="sequence">30</field>
+            <field name="type">icu</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="section_surgery" model="res.sections">
+            <field name="name">الجراحة</field>
+            <field name="sequence">40</field>
+            <field name="type">surgeries</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="section_laboratory" model="res.sections">
+            <field name="name">المختبر</field>
+            <field name="sequence">50</field>
+            <field name="type">laboratory</field>
+            <field name="active">True</field>
+        </record>
+
+        <!-- Clinics -->
+        <record id="clinic_general" model="res.clinics">
+            <field name="name">عيادة الطب العام</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="clinic_cardiology" model="res.clinics">
+            <field name="name">عيادة القلب</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="clinic_pediatrics" model="res.clinics">
+            <field name="name">عيادة الأطفال</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="clinic_orthopedic" model="res.clinics">
+            <field name="name">عيادة العظام</field>
+            <field name="active">True</field>
+        </record>
+
+        <!-- Doctor Services -->
+        <record id="doctor_service_consultation" model="hospital_base.doctor_services">
+            <field name="name">استشارة طبية</field>
+            <field name="description">استشارة طبية عامة</field>
+            <field name="compute_name">consultation</field>
+            <field name="store">True</field>
+            <field name="domain">[('is_doctor', '=', True)]</field>
+            <field name="string">استشارة</field>
+            <field name="service_id" ref="product.product_product_1"/>
+            <field name="active">True</field>
+        </record>
+
+        <record id="doctor_service_surgery" model="hospital_base.doctor_services">
+            <field name="name">عملية جراحية</field>
+            <field name="description">عملية جراحية</field>
+            <field name="compute_name">surgery</field>
+            <field name="store">True</field>
+            <field name="domain">[('is_doctor', '=', True)]</field>
+            <field name="string">جراحة</field>
+            <field name="service_id" ref="product.product_product_2"/>
+            <field name="active">True</field>
+        </record>
+
+        <!-- Rooms -->
+        <record id="room_101" model="res.rooms">
+            <field name="name">غرفة 101</field>
+            <field name="no_of_beds">2</field>
+            <field name="floor">الطابق الأول</field>
+            <field name="room_type">general</field>
+            <field name="room_capacity">single</field>
+            <field name="active">True</field>
+            <field name="is_available">True</field>
+            <field name="current_patients_count">0</field>
+        </record>
+
+        <record id="room_102" model="res.rooms">
+            <field name="name">غرفة 102</field>
+            <field name="no_of_beds">4</field>
+            <field name="floor">الطابق الأول</field>
+            <field name="room_type">general</field>
+            <field name="room_capacity">double</field>
+            <field name="active">True</field>
+            <field name="is_available">True</field>
+            <field name="current_patients_count">1</field>
+        </record>
+
+        <record id="room_201" model="res.rooms">
+            <field name="name">غرفة عناية مركزة 201</field>
+            <field name="no_of_beds">1</field>
+            <field name="floor">الطابق الثاني</field>
+            <field name="room_type">icu</field>
+            <field name="room_capacity">single</field>
+            <field name="active">True</field>
+            <field name="is_available">False</field>
+            <field name="current_patients_count">1</field>
+        </record>
+
+        <!-- Surgery Rooms -->
+        <record id="surgery_room_1" model="surgery.room">
+            <field name="name">غرفة عمليات 1</field>
+            <field name="room_type">general</field>
+            <field name="location">الطابق الثالث</field>
+            <field name="active">True</field>
+            <field name="is_available_now">True</field>
+        </record>
+
+        <record id="surgery_room_2" model="surgery.room">
+            <field name="name">غرفة عمليات القلب</field>
+            <field name="room_type">cardiac</field>
+            <field name="location">الطابق الثالث</field>
+            <field name="active">True</field>
+            <field name="is_available_now">True</field>
+        </record>
+
+        <!-- Surgeries Classification -->
+        <record id="surgery_class_general" model="res.surgeries.classification">
+            <field name="name">جراحة عامة</field>
+            <field name="service_id" ref="product.product_product_3"/>
+            <field name="active">True</field>
+        </record>
+
+        <record id="surgery_class_cardiac" model="res.surgeries.classification">
+            <field name="name">جراحة القلب</field>
+            <field name="service_id" ref="product.product_product_4"/>
+            <field name="active">True</field>
+        </record>
+
+        <record id="surgery_class_ortho" model="res.surgeries.classification">
+            <field name="name">جراحة العظام</field>
+            <field name="service_id" ref="product.product_product_5"/>
+            <field name="active">True</field>
+        </record>
+
+        <!-- Visit Templates -->
+        <record id="visit_template_general" model="visit.template">
+            <field name="name">قالب الكشف العام</field>
+            <field name="doctor_id" ref="base.user_demo"/>
+            <field name="diagnosis">فحص عام</field>
+            <field name="notes">فحص روتيني</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="visit_template_cardiac" model="visit.template">
+            <field name="name">قالب كشف القلب</field>
+            <field name="doctor_id" ref="base.user_demo"/>
+            <field name="diagnosis">فحص القلب والأوعية الدموية</field>
+            <field name="notes">فحص متخصص للقلب</field>
+            <field name="active">True</field>
+        </record>
+
+        <!-- Visit Template Lines for General Template -->
+        <record id="visit_template_line_1" model="visit.template.lines">
+            <field name="name">فحص ضغط الدم</field>
+            <field name="visit_template_id" ref="visit_template_general"/>
+            <field name="medicament_id" ref="product.product_product_6"/>
+            <field name="laboratory_id" ref="product.product_product_7"/>
+            <field name="notes">قياس ضغط الدم</field>
+        </record>
+
+        <record id="visit_template_line_2" model="visit.template.lines">
+            <field name="name">تحليل دم شامل</field>
+            <field name="visit_template_id" ref="visit_template_general"/>
+            <field name="laboratory_id" ref="product.product_product_8"/>
+            <field name="notes">CBC تحليل</field>
+        </record>
+
+        <!-- Sample Products for Hospital -->
+        <record id="product_paracetamol" model="product.template">
+            <field name="name">باراسيتامول 500mg</field>
+            <field name="hospital_product_type">medicament</field>
+            <field name="is_contract">False</field>
+            <field name="is_device">False</field>
+            <field name="available_in">clinic</field>
+        </record>
+
+        <record id="product_blood_test" model="product.template">
+            <field name="name">تحليل دم شامل</field>
+            <field name="hospital_product_type">consumable</field>
+            <field name="is_contract">False</field>
+            <field name="is_device">False</field>
+            <field name="available_in">laboratory</field>
+        </record>
+
+        <record id="product_xray" model="product.template">
+            <field name="name">أشعة سينية</field>
+            <field name="hospital_product_type">medical_service</field>
+            <field name="is_contract">False</field>
+            <field name="is_device">False</field>
+            <field name="available_in">radiology</field>
+        </record>
+
+        <!-- Sample Surgeries -->
+        <record id="surgery_appendix" model="res.surgeries">
+            <field name="name">استئصال الزائدة الدودية</field>
+            <field name="sequence">10</field>
+            <field name="surgery_id" ref="surgery_class_general"/>
+            <field name="classification" ref="surgery_class_general"/>
+            <field name="active">True</field>
+            <field name="add_exp">True</field>
+            <field name="is_package">True</field>
+        </record>
+
+        <record id="surgery_cardiac_bypass" model="res.surgeries">
+            <field name="name">عملية القلب المفتوح</field>
+            <field name="sequence">20</field>
+            <field name="surgery_id" ref="surgery_class_cardiac"/>
+            <field name="classification" ref="surgery_class_cardiac"/>
+            <field name="active">True</field>
+            <field name="add_exp">True</field>
+            <field name="is_package">True</field>
+        </record>
+
+        <!-- Surgery Lines for Appendix Surgery -->
+        <record id="surgery_line_appendix_1" model="res.surgeries.lines">
+            <field name="surgery_id" ref="surgery_appendix"/>
+            <field name="product_id" ref="product.product_product_9"/>
+            <field name="product_type">Type</field>
+            <field name="hospital_product_type">consumable</field>
+            <field name="available_in">surgeries</field>
+            <field name="quantity">1</field>
+            <field name="amount">1000</field>
+            <field name="total_amount">1000</field>
+            <field name="package_line">True</field>
+        </record>
+
+        <record id="surgery_line_appendix_2" model="res.surgeries.lines">
+            <field name="surgery_id" ref="surgery_appendix"/>
+            <field name="product_id" ref="product.product_product_10"/>
+            <field name="product_type">Type</field>
+            <field name="hospital_product_type">medicament</field>
+            <field name="available_in">surgeries</field>
+            <field name="quantity">5</field>
+            <field name="amount">50</field>
+            <field name="total_amount">250</field>
+            <field name="package_line">True</field>
+        </record>
+
+    </data>
+</odoo>

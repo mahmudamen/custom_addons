@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Form View -->
+        <record id="radiology_request_form" model="ir.ui.view">
+            <field name="name">radiology_request_form</field>
+            <field name="model">radiology.request</field>
+            <field name="arch" type="xml">
+                <form string="Radiology Request">
+                    <header>
+                        <field name="clinic_visit_id" invisible="1"/>
+                        <field name="visit_id" invisible="1"/>
+                        <field name="reception_done" invisible="1"/>
+                        <button name="action_done" string="تم" class="oe_highlight"
+                                invisible="state != 'waiting'" type="object"/>
+                        <button name="action_cancel" string="الغاء" class="oe_highlight"
+                                invisible="state != 'waiting'" type="object"/>
+                        <button name="action_reservation" string="حجز" class="oe_highlight"
+                                invisible="state == 'cancelled'" type="object"/>
+                        <button name="print_radiology_receipt" string="طباعة الإيصال" type="object" class="oe_highlight"/>
+                        <field name="state" widget="statusbar" statusbar_visible="waiting,done,cancelled"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h5>
+                                <field name="name" placeholder="Draft" readonly="1"/>
+                            </h5>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="patient_id" readonly="state == 'done'" options="{'no_create': True}"/>
+                                <field name="service_id" readonly="state == 'done'" options="{'no_open': True, 'no_create': True}"/>
+                                <field name="radiology_technician" readonly="state == 'done'" options="{'no_open': True, 'no_create': True}"/>
+                                <field name="patient_account" readonly="state == 'done'" invisible="patient_account != 'contract'" options="{'no_open': True, 'no_create': True}"/>
+                                <field name="contract_company" readonly="state == 'done'" invisible="patient_account != 'contract'" options="{'no_open': True, 'no_create': True}"/>
+                                <field name="note"/>
+                                <field name="sale_order_id" readonly="1" /> <!-- attrs="{'invisible': [('sale_order_id', '=', False)]}" -->
+                            </group>
+                            <group>
+                                <field name="doctor_id" readonly="state == 'done'" options="{'no_open': True, 'no_create': True}"/>
+                                <field name="date" readonly="state == 'done'" options="{'no_open': True, 'no_create': True}"/>
+                                <field name="quantity" readonly="state == 'done'"/>
+                                <field name="employer" readonly="state == 'done'" invisible="patient_account != 'contract'" options="{'no_open': True, 'no_create': True}"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <div class="o_attachment_preview"/>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <!-- List View - Modified to enable creation/editing -->
+        <record id="radiology_request_tree" model="ir.ui.view">
+            <field name="name">radiology_request_tree</field>
+            <field name="model">radiology.request</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="name"/>
+                    <field name="date"/>
+                    <field name="patient_id"/>
+                    <field name="doctor_id"/>
+                    <field name="patient_account"/>
+                    <field name="employer"/>
+                    <field name="contract_company"/>
+                    <field name="radiology_technician"/>
+                    <field name="service_id"/>
+                    <field name="quantity"/>
+                    <field name="state"/>
+                    <field name="note"/>
+                    <field name="clinic_visit_id" column_invisible="1"/>
+                    <field name="reception_done" column_invisible="1"/>
+                    <field name="sale_order_id" column_invisible="1"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Search View -->
+        <record id="radiology_request_search" model="ir.ui.view">
+            <field name="name">radiology_request_search</field>
+            <field name="model">radiology.request</field>
+            <field name="arch" type="xml">
+                <search string="Search Radiology Requests">
+                    <field name="name" string="Reference"/>
+                    <field name="patient_id"/>
+                    <field name="doctor_id"/>
+                    <field name="service_id"/>
+                    <field name="radiology_technician"/>
+                    <separator/>
+                    <filter string="Waiting" name="waiting" domain="[('state', '=', 'waiting')]"/>
+                    <filter string="Done" name="done" domain="[('state', '=', 'done')]"/>
+                    <filter string="Cancelled" name="cancelled" domain="[('state', '=', 'cancelled')]"/>
+                    <separator/>
+                    <filter string="Today" name="today" domain="[('date', '=', context_today().strftime('%Y-%m-%d'))]"/>
+                    <filter string="This Week" name="this_week" domain="[('date', '>=', (context_today() + relativedelta(weeks=-1,days=1,weekday=0)).strftime('%Y-%m-%d')), ('date', '&lt;=', (context_today() + relativedelta(weekday=6)).strftime('%Y-%m-%d'))]"/>
+                    <filter string="This Month" name="this_month" domain="[('date', '>=', (context_today().replace(day=1)).strftime('%Y-%m-%d')), ('date', '&lt;=', (context_today() + relativedelta(months=1, day=0)).strftime('%Y-%m-%d'))]"/>
+                    <separator/>
+                    <filter string="Has Sale Order" name="has_sale_order" domain="[('sale_order_id', '!=', False)]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Patient" name="group_by_patient" domain="[]" context="{'group_by': 'patient_id'}"/>
+                        <filter string="Doctor" name="group_by_doctor" domain="[]" context="{'group_by': 'doctor_id'}"/>
+                        <filter string="Service" name="group_by_service" domain="[]" context="{'group_by': 'service_id'}"/>
+                        <filter string="Status" name="group_by_state" domain="[]" context="{'group_by': 'state'}"/>
+                        <filter string="Date" name="group_by_date" domain="[]" context="{'group_by': 'date:month'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Pivot View -->
+        <record id="radiology_request_pivot" model="ir.ui.view">
+            <field name="name">radiology_request_pivot</field>
+            <field name="model">radiology.request</field>
+            <field name="arch" type="xml">
+                <pivot string="Radiology Analysis" display_quantity="true">
+                    <field name="date" type="row" interval="month"/>
+                    <field name="service_id" type="row"/>
+                    <field name="doctor_id" type="col"/>
+                    <field name="quantity" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <!-- Graph View -->
+        <record id="radiology_request_graph" model="ir.ui.view">
+            <field name="name">radiology_request_graph</field>
+            <field name="model">radiology.request</field>
+            <field name="arch" type="xml">
+                <graph string="Radiology" type="bar">
+                    <field name="service_id"/>
+                    <field name="quantity" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <!-- Action - Updated to include all views -->
+        <record id="radiology_request_action" model="ir.actions.act_window">
+            <field name="name">طلبات الاشعة</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">radiology.request</field>
+            <field name="view_mode">list,form,pivot,graph</field>
+            <field name="search_view_id" ref="radiology_request_search"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first radiology request!
+                </p>
+            </field>
+        </record>
+
+        <!-- Menu -->
+        <menuitem id="radiology_requests"
+                  name="طلبات الاشعة"
+                  parent="hospital_base.hospital_base_radiology_menu"
+                  action="radiology_request_action"
+                  sequence="0"/>
+    </data>
+</odoo>

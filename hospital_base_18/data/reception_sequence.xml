@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="seq_reception" model="ir.sequence">
+            <field name="name">Reception Cash</field>
+            <field name="code">reception.cash</field>
+            <field name="padding">8</field>
+        </record>
+        <record id="seq_reception_close_session" model="ir.sequence">
+            <field name="name">Reception close session</field>
+            <field name="code">reception.close.session</field>
+            <field name="padding">8</field>
+        </record>
+
+    </data>
+</odoo>

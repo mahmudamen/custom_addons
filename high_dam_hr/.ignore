@@ -1,0 +1,4 @@
+*.pyc
+!spec/*.pyc
+/model/*.pyc
+/wizard/*.pyc

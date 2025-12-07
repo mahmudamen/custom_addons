@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Pharma User Group -->
+
+        <record id="group_pharmacy_user" model="res.groups">
+            <field name="name">Pharmacy UserOut</field>
+            <field name="category_id" ref="hospital_base.module_category_custom_access_rights"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">Users with access to Pharma-specific products and operations</field>
+        </record>
+        <!-- Record Rules for Pharma Products in Sale Order -->
+        <record id="pharma_sale_order_rule" model="ir.rule">
+            <field name="name">Pharma Products in Sale Order</field>
+            <field name="model_id" ref="sale.model_sale_order_line"/>
+            <field name="domain_force">[
+                '|',
+                ('product_id.is_pharma', '=', False),
+                ('order_id.user_id.groups_id', 'in', [ref('group_pharmacy_user')])
+            ]</field>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- Record Rules for Pharma Products in Inventory -->
+        <record id="pharma_stock_move_rule" model="ir.rule">
+            <field name="name">Pharma Products in Inventory</field>
+            <field name="model_id" ref="stock.model_stock_move"/>
+            <field name="domain_force">[
+                '|',
+                ('product_id.is_pharma', '=', False),
+                ('picking_id.user_id.groups_id', 'in', [ref('group_pharmacy_user')])
+            ]</field>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <record id="access_sale_order_type_pharmacy_user" model="ir.model.access">
+            <field name="name">Pharmacy User Sale Order Type Access</field>
+            <field name="model_id" ref="sale.model_sale_order"/>
+            <field name="group_id" ref="group_pharmacy_user"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="access_product_product_pharmacy_user" model="ir.model.access">
+            <field name="name">Pharmacy User Product Product Access</field>
+            <field name="model_id" ref="product.model_product_product"/>
+            <field name="group_id" ref="hospital_base.group_pharmacy_user"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="access_product_category_pharmacy_user" model="ir.model.access">
+            <field name="name">Pharmacy User Product Category Access</field>
+            <field name="model_id" ref="product.model_product_category"/>
+            <field name="group_id" ref="hospital_base.group_pharmacy_user"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="access_product_uom_pharmacy_user" model="ir.model.access">
+            <field name="name">Pharmacy User UoM Access</field>
+            <field name="model_id" ref="uom.model_uom_uom"/>
+            <field name="group_id" ref="hospital_base.group_pharmacy_user"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="access_product_uom_category_pharmacy_user" model="ir.model.access">
+            <field name="name">Pharmacy User UoM Category Access</field>
+            <field name="model_id" ref="uom.model_uom_category"/>
+            <field name="group_id" ref="hospital_base.group_pharmacy_user"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="access_sale_order_pharmacy_user" model="ir.model.access">
+            <field name="name">Pharmacy User Sale Order Access</field>
+            <field name="model_id" ref="sale.model_sale_order"/>
+            <field name="group_id" ref="hospital_base.group_pharmacy_user"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="access_sale_order_line_pharmacy_user" model="ir.model.access">
+            <field name="name">Pharmacy User Sale Order Line Access</field>
+            <field name="model_id" ref="sale.model_sale_order_line"/>
+            <field name="group_id" ref="hospital_base.group_pharmacy_user"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+    </data>
+</odoo>

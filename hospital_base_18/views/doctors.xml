@@ -1,0 +1,507 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="res_partner_doctor_form" model="ir.ui.view">
+            <field name="name">res_partner_doctor_form</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <form string="Doctors">
+                    <div class="alert alert-warning oe_edit_only" role="alert" name="warning_tax"
+                         invisible="not same_vat_partner_id">
+                        A partner with the same
+                        <span>
+                            <span class="o_vat_label">Tax ID</span>
+                        </span>
+                        already exists (<field name="same_vat_partner_id"/>), are you sure to create a new one?
+                    </div>
+                    <div class="alert alert-warning oe_edit_only" role="alert" name="warning_company"
+                         invisible="not same_company_registry_partner_id">
+                        A partner with the same
+                        <span>
+                            <span class="o_vat_label">Company Registry</span>
+                        </span>
+                        already exists (<field name="same_company_registry_partner_id"/>), are you sure to create a new
+                        one?
+                    </div>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button class="oe_stat_button" name="open_doctor_services"
+                                    string="Service List"
+                                    invisible="is_doctor == False"
+                                    type="object" icon="fa-credit-card">
+                            </button>
+                            <button class="oe_stat_button" name="open_services_list"
+                                    string="Service Book"
+                                    invisible="is_doctor == False"
+                                    type="object" icon="fa-credit-card">
+                            </button>
+                        </div>
+                        <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                        <field name="avatar_128" invisible="1"/>
+                        <field name="image_1920" widget="image" class="oe_avatar"
+                               options="{&quot;preview_image&quot;: &quot;avatar_128&quot;}"/>
+                        <div class="oe_title mb24">
+                            <field name="is_company" invisible="1"/>
+                            <field name="commercial_partner_id" invisible="1"/>
+                            <field name="active" invisible="1"/>
+                            <field name="company_id" invisible="1"/>
+                            <field name="country_code" invisible="1"/>
+                            <field name="company_type" invisible="1"/>
+                            <field name="is_doctor" invisible="1"/>
+                            <field name="is_laboratory" invisible="1"/>
+                            <h1>
+                                <field id="individual" options="{'line_breaks': False}" widget="text" class="text-break"
+                                       name="name" default_focus="1" placeholder="Doctor Name"
+                                       required="True"/>
+                            </h1>
+                        </div>
+
+                        <group>
+                            <group>
+                                <field name="degree" required="is_doctor == True" options="{'no_create': True}"/>
+                                <field name="clinic" required="is_doctor == True" options="{'no_create': True}"/>
+                                <span class="o_form_label o_td_label" name="address_name">
+                                    <field name="type" invisible="is_company" readonly="user_ids"
+                                           required="not is_company"
+                                           class="fw-bold"/>
+                                    <b invisible="not is_company">Address</b>
+                                </span>
+                                <div class="o_address_format">
+                                    <field name="street" placeholder="Street..." class="o_address_street"/>
+                                    <field name="street2" placeholder="Street 2..." class="o_address_street"/>
+                                    <field name="city" placeholder="City" class="o_address_city"/>
+                                    <field name="state_id" class="o_address_state" placeholder="State"
+                                           options="{'no_open': True, 'no_quick_create': True}"
+                                           context="{'country_id': country_id, 'default_country_id': country_id, 'zip': zip}"/>
+                                    <field name="zip" placeholder="ZIP" class="o_address_zip"/>
+                                    <div name="partner_address_country" class="d-flex justify-content-between">
+                                        <field name="country_id" placeholder="Country" class="o_address_country"
+                                               options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}"/>
+                                    </div>
+                                </div>
+                            </group>
+                            <group>
+                                <field name="phone" widget="phone"/>
+                                <field name="mobile" widget="phone"/>
+                                <field name="nat_id" placeholder="e.g. BE0477472701"/>
+                                <field name="vat" placeholder="e.g. BE0477472701"/>
+                                <field name="user_ids" invisible="1"/>
+                                <field name="active_lang_count" invisible="1"/>
+                                <field name="lang" invisible="active_lang_count &lt;= 1"/>
+                                <field name="category_id" widget="many2many_tags"
+                                       options="{'color_field': 'color', 'no_create_edit': True}"
+                                       placeholder="e.g. &quot;B2B&quot;, &quot;VIP&quot;, &quot;Consulting&quot;, ..."/>
+                            </group>
+                        </group>
+                        <notebook colspan="4">
+                            <page string="Info" name="doctor_data" autofocus="autofocus">
+                                <group string="Clinic">
+                                    <group>
+                                        <field name="is_shift" required="is_doctor == True"/>
+                                        <field name="lab_amount" required="is_doctor == True"/>
+                                        <field name="rad_amount" required="is_doctor == True"/>
+                                    </group>
+                                    <group>
+                                        <field name="surgery_tax" required="is_doctor == True"/>
+                                        <field name="in_amount" required="is_doctor == True"/>
+                                        <field name="inpatient_discount" required="is_doctor == True"/>
+                                    </group>
+                                </group>
+                                <group>
+                                    <group>
+                                        <field name="start_from" required="is_doctor == True"/>
+                                    </group>
+                                    <group>
+                                        <field name="max_num" required="is_doctor == True"/>
+                                    </group>
+                                </group>
+                                <group string="Accounting">
+                                    <group>
+                                        <field name="property_account_receivable_id"/>
+                                    </group>
+                                    <group>
+                                        <field name="property_account_payable_id"/>
+                                    </group>
+                                </group>
+                            </page>
+
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="res_partner_doctor_tree" model="ir.ui.view">
+            <field name="name">res_partner_doctor_tree</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="name"/>
+                    <field name="degree"/>
+                    <field name="clinic"/>
+                    <field name="phone"/>
+                    <field name="mobile"/>
+                    <field name="company_type" column_invisible="True"/>
+                    <field name="is_doctor" column_invisible="True"/>
+                    <field name="is_laboratory" column_invisible="True"/>
+                </list>
+            </field>
+        </record>
+        <record id="doctor_view_action" model="ir.actions.act_window">
+            <field name="name">اﻷطباء</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[('is_doctor', '=', True), ('company_type', '=', 'doctor')]</field>
+            <field name="context">{'default_company_type': 'doctor', 'default_is_doctor': True}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'list', 'view_id': ref('res_partner_doctor_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('res_partner_doctor_form')}),
+            ]"/>
+        </record>
+        <menuitem id="doctor_view_menu"
+                  name="اﻷطباء"
+                  parent="hospital_base.hospital_doctor_menu"
+                  action="doctor_view_action"
+                  sequence="10"/>
+
+        <!-- Kanban View for Doctor Services with Unique Classes -->
+        <record id="view_doctor_services_form" model="ir.ui.view">
+            <field name="name">doctor.services.form</field>
+            <field name="model">doctor.services</field>
+            <field name="arch" type="xml">
+                <form string="خدمات الطبيب">
+                    <header>
+                        <!-- Add any status bar or buttons here if needed -->
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" readonly="1"/>
+                            </h1>
+                        </div>
+
+                        <group>
+                            <group string="معلومات أساسية">
+                                <field name="doctor_id" options="{'no_create': True, 'no_open': True}"/>
+                                <field name="service_id" options="{'no_create': True, 'no_open': True}"/>
+                                <field name="patient_account"/>
+                                <field name="available_in"/>
+                                <field name="hospital_product_type"/>
+                            </group>
+
+                            <group string="تفاصيل الشركات">
+                                <field name="customer_id"
+                                       widget="many2many_tags"
+                                       invisible="patient_account == 'cash'"
+                                       options="{'no_create': True, 'no_open': True}"/>
+                            </group>
+                        </group>
+
+                        <notebook>
+                            <page string="التكلفة والمبالغ">
+                                <group>
+                                    <group string="التفاصيل المالية">
+                                        <field name="amount"/>
+                                        <field name="doctor_amount"/>
+                                        <field name="exp_amount"/>
+                                        <field name="tax_amount"/>
+                                    </group>
+
+                                    <group string="الإجمالي">
+                                        <field name="total_amount" readonly="1"
+                                               class="oe_subtotal_footer_separator"/>
+                                    </group>
+                                </group>
+                            </page>
+
+                            <page string="المتابعة">
+                                <chatter/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+        <record id="doctor_service_kanban" model="ir.ui.view">
+            <field name="name">doctor.services.kanban</field>
+            <field name="model">doctor.services</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_mobile ds_kanban_view" default_group_by="doctor_id">
+                    <field name="doctor_id"/>
+                    <field name="service_id"/>
+                    <field name="patient_account"/>
+                    <field name="customer_id"/>
+                    <field name="amount"/>
+                    <field name="doctor_amount"/>
+                    <field name="exp_amount"/>
+                    <field name="tax_amount"/>
+                    <field name="total_amount"/>
+                    <field name="available_in"/>
+                    <field name="hospital_product_type"/>
+                    <progressbar field="patient_account" colors='{"cash": "success", "contract": "info"}'/>
+                    <templates>
+                        <t t-name="card">
+                            <div class="oe_kanban_global_click ds_kanban_card">
+                                <div class="ds_card_header">
+                                    <div class="ds_service_icon">
+                                        <i class="fa fa-stethoscope" title="t"/>
+                                    </div>
+                                    <div class="ds_service_info">
+                                        <h4 class="ds_service_title">
+                                            <field name="service_id"/>
+                                        </h4>
+                                        <div class="ds_doctor_name">
+                                            <i class="fa fa-user-md" title="u"/>
+                                            <field name="doctor_id"/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="ds_status_section">
+                                    <span t-if="record.patient_account.raw_value == 'cash'"
+                                          class="ds_badge ds_badge_cash">
+                                        <i class="fa fa-money" title="money"/> نقدي
+                                    </span>
+                                    <span t-if="record.patient_account.raw_value == 'contract'"
+                                          class="ds_badge ds_badge_contract">
+                                        <i class="fa fa-file-text-o" title="file"/> تعاقد
+                                    </span>
+                                    <span t-if="record.available_in.raw_value"
+                                          class="ds_badge ds_badge_location">
+                                        <i class="fa fa-map-marker" title="map"/>
+                                        <field name="available_in"/>
+                                    </span>
+                                </div>
+
+                                <div t-if="record.customer_id.raw_value.length > 0" class="ds_insurance_section">
+                                    <div class="ds_insurance_header">
+                                        <i class="fa fa-shield" title="shield"/> شركات التأمين
+                                    </div>
+                                    <field name="customer_id" widget="many2many_tags"/>
+                                </div>
+
+                                <div class="ds_financial_section">
+                                    <div class="ds_amount_grid">
+                                        <div class="ds_amount_item">
+                                            <div class="ds_amount_icon">
+                                                <i class="fa fa-dollar" title="dollar"/>
+                                            </div>
+                                            <div class="ds_amount_details">
+                                                <span class="ds_amount_label">القيمة</span>
+                                                <span class="ds_amount_value">
+                                                    <field name="amount"/> ج.م
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="ds_amount_item ds_doctor_amount">
+                                            <div class="ds_amount_icon">
+                                                <i class="fa fa-user-md" title="user"/>
+                                            </div>
+                                            <div class="ds_amount_details">
+                                                <span class="ds_amount_label">نصيب الطبيب</span>
+                                                <span class="ds_amount_value">
+                                                    <field name="doctor_amount"/> ج.م
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div t-if="record.exp_amount.raw_value > 0 or record.tax_amount.raw_value > 0"
+                                         class="ds_additional_costs">
+                                        <div t-if="record.exp_amount.raw_value > 0" class="ds_cost_item">
+                                            <i class="fa fa-calculator" title="calculator"/>
+                                            <span>مصروفات:</span>
+                                            <span class="ds_cost_value">
+                                                <field name="exp_amount"/> ج.م
+                                            </span>
+                                        </div>
+                                        <div t-if="record.tax_amount.raw_value > 0" class="ds_cost_item">
+                                            <i class="fa fa-percent" title="percent"/>
+                                            <span>ضريبة:</span>
+                                            <span class="ds_cost_value">
+                                                <field name="tax_amount"/> ج.م
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="ds_total_section">
+                                    <div class="ds_total_content">
+                                        <span class="ds_total_label">الإجمالي</span>
+                                        <span class="ds_total_value">
+                                            <field name="total_amount"/> ج.م
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="ds_progress_section">
+                                    <t t-set="percentage" t-value="record.amount.raw_value and (record.doctor_amount.raw_value / record.amount.raw_value * 100) or 0"/>
+                                    <div class="ds_progress_header">
+                                        <span class="ds_progress_label">نسبة الطبيب</span>
+                                        <span class="ds_progress_percentage">
+                                            <t t-esc="Math.round(percentage)"/>%
+                                        </span>
+                                    </div>
+                                    <div class="ds_progress_bar">
+                                        <div class="ds_progress_fill"
+                                             t-att-style="'width: ' + percentage + '%'"
+                                             t-att-data-percentage="percentage">
+                                            <span class="ds_progress_glow"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+        <record id="doctor_service_tree" model="ir.ui.view">
+            <field name="name">doctor_service_tree</field>
+            <field name="model">doctor.services</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="doctor_id"/>
+                    <field name="service_id"/>
+                    <field name="patient_account"/>
+                    <field name="customer_id" widget="many2many_tags"/>
+                    <field name="available_in" optional="show"/>
+                    <field name="hospital_product_type" optional="hide"/>
+                    <field name="amount"/>
+                    <field name="doctor_amount"/>
+                    <field name="exp_amount"/>
+                    <field name="tax_amount"/>
+                    <field name="total_amount"/>
+                </list>
+            </field>
+        </record>
+        <record id="doctor_service_search" model="ir.ui.view">
+            <field name="name">doctor.services.search</field>
+            <field name="model">doctor.services</field>
+            <field name="arch" type="xml">
+                <search>
+                    <!-- Search Fields -->
+                    <field name="name" string="الاسم"/>
+                    <field name="doctor_id" string="الطبيب"/>
+                    <field name="service_id" string="الخدمة"/>
+                    <field name="customer_id" string="الشركات"/>
+
+                    <!-- Patient Account Filters -->
+                    <filter name="cash" string="نقدي" domain="[('patient_account', '=', 'cash')]"/>
+                    <filter name="contract" string="تعاقد" domain="[('patient_account', '=', 'contract')]"/>
+
+                    <separator/>
+
+                    <!-- Hospital Product Type Filters -->
+                    <filter name="medicament" string="أدوية" domain="[('hospital_product_type', '=', 'medicament')]"/>
+                    <filter name="consumable" string="مستهلكات" domain="[('hospital_product_type', '=', 'consumable')]"/>
+                    <filter name="medical_service" string="خدمة طبية" domain="[('hospital_product_type', '=', 'medical_service')]"/>
+                    <filter name="os" string="خدمات أخرى" domain="[('hospital_product_type', '=', 'os')]"/>
+                    <filter name="accommodation" string="إقامة" domain="[('hospital_product_type', '=', 'accommodation')]"/>
+
+                    <separator/>
+
+                    <!-- Available In Filters -->
+                    <filter name="surgeries" string="عمليات" domain="[('available_in', '=', 'surgeries')]"/>
+                    <filter name="clinic" string="عيادات خارجية" domain="[('available_in', '=', 'clinic')]"/>
+                    <filter name="inpatient" string="الداخلي" domain="[('available_in', '=', 'inpatient')]"/>
+                    <filter name="icu" string="عناية مركزة" domain="[('available_in', '=', 'icu')]"/>
+                    <filter name="laboratory" string="المعمل" domain="[('available_in', '=', 'laboratory')]"/>
+                    <filter name="catheterization" string="القسطرة" domain="[('available_in', '=', 'catheterization')]"/>
+                    <filter name="radiology" string="الأشعة" domain="[('available_in', '=', 'radiology')]"/>
+                    <filter name="nursing" string="تمريض" domain="[('available_in', '=', 'nursing')]"/>
+
+                    <separator/>
+
+                    <!-- Amount Filters -->
+                    <filter name="has_doctor_amount" string="يوجد نصيب للطبيب" domain="[('doctor_amount', '>', 0)]"/>
+                    <filter name="has_exp_amount" string="يوجد مصروفات" domain="[('exp_amount', '>', 0)]"/>
+                    <filter name="has_tax_amount" string="يوجد ضريبة" domain="[('tax_amount', '>', 0)]"/>
+
+                    <!-- Amount Range Filters -->
+                    <filter name="amount_low" string="القيمة أقل من 100" domain="[('amount', '&lt;', 100)]"/>
+                    <filter name="amount_medium" string="القيمة 100-500" domain="[('amount', '&gt;=', 100), ('amount', '&lt;=', 500)]"/>
+                    <filter name="amount_high" string="القيمة أكثر من 500" domain="[('amount', '&gt;', 500)]"/>
+
+                    <separator/>
+
+                    <!-- Doctor Amount Range Filters -->
+                    <filter name="doctor_amount_low" string="نصيب الطبيب أقل من 50" domain="[('doctor_amount', '&lt;', 50)]"/>
+                    <filter name="doctor_amount_medium" string="نصيب الطبيب 50-200" domain="[('doctor_amount', '&gt;=', 50), ('doctor_amount', '&lt;=', 200)]"/>
+                    <filter name="doctor_amount_high" string="نصيب الطبيب أكثر من 200" domain="[('doctor_amount', '&gt;', 200)]"/>
+
+                    <!-- Group By -->
+                    <group expand="0" string="تجميع حسب">
+                        <filter name="group_doctor" string="الطبيب" context="{'group_by': 'doctor_id'}"/>
+                        <filter name="group_service" string="الخدمة" context="{'group_by': 'service_id'}"/>
+                        <filter name="group_patient_account" string="نوع الحساب" context="{'group_by': 'patient_account'}"/>
+                        <filter name="group_hospital_product_type" string="نوع الصنف" context="{'group_by': 'hospital_product_type'}"/>
+                        <filter name="group_available_in" string="متاح في" context="{'group_by': 'available_in'}"/>
+                        <separator/>
+                        <filter name="group_month" string="الشهر" context="{'group_by': 'create_date:month'}"/>
+                        <filter name="group_year" string="السنة" context="{'group_by': 'create_date:year'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <record id="doctor_service_action" model="ir.actions.act_window">
+            <field name="name">خدمات الأطباء</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">doctor.services</field>
+            <field name="view_mode">kanban,list,form</field>
+            <field name="search_view_id" ref="doctor_service_search"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    إنشاء خدمة طبيب جديدة
+                </p>
+                <p>
+                    قم بتعريف الخدمات الطبية المتاحة للأطباء مع تحديد التكلفة ونصيب الطبيب
+                </p>
+            </field>
+        </record>
+        <menuitem id="doctor_service_menu"
+                  name="خدمات اﻷطباء"
+                  parent="hospital_base.hospital_doctor_menu"
+                  action="doctor_service_action"
+                  sequence="20"/>
+
+        <record id="doctor_degrees_view_form" model="ir.ui.view">
+            <field name="name">doctor_degrees_view_form</field>
+            <field name="model">doctor.degrees</field>
+            <field name="arch" type="xml">
+                <form string="Degrees">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="doctor_degree_view_tree" model="ir.ui.view">
+            <field name="name">doctor_degree_view_tree</field>
+            <field name="model">doctor.degrees</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="name"/>
+                    <field name="active" column_invisible="True"/>
+                </list>
+            </field>
+        </record>
+        <record id="doctor_degrees_view_action" model="ir.actions.act_window">
+            <field name="name">درجات الاطباء</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">doctor.degrees</field>
+            <field name="view_mode">list,form</field>
+        </record>
+        <menuitem id="doctor_degree_view_menu"
+                  name="درجات اﻷطباء"
+                  parent="hospital_base.hospital_doctor_menu"
+                  action="doctor_degrees_view_action"
+                  sequence="100"/>
+
+    </data>
+</odoo>

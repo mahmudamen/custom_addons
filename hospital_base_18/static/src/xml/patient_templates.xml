@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="patient_templates" xml:space="preserve">
+
+    <!-- Patient Carousel Template -->
+    <t t-name="hospital_management.PatientCarousel">
+        <div class="patient-carousel-wrapper"
+             t-ref="carousel"
+             t-on-mouseenter="onMouseEnter"
+             t-on-mouseleave="onMouseLeave">
+
+            <div class="carousel-container">
+                <div class="carousel-track">
+                    <div t-foreach="props.items" t-as="item" t-key="item_index"
+                         class="carousel-item"
+                         t-att-class="{ 'active': item_index === state.currentIndex }">
+                        <div class="carousel-card" t-att-style="{ background: item.gradient }">
+                            <i t-att-class="'fas ' + item.icon + ' carousel-icon'"/>
+                            <h3 t-esc="item.title"/>
+                            <p t-esc="item.description"/>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <button class="carousel-nav carousel-nav-prev" t-on-click="prev">
+                    <i class="fas fa-chevron-right"/>
+                </button>
+                <button class="carousel-nav carousel-nav-next" t-on-click="next">
+                    <i class="fas fa-chevron-left"/>
+                </button>
+
+                <!-- Dots -->
+                <div class="carousel-dots">
+                    <button t-foreach="props.items" t-as="item" t-key="item_index"
+                            class="carousel-dot"
+                            t-att-class="{ 'active': item_index === state.currentIndex }"
+                            t-on-click="() => goToSlide(item_index)"/>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <!-- Patient Info View Template -->
+    <t t-name="hospital_management.PatientInfoView">
+        <div class="patient-info-container">
+            <div class="patient-header animate-on-load">
+                <div class="header-content">
+                    <div class="patient-identity">
+                        <img src="/hospital_management/static/img/avatar-placeholder.png"
+                             alt="Patient Avatar" class="patient-avatar"/>
+                        <div class="patient-details">
+                            <h1 class="patient-name" t-esc="state.patientData.name"/>
+                            <span class="patient-id" t-esc="state.patientData.id"/>
+                        </div>
+                    </div>
+                    <div class="patient-badges">
+                        <span class="badge badge-info">
+                            <i class="fas fa-user"/> <t t-esc="state.patientData.age"/> سنة
+                        </span>
+                        <span class="badge badge-success">
+                            <i class="fas fa-check-circle"/> مستقر
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons animate-on-load">
+                <button class="btn btn-excel" t-on-click="onExcelExport">
+                    <i class="fas fa-file-excel"/>
+                    <span>تصدير Excel</span>
+                </button>
+                <button class="btn btn-print" t-on-click="onPrint">
+                    <i class="fas fa-print"/>
+                    <span>طباعة</span>
+                </button>
+                <button class="btn btn-primary" t-on-click="onAddRecord">
+                    <i class="fas fa-plus"/>
+                    <span>إضافة سجل</span>
+                </button>
+            </div>
+
+            <!-- Carousel Section -->
+            <div class="carousel-section animate-on-load">
+                <PatientCarousel items="state.carouselItems" autoplay="true" interval="5000"/>
+            </div>
+
+            <!-- Patient Information Grid -->
+            <div class="info-grid-section animate-on-load">
+                <h2 class="section-title">معلومات المريض</h2>
+                <div class="info-grid">
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <i class="fas fa-user-md"/>
+                        </div>
+                        <div class="info-content">
+                            <label>الطبيب المعالج</label>
+                            <span t-esc="state.patientData.doctor"/>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <i class="fas fa-bed"/>
+                        </div>
+                        <div class="info-content">
+                            <label>الغرفة</label>
+                            <span t-esc="state.patientData.room"/>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <i class="fas fa-calendar-check"/>
+                        </div>
+                        <div class="info-content">
+                            <label>تاريخ الدخول</label>
+                            <span t-esc="state.patientData.admission_date"/>
+                        </div>
+                    </div>
+                                    <!-- Continue with more info cards -->
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <i class="fas fa-stethoscope"/>
+                        </div>
+                        <div class="info-content">
+                            <label>التشخيص</label>
+                            <span t-esc="state.patientData.diagnosis"/>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <i class="fas fa-heartbeat"/>
+                        </div>
+                        <div class="info-content">
+                            <label>الحالة</label>
+                            <span class="status-tag status-stable" t-esc="state.patientData.status"/>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <i class="fas fa-file-medical"/>
+                        </div>
+                        <div class="info-content">
+                            <label>رقم الملف</label>
+                            <span>PAT102306</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Medical History Section -->
+            <div class="medical-history-section animate-on-load">
+                <h2 class="section-title">السجل الطبي</h2>
+                <div class="history-timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-marker">
+                            <i class="fas fa-pills"/>
+                        </div>
+                        <div class="timeline-content">
+                            <h4>الأدوية الحالية</h4>
+                            <p>5 أدوية نشطة - آخر تحديث منذ ساعتين</p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-marker">
+                            <i class="fas fa-procedures"/>
+                        </div>
+                        <div class="timeline-content">
+                            <h4>العمليات الجراحية</h4>
+                            <p>عملية واحدة مجدولة</p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-marker">
+                            <i class="fas fa-vials"/>
+                        </div>
+                        <div class="timeline-content">
+                            <h4>التحاليل المخبرية</h4>
+                            <p>3 تحاليل جديدة متاحة</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Financial Information -->
+            <div class="financial-section animate-on-load">
+                <h2 class="section-title">المعلومات المالية</h2>
+                <div class="financial-cards">
+                    <div class="financial-card">
+                        <div class="financial-icon">
+                            <i class="fas fa-dollar-sign"/>
+                        </div>
+                        <div class="financial-info">
+                            <label>إجمالي الفواتير</label>
+                            <span class="amount">25,000 ج.م</span>
+                        </div>
+                    </div>
+
+                    <div class="financial-card">
+                        <div class="financial-icon paid">
+                            <i class="fas fa-check-double"/>
+                        </div>
+                        <div class="financial-info">
+                            <label>المدفوع</label>
+                            <span class="amount paid">15,000 ج.م</span>
+                        </div>
+                    </div>
+
+                    <div class="financial-card">
+                        <div class="financial-icon pending">
+                            <i class="fas fa-clock"/>
+                        </div>
+                        <div class="financial-info">
+                            <label>المتبقي</label>
+                            <span class="amount pending">10,000 ج.م</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="payment-progress">
+                    <label>نسبة السداد</label>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 60%;">
+                            <span>60%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activities -->
+            <div class="activities-section animate-on-load">
+                <h2 class="section-title">النشاطات الأخيرة</h2>
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-user-nurse"/>
+                        </div>
+                        <div class="activity-content">
+                            <h4>زيارة التمريض</h4>
+                            <p>تم فحص العلامات الحيوية</p>
+                            <span class="activity-time">منذ 30 دقيقة</span>
+                        </div>
+                    </div>
+
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-pills"/>
+                        </div>
+                        <div class="activity-content">
+                            <h4>جرعة دواء</h4>
+                            <p>تم إعطاء المضاد الحيوي</p>
+                            <span class="activity-time">منذ ساعة</span>
+                        </div>
+                    </div>
+
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-user-md"/>
+                        </div>
+                        <div class="activity-content">
+                            <h4>زيارة الطبيب</h4>
+                            <p>د. محمد عبد التواب - فحص روتيني</p>
+                            <span class="activity-time">منذ 3 ساعات</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Footer -->
+            <div class="action-footer animate-on-load">
+                <button class="btn btn-secondary">
+                    <i class="fas fa-arrow-right"/>
+                    <span>العودة</span>
+                </button>
+                <div class="footer-actions">
+                    <button class="btn btn-danger">
+                        <i class="fas fa-sign-out-alt"/>
+                        <span>تسجيل الخروج</span>
+                    </button>
+                    <button class="btn btn-success">
+                        <i class="fas fa-save"/>
+                        <span>حفظ التغييرات</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <!-- Loading State Template -->
+    <t t-name="hospital_management.LoadingState">
+        <div class="loading-container">
+            <div class="loading-spinner">
+                <div class="spinner-circle"></div>
+                <div class="spinner-circle"></div>
+                <div class="spinner-circle"></div>
+            </div>
+            <p class="loading-text">جاري تحميل البيانات...</p>
+        </div>
+    </t>
+
+    <!-- Empty State Template -->
+    <t t-name="hospital_management.EmptyState">
+        <div class="empty-state">
+            <i class="fas fa-inbox empty-icon"/>
+            <h3>لا توجد بيانات</h3>
+            <p>لا توجد بيانات متاحة لهذا المريض</p>
+            <button class="btn btn-primary" t-on-click="onAddRecord">
+                <i class="fas fa-plus"/>
+                <span>إضافة بيانات جديدة</span>
+            </button>
+        </div>
+    </t>
+
+    <!-- Error State Template -->
+    <t t-name="hospital_management.ErrorState">
+        <div class="error-state">
+            <i class="fas fa-exclamation-triangle error-icon"/>
+            <h3>حدث خطأ</h3>
+            <p t-esc="props.message || 'حدث خطأ أثناء تحميل البيانات'"/>
+            <button class="btn btn-primary" t-on-click="onRetry">
+                <i class="fas fa-redo"/>
+                <span>إعادة المحاولة</span>
+            </button>
+        </div>
+    </t>
+</templates>

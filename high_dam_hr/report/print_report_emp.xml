@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <template id="report_patient_card_document">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="web.external_layout">
+                        <h2>بيان حالة وظيفية</h2>
+                        <div class="page" style="margin: 10px;padding:10px;">
+                            <br/>
+                            <br/>
+                            <br/>
+                            <div class="right-block" style="height: 2px;margin: 2px;padding:2px; width: auto; ">
+                                <div class="row" style="background:#E6E6FA">
+                                    <div style="margin-left: 10px; margin-right: 10px; margin-top: 10px; margin-bottom: 10px; font-size:16px">
+                                        <b style="font-family:'almarai-Bold';">
+                                            اسم الموظف :<span t-field="o.name"/>
+                                        </b>
+                                    </div>
+                                    <div style="margin-left: 10px; margin-right: 10px; margin-top: 10px; margin-bottom: 10px; font-size:16px">
+                                        <b style="font-family:'almarai-Bold';">
+                                            تاريخ الميلاد :<span t-field="o.birthday"/>
+                                        </b>
+                                    </div>
+                                </div>
+                                <br/>
+                                <div class="row" style="background:#E6E6FA">
+                                    <div style="margin-left: 10px; margin-right: 10px; margin-top: 10px; margin-bottom: 10px; font-size:16px">
+                                        <b style="font-family:'almarai-Bold';">
+                                            تاريخ التعيين الفعلي :<span t-field="o.hiring_date"/>
+                                        </b>
+                                    </div>
+                                    <div style="margin-left: 10px; margin-right: 10px; margin-top: 10px; margin-bottom: 10px; font-size:16px">
+                                        <b style="font-family:'almarai-Bold';">
+                                            التاريخ الفرضي :<span t-field="o.start_date"/>
+                                        </b>
+                                    </div>
+                                </div>
+                                <br/>
+                                <div class="row" style="background:#E6E6FA">
+                                    <div class="col-xs-4">
+                                        <div style="margin-left: 10px; margin-right: 10px; margin-top: 10px; margin-bottom: 10px; font-size:16px">
+                                            <b style="font-family:'almarai-Bold';">
+                                                المؤهل :<span t-field="o.degree"/>
+                                            </b>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-4">
+                                        <div style="margin-left: 10px; margin-right: 10px; margin-top: 10px; margin-bottom: 10px; font-size:16px">
+                                            <b style="font-family:'almarai-Bold';">
+                                                الوظيفة :<span t-field="o.job_name"/>
+                                            </b>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <br/>
+                                <div class="row" style="background:#E6E6FA">
+                                    <div style="margin-left: 10px; margin-right: 10px; margin-top: 10px; margin-bottom: 10px; font-size:16px">
+                                        <b style="font-family:'almarai-Bold';">
+                                            المجموعة الوظيفية :<span t-field="o.qualitative_group"/>
+                                        </b>
+                                    </div>
+                                    <div style="margin-left: 10px; margin-right: 10px; margin-top: 10px; margin-bottom: 10px; font-size:16px">
+                                        <b style="font-family:'almarai-Bold';">
+                                            المستوي الوظيفي : <span t-field="o.level_id"/>
+                                        </b>
+                                    </div>
+                                    <div style="margin-left: 10px; margin-right: 10px; margin-top: 10px; margin-bottom: 10px; font-size:16px">
+                                        <b style="font-family:'almarai-Bold';">
+                                            تاريخ الحصول عليها : <span t-field="o.level_date_got"/>
+                                        </b>
+                                    </div>
+                                </div>
+                                <br/>
+                                <div class="row" style="background:#E6E6FA">
+                                    <div style="margin-left: 10px; margin-right: 10px; margin-top: 10px; margin-bottom: 10px; font-size:16px">
+                                        <b style="font-family:'almarai-Bold';">
+                                            الموقف من التجنيد :<span t-field="o.military_status"/>
+                                        </b>
+                                    </div>
+                                    <div style="margin-left: 10px; margin-right: 10px; margin-top: 10px; margin-bottom: 10px; font-size:16px">
+                                        <b style="font-family:'almarai-Bold';">
+                                            تقارير الكفاية : <span t-field="o.rate_ids"/>
+                                        </b>
+                                    </div>
+                                </div>
+                                <div class="row" style="background:#E6E6FA">
+                                    <div style="margin-left: 10px; margin-right: 10px; margin-top: 10px; margin-bottom: 10px; font-size:16px">
+                                        <b style="font-family:'almarai-Bold';">
+                                            الجزاءات : <span t-field="o.punch_ids"/>
+                                        </b>
+                                    </div>
+                                </div>
+
+                                <span/>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <span/>
+                                <div class="row" style="background:#E6E6FA">
+                                    <div style="margin-left: 10px; margin-right: 10px; margin-top: 10px; margin-bottom: 10px; font-size:16px">
+                                        <b style="font-family:'almarai-Bold';">
+                                            المختص
+                                        </b>
+                                    </div>
+                                </div>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <br/>
+                                <br/>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+        <template id="report_emp_id_card">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="high_dam_hr.report_patient_card_document"/>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

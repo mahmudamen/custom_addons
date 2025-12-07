@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    <!-- Room Views -->
+    <record id="res_rooms_form" model="ir.ui.view">
+        <field name="name">res_rooms_form</field>
+        <field name="model">res.rooms</field>
+        <field name="arch" type="xml">
+            <form string="Rooms">
+                <header>
+                    <field name="is_available" widget="boolean_toggle" options="{'active': 'Available', 'inactive': 'Full'}"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Room Name" class="room-name"/></h1>
+                    </div>
+
+
+                    <notebook>
+                        <page string="Room Information" name="room_info">
+                            <group>
+                                <group>
+                                    <field name="floor" widget="char" placeholder="Floor number/name"/>
+                                    <field name="no_of_beds" widget="integer"/>
+                                    <field name="room_capacity" widget="radio" options="{'horizontal': true}"/>
+                                </group>
+                                <group>
+                                    <field name="room_type" widget="selection"/>
+                                    <field name="current_patients_count" readonly="1"/>
+                                    <field name="active" widget="boolean_toggle"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Beds" name="beds">
+                            <field name="bed_ids" widget="one2many">
+                                <list editable="bottom" decoration-success="state=='available'" decoration-danger="state=='not_available'" decoration-primary="state=='full'">
+                                    <field name="name"/>
+                                    <field name="state" widget="badge"
+                                        decoration-success="state == 'available'"
+                                        decoration-danger="state == 'not_available'"
+                                        decoration-primary="state == 'full'"/>
+                                    <field name="service_id"/>
+                                    <field name="patient_id" readonly="1"/>
+                                    <button name="mark_as_available" string="Set Available" type="object" icon="fa-check-circle" invisible="state == 'available'"/>
+                                    <button name="mark_as_not_available" string="Set Unavailable" type="object" icon="fa-ban" invisible="state == 'not_available'"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="res_rooms_tree" model="ir.ui.view">
+        <field name="name">res_rooms_tree</field>
+        <field name="model">res.rooms</field>
+        <field name="arch" type="xml">
+            <list decoration-success="is_available" decoration-danger="not is_available" sample="1">
+                <field name="name"/>
+                <field name="floor"/>
+                <field name="no_of_beds"/>
+                <field name="room_capacity"/>
+                <field name="room_type"/>
+                <field name="current_patients_count"/>
+                <field name="is_available" widget="boolean_toggle"/>
+                <field name="active" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="res_rooms_kanban" model="ir.ui.view">
+    <field name="name">res_rooms_kanban</field>
+    <field name="model">res.rooms</field>
+    <field name="arch" type="xml">
+        <kanban class="o_res_rooms_kanban">
+            <field name="id"/>
+            <field name="name"/>
+            <field name="room_type"/>
+            <field name="room_capacity"/>
+            <field name="floor"/>
+            <field name="no_of_beds"/>
+            <field name="current_patients_count"/>
+            <field name="is_available"/>
+            <templates>
+                <t t-name="card">
+                    <div class="o_kanban_card oe_kanban_global_click">
+                        <!-- Room Number Header -->
+                        <div class="o_kanban_record_top">
+                            <div class="o_kanban_record_title">
+                                <field name="name" class="room-number"/>
+                            </div>
+                            <div t-if="record.is_available.raw_value" class="room-status available">
+                                <i class="fa fa-check-circle" title="check"/> متاح
+                            </div>
+                            <div t-else="" class="room-status occupied">
+                                <i class="fa fa-bed" title="bed"/> محجوز
+                            </div>
+                        </div>
+
+                        <!-- Room Details Content -->
+                        <div class="o_kanban_record_body">
+                            <div class="room-detail-row">
+                                <strong class="room-label">نوع الغرفة:</strong>
+                                <span class="room-value"><field name="room_type"/></span>
+                            </div>
+                            <div class="room-detail-row">
+                                <strong class="room-label">سعة الغرفة:</strong>
+                                <span class="room-value"><field name="room_capacity"/></span>
+                            </div>
+                            <div class="room-detail-row">
+                                <strong class="room-label">الأسرة:</strong>
+                                <span class="room-value"><field name="no_of_beds"/></span>
+                            </div>
+                            <div t-if="record.floor.raw_value" class="room-detail-row">
+                                <strong class="room-label">رقم الدور:</strong>
+                                <span class="room-value"><field name="floor"/></span>
+                            </div>
+
+                            <!-- Separator -->
+                            <div class="room-separator"></div>
+
+                            <!-- Patient Count -->
+                            <div class="room-detail-row patient-count">
+                                <strong class="room-label">المرضي:</strong>
+                                <span class="room-value patient-number">
+                                    <field name="current_patients_count"/>
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Actions Footer -->
+                        <div class="o_kanban_record_bottom">
+                            <div class="oe_kanban_bottom_left">
+                                <!-- Fixed: use button with name attribute instead of href -->
+                                <button name="action_view_beds" type="object" class="btn btn-sm view-beds-btn">
+                                    <i class="fa fa-bed" title="bed"/> عرض الأسرة
+                                </button>
+                            </div>
+                            <div class="oe_kanban_bottom_right">
+                                <field name="is_available" widget="boolean_toggle"/>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </templates>
+        </kanban>
+    </field>
+</record>
+
+    <record id="res_rooms_pivot" model="ir.ui.view">
+        <field name="name">res_rooms_pivot</field>
+        <field name="model">res.rooms</field>
+        <field name="arch" type="xml">
+            <pivot string="Rooms Analysis" sample="1">
+                <field name="room_type" type="row"/>
+                <field name="room_capacity" type="row"/>
+                <field name="floor" type="col"/>
+                <field name="current_patients_count" type="measure"/>
+                <field name="no_of_beds" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="res_rooms_action" model="ir.actions.act_window">
+        <field name="name">الغرف</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">res.rooms</field>
+        <field name="view_mode">kanban,list,form,pivot</field>
+    </record>
+
+    <!-- Bed Views -->
+    <record id="res_beds_form" model="ir.ui.view">
+        <field name="name">res_beds_form</field>
+        <field name="model">res.beds</field>
+        <field name="arch" type="xml">
+            <form string="Beds">
+                <header>
+                    <field name="state" widget="statusbar" statusbar_visible="not_available,available,full"/>
+                    <button name="mark_as_available" string="Set Available" type="object" class="oe_highlight" invisible="state == 'available'"/>
+                    <button name="mark_as_not_available" string="Set Unavailable" type="object" class="oe_highlight" invisible="state ==  'not_available'"/>
+                    <button name="add_new_patient" string="Add Patient" type="object" class="oe_highlight"
+                            invisible="state != 'available'"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Bed Name" class="bed-name"/></h1>
+                    </div>
+                    <div class="bed-status-panel">
+                        <field name="state" widget="badge"
+                               decoration-success="state == 'available'"
+                               decoration-danger="state == 'not_available'"
+                               decoration-primary="state == 'full'"/>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="room_id" options="{'no_create': True}"/>
+                            <field name="service_id" options="{'no_create': True}"/>
+                        </group>
+                        <group>
+                            <field name="patient_id" readonly="1" invisible="state != 'full'"/>
+                            <field name="patient_file_id" readonly="1" invisible="state != 'full'"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="res_beds_tree" model="ir.ui.view">
+        <field name="name">res_beds_tree</field>
+        <field name="model">res.beds</field>
+        <field name="arch" type="xml">
+            <list decoration-success="state=='available'" decoration-danger="state=='not_available'" decoration-primary="state=='full'" sample="1">
+                <field name="name"/>
+                <field name="room_id"/>
+                <field name="service_id"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'available'"
+                       decoration-danger="state == 'not_available'"
+                       decoration-primary="state == 'full'"/>
+                <field name="patient_id" optional="show"/>
+                <field name="active" column_invisible="1"/>
+                <button name="mark_as_available" string="Set Available" type="object" icon="fa-check-circle" invisible="state == 'available'"/>
+                <button name="mark_as_not_available" string="Set Unavailable" type="object" icon="fa-ban" invisible="state == 'not_available'"/>
+                <button name="add_new_patient" string="Add Patient" type="object" icon="fa-user-plus" invisible="state != 'available'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="res_beds_kanban" model="ir.ui.view">
+        <field name="name">res_beds_kanban</field>
+        <field name="model">res.beds</field>
+        <field name="arch" type="xml">
+            <kanban class="o_res_beds_kanban" sample="1">
+                <field name="id"/>
+                <field name="name"/>
+                <field name="room_id"/>
+                <field name="service_id"/>
+                <field name="state"/>
+                <field name="patient_id"/>
+                <field name="patient_file_id"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_card oe_kanban_global_click bed-card">
+                            <div class="bed-kanban-header">
+                                <div class="bed-kanban-title">
+                                    <h3 class="bed-name"><field name="name"/></h3>
+                                    <field name="state" widget="badge"
+                                           decoration-success="state == 'available'"
+                                           decoration-danger="state == 'not_available'"
+                                           decoration-primary="state == 'full'"/>
+                                </div>
+                            </div>
+                            <div class="bed-kanban-content">
+                                <div class="bed-info">
+                                    <span class="info-label">Room:</span>
+                                    <span class="info-value"><field name="room_id"/></span>
+                                </div>
+                                <div class="bed-info">
+                                    <span class="info-label">Service:</span>
+                                    <span class="info-value"><field name="service_id"/></span>
+                                </div>
+                                <div invisible="state != 'full'" class="bed-info patient-info">
+                                    <span class="info-label">Patient:</span>
+                                    <span class="info-value"><field name="patient_id"/></span>
+                                </div>
+                            </div>
+                            <div class="bed-kanban-footer">
+                                <button name="mark_as_available" string="Set Available" type="object" class="btn btn-sm btn-success" invisible="state == 'available'">
+                                    <i class="fa fa-check-circle" title="Available"/> Available
+                                </button>
+                                <button name="mark_as_not_available" string="Set Unavailable" type="object" class="btn btn-sm btn-danger" invisible="state == 'not_available'">
+                                    <i class="fa fa-ban" title="Unavailable"/> Unavailable
+                                </button>
+                                <button name="add_new_patient" string="Add Patient" type="object" class="btn btn-sm btn-primary" invisible="state != 'available'">
+                                    <i class="fa fa-user-plus" title="Add Patient"/> Add Patient
+                                </button>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+
+
+    <record id="res_beds_action" model="ir.actions.act_window">
+        <field name="name">اﻷسرة</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">res.beds</field>
+        <field name="view_mode">kanban,list,form</field>
+    </record>
+
+    <menuitem id="res_rooms_menu"
+              name="الغرف"
+              parent="hospital_base.res_rooms_root_menu"
+              action="res_rooms_action"
+              sequence="10"/>
+
+    <menuitem id="res_beds_menu"
+              name="اﻷسرة"
+              parent="hospital_base.res_rooms_root_menu"
+              action="res_beds_action"
+              sequence="20"/>
+
+
+    </data>
+</odoo>

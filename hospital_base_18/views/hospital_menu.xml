@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <menuitem id="hospital_base_clinic_menu"
+                  name="العيادات"
+                  web_icon="hospital_base,static/description/clinic.png"
+                  groups="hospital_base.doctor_user"
+                  sequence="1"/>
+        <menuitem id="hospital_base_dashboard_menu"
+                  name="DashBoard"
+                  web_icon="hospital_base,static/description/clinic.png"
+                  groups="hospital_base.doctor_user"
+                  sequence="1"/>
+
+        <menuitem id="hospital_base_surgeries_menu"
+                  name="العمليات"
+                  web_icon="hospital_base,static/description/surgery.png"
+                  groups="hospital_base.sur_user"
+                  sequence="2"/>
+
+        <menuitem id="hospital_base_catheterization_menu"
+                  name="القسطرة"
+                  web_icon="hospital_base,static/description/catheterization.png"
+                  groups="hospital_base.catheter_user"
+                  sequence="2"/>
+
+        <menuitem id="hospital_base_inpatient_menu"
+                  name="الداخلي"
+                  web_icon="hospital_base,static/description/inpatient.png"
+                  groups="hospital_base.inpatient_user"
+                  sequence="2"/>
+
+        <menuitem id="hospital_base_icu_menu"
+                  name="العناية"
+                  web_icon="hospital_base,static/description/icu.png"
+                  groups="hospital_base.icu_user"
+                  sequence="3"/>
+
+        <menuitem id="hospital_base_laboratory_menu"
+                  name="المعمل"
+                  web_icon="hospital_base,static/description/laboratory.png"
+                  groups="hospital_base.lab_user"
+                  sequence="4"/>
+
+        <menuitem id="hospital_base_radiology_menu"
+                  name="اﻷشعة"
+                  web_icon="hospital_base,static/description/radiology.png"
+                  groups="hospital_base.rad_user"
+                  sequence="5"/>
+
+        <menuitem id="hospital_base_reception_menu"
+                  name="الاستقبال"
+                  web_icon="hospital_base,static/description/reception.png"
+                  groups="hospital_base.reception_user"
+                  sequence="6"/>
+
+        <menuitem id="hospital_base_menu"
+                  name="إعدادات المستشفي"
+                  web_icon="hospital_base,static/description/icon.png"
+                  groups="hospital_base.hospital_management"
+                  sequence="0"/>
+
+        <menuitem id="hospital_clinic_menu"
+                  name="العيادات"
+                  parent="hospital_base.hospital_base_menu"
+                  sequence="10"/>
+
+        <menuitem id="hospital_doctor_menu"
+                  name="اﻷطباء"
+                  parent="hospital_base.hospital_base_menu"
+                  sequence="20"/>
+
+        <menuitem id="hospital_patient_menu"
+                  name="المرضي"
+                  parent="hospital_base.hospital_base_menu"
+                  sequence="25"/>
+
+        <menuitem id="hospital_insurance_contract_menu"
+                  name="التعاقدات"
+                  parent="hospital_base.hospital_base_menu"
+                  sequence="26"/>
+
+        <menuitem id="hospital_service_menu"
+                  name="الخدمات"
+                  parent="hospital_base.hospital_base_menu"
+                  sequence="27"/>
+
+        <menuitem id="hospital_surgeries_menu"
+                  name="العمليات"
+                  parent="hospital_base.hospital_base_menu"
+                  sequence="30"/>
+
+        <menuitem id="hospital_catheterization_menu"
+                  name="القسطرة"
+                  parent="hospital_base.hospital_base_menu"
+                  sequence="35"/>
+
+        <menuitem id="hospital_laboratory_menu"
+                  name="المعمل"
+                  parent="hospital_base.hospital_base_menu"
+                  sequence="40"/>
+
+        <menuitem id="res_rooms_root_menu"
+                  name="الغرف"
+                  parent="hospital_base.hospital_base_menu"
+                  sequence="50"/>
+
+        <menuitem name="Settings"
+                  id="base.menu_administration"
+                  web_icon="base,static/description/settings.png"
+                  sequence="550"
+                  groups="hospital_base.hospital_management_entry"/>
+
+        <menuitem id="base.menu_management"
+                  name="Apps"
+                  sequence="500"
+                  web_icon="base,static/description/modules.png"
+                  groups="hospital_base.hospital_management_apps"/>
+
+         <record id="action_hospital_dashboard" model="ir.actions.client">
+            <field name="name">Hospital Dashboard</field>
+            <field name="tag">hospital_dashboard</field>
+            <field name="target">main</field>
+        </record>
+
+         <menuitem id="clinic_visit_menu"
+                  name="DashBoard"
+                  parent="hospital_base.hospital_base_dashboard_menu"
+                  action="action_hospital_dashboard"
+                  sequence="0"/>
+    </data>
+</odoo>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+<menuitem id="main_menu_sufficiency_report" name="تقرير الكفاءة" web_icon="high_dam_hr,static/description/icon.png"/>
+<menuitem name="Configuration" id="main_menu_configartion" parent="main_menu_sufficiency_report" sequence="13"/>
+    </data>
+</odoo>

@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hr_employee_form_inherit" model="ir.ui.view">
+            <field name="name">hr.employee.form.inherit</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+                <header>
+                    <button name="print_report" type="object" string="بيان حالة وظيفية" class="oe_highlight"/>
+                </header>
+                <xpath expr="//field[@name='job_title']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//page[@name='personal_information']//field[@name='birthday']" position="after">
+                    <field name="national_id"/>
+                    <field name="ensure_id"/>
+                    <field name="age"/>
+                    <field name="dept" widget="Many2one"/>
+                    <field name="dept_center" widget="Many2one"/>
+                    <field name="live"/>
+                </xpath>
+                <xpath expr="//page[@name='hr_settings']//field[@name='user_id']" position="after">
+                    <field name="current_status"/>
+                    <field name="start_date"/>
+                    <field name="default_date"/>
+                    <field name="hiring_date"/>
+                </xpath>
+                <xpath expr="//page[@name='hr_settings']//field[@name='hiring_date']" position="after">
+                    <field name="qualitative_group"/>
+                    <field name="job_name"/>
+                    <field name="job_type"/>
+                    <field name="degree"/>
+                    <field name="hi_degree"/>
+                    <field name="level_id"/>
+                    <field name="level_date_got"/>
+                    <field name="military_status"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="hr_employee_view_tree_inherit" model="ir.ui.view">
+            <field name="name">hr.employee.tree.inherit</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_tree"/>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="job_title" optional="hide"/>
+                    <field name="job_id" optional="hide"/>
+                    <field name="age" optional="hide"/>
+                    <field name="national_id" optional="hide"/>
+                    <field name="job_name" optional="show"/>
+                    <field name="job_type" optional="hide"/>
+                    <field name="degree" optional="hide"/>
+                    <field name="level_id" optional="show"/>
+                    <field name="level_date_got" optional="show"/>
+                    <field name="dept" widget="Many2one" optional="hide"/>
+                    <field name="dept_center" widget="Many2one"/>
+                    <field name="live" widget="Many2one" optional="hide"/>
+                    <field name="current_status" optional="hide"/>
+                </tree>
+            </field>
+
+        </record>
+        <record id="action_emp_id_card" model="ir.actions.report">
+            <field name="name">بيان حالة وظيفية</field>
+            <field name="model">hr.employee</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">high_dam_hr.report_emp_id_card</field>
+            <field name="report_file">high_dam_hr.report_emp_id_card</field>
+            <field name="print_report_name">' %s' % (object.name)</field>
+            <field name="binding_model_id" ref="model_hr_employee"/>
+        </record>
+
+        <record id="view_employee_filtert_inherit" model="ir.ui.view">
+            <field name="name">hr.employee.search</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//search/field[@name='name']" position="after">
+                    <field name="national_id"/>
+                    <field name="job_name"/>
+                    <field name="job_type"/>
+                    <field name="degree"/>
+                    <field name="level_id"/>
+                    <field name="dept"/>
+                    <field name="dept_center"/>
+                    <field name="ensure_id"/>
+                    <field name="age"/>
+                    <field name="live"/>
+                    <field name="current_status"/>
+                    <field name="hi_degree"/>
+                    <field name="level_id"/>
+                    <field name="level_date_got"/>
+                    <field name="military_status"/>
+                    <field name="current_status"/>
+                    <field name="start_date"/>
+                    <field name="hiring_date"/>
+                    <separator/>
+                </xpath>
+
+                <xpath expr="//group/filter[@name='group_job']" position="after">
+
+                    <filter name="current_status_do" string=" موظف اساسي "
+                            domain="[('current_status','=', 'basic')]"
+                            help="اساسي"/>
+                    <filter name="current_status_do_mandate_out" string="منتدب خارجي لجهة اخري"
+                            domain="[('current_status','=', 'mandate_out')]"
+                            help="منتدب خارجي لجهة اخري"/>
+                    <filter name="current_status_do_mandate_in" string="منتدب داخلي الي الهيئة"
+                            domain="[('current_status','=', 'mandate_in')]"
+                            help="منتدب داخلي الي الهيئة"/>
+                    <filter name="current_status_do_loan_in" string="اعارة الي الهيئة"
+                            domain="[('current_status','=', 'loan_in')]"
+                            help="اعارة من جهة اخري الي الهيئة"/>
+                    <filter name="current_status_do_loan_in" string="اعارة من الهيئة لجهة اخري"
+                            domain="[('current_status','=', 'loan_out')]"
+                            help="اعارة من الهيئة الي جهة اخري"/>
+                    <filter name="current_status_Appendix" string="ملحق"
+                            domain="[('current_status','=', 'Appendix')]"
+                            help="ملحق الي الهيئة"/>
+                    <filter name="current_status_end" string="معاش"
+                            domain="[('current_status','=', 'end')]"
+                            help="محال الي المعاش"/>
+                    <filter name="job_type_do" string="قيادية"
+                            domain="[('job_type','=', 'manager')]"
+                            help="قيادات"/>
+                    <filter name="specialist_do" string="تخصصية"
+                            domain="[('job_type','=', 'specialist')]"
+                            help="تخصصية"/>
+
+                    <filter name="job_title" string="المسمي الوظيفي" domain="[]" context="{'group_by': 'job_title'}"/>
+                    <filter name="job_type" string="الوظيفة" domain="[]" context="{'group_by': 'job_type'}"/>
+                    <filter name="hiring_date" string="تاريخ التعيين" domain="[]"
+                            context="{'group_by': 'hiring_date'}"/>
+                    <filter name="default_date" string="تاريخ الفرضي" domain="[]"
+                            context="{'group_by': 'default_date'}"/>
+                    <filter name="start_date" string="تاريخ بدء العمل" domain="[]"
+                            context="{'group_by': 'start_date'}"/>
+                    <filter name="military_status" string="حالة التجنيد" domain="[]"
+                            context="{'group_by': 'military_status'}"/>
+                    <filter name="level_id" string="المستوي" domain="[]" context="{'group_by': 'level_id'}"/>
+                    <filter name="current_status" string="الحالة" domain="[]"
+                            context="{'group_by': 'current_status'}"/>
+                    <filter name="dept" string="الادارة المركزية" domain="[]"
+                            context="{'group_by': 'dept_center'}"/>
+                    <filter name="dept_center" string="الادارة " domain="[]"
+                            context="{'group_by': 'dept'}"/>
+                    <filter name="job_name" string="اسم الوظيفة" domain="[]" context="{'group_by': 'job_name'}"/>
+                    <filter name="age" string="العمر" domain="[]" context="{'group_by': 'age'}"/>
+                    <filter name="level_id" string="المستوي الوظيفي" domain="[]" context="{'group_by': 'level_id'}"/>
+                    <filter name="level_date_got" string="تاريخ الحصول عليها" domain="[]"
+                            context="{'group_by': 'level_date_got'}"/>
+                </xpath>
+
+
+            </field>
+        </record>
+        <record id="hr_employee_calendar_view" model="ir.ui.view">
+            <field name="name">hr.employee.calendar</field>
+            <field name="model">hr.employee</field>
+            <field name="arch" type="xml">
+                <calendar string="Employee" date_start="default_date">
+                    <field name="name"/>
+                    <field name="national_id"/>
+                    <field name="ensure_id"/>
+                    <field name="job_name"/>
+                    <field name="job_type"/>
+                    <field name="degree"/>
+                    <field name="level_id"/>
+                    <field name="dept"/>
+                    <field name="dept_center"/>
+                    <field name="ensure_id"/>
+                    <field name="age"/>
+                    <field name="live"/>
+                    <field name="hi_degree"/>
+                    <field name="level_id"/>
+                    <field name="level_date_got"/>
+                    <field name="military_status"/>
+                    <field name="current_status"/>
+                    <field name="start_date"/>
+                    <field name="default_date"/>
+                    <field name="hiring_date"/>
+                </calendar>
+            </field>
+        </record>
+
+        <record id="hr_employee_graph_view" model="ir.ui.view">
+            <field name="name">hr.employee.graph</field>
+            <field name="model">hr.employee</field>
+            <field name="arch" type="xml">
+                <graph string="Employee">
+                    <field name="department_id"/>
+                    <field name="name"/>
+                    <field name="dept"/>
+                    <field name="dept_center"/>
+                    <field name="national_id"/>
+                    <field name="ensure_id"/>
+                    <field name="job_name" type="measure"/>
+                    <field name="job_type" type="measure"/>
+                    <field name="degree" type="measure"/>
+                    <field name="ensure_id"/>
+                    <field name="age" type="measure"/>
+                    <field name="live"/>
+                    <field name="hi_degree" type="measure"/>
+                    <field name="level_id" type="measure"/>
+                    <field name="level_date_got"/>
+                    <field name="military_status"/>
+                    <field name="current_status"/>
+                    <field name="start_date"/>
+                    <field name="default_date"/>
+                    <field name="hiring_date"/>
+                </graph>
+            </field>
+        </record>
+
+        <record id="hr_employee_pivot_view" model="ir.ui.view">
+            <field name="name">hr.employee.pivot</field>
+            <field name="model">hr.employee</field>
+            <field name="arch" type="xml">
+                <pivot string="Employee">
+
+                    <field name="name" type="row"/>
+                    <field name="department_id" type="col"/>
+                    <field name="dept_center" type="col"/>
+                    <field name="dept" type="col"/>
+                    <field name="national_id"/>
+                    <field name="ensure_id"/>
+                    <field name="job_name"/>
+                    <field name="job_type"/>
+                    <field name="degree"/>
+                    <field name="ensure_id"/>
+                    <field name="age"/>
+                    <field name="live"/>
+                    <field name="hi_degree"/>
+                    <field name="level_id"/>
+                    <field name="level_date_got"/>
+                    <field name="military_status"/>
+                    <field name="current_status"/>
+                    <field name="start_date"/>
+                    <field name="default_date"/>
+                    <field name="hiring_date"/>
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="hr.open_view_employee_list_my" model="ir.actions.act_window">
+            <field name="name">Employees</field>
+            <field name="res_model">hr.employee</field>
+            <field name="view_mode">kanban,tree,form,calendar,graph,pivot,activity</field>
+            <field name="domain">[]</field>
+            <field name="context">{'chat_icon': True}</field>
+            <field name="view_id" eval="False"/>
+            <field name="search_view_id" ref="hr.view_employee_filter"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Add a new employee
+                </p>
+                <p>
+                    With just a quick glance on the Odoo employee screen, you
+                    can easily find all the information you need for each person;
+                    contact data, job position, availability, etc.
+                </p>
+            </field>
+        </record>
+        <record id="hr.open_view_employee_tree" model="ir.actions.act_window">
+            <field name="name">Employees Structure</field>
+            <field name="res_model">hr.employee</field>
+            <field name="view_mode">kanban,tree,form,calendar,graph,pivot,activity</field>
+            <field name="view_id" ref="hr.view_employee_tree"/>
+            <field name="domain">[('parent_id','=',False)]</field>
+            <field name="search_view_id" ref="hr.view_employee_filter"/>
+        </record>
+
+        <record id="hr.open_view_employee_list" model="ir.actions.act_window">
+            <field name="name">Employees</field>
+            <field name="res_model">hr.employee</field>
+            <field name="view_mode">kanban,tree,form,calendar,graph,pivot,activity</field>
+            <field name="view_id" eval="False"/>
+            <field name="search_view_id" ref="hr.view_employee_filter"/>
+        </record>
+        <record id="hr.act_employee_from_department" model="ir.actions.act_window">
+            <field name="name">Employees</field>
+            <field name="res_model">hr.employee</field>
+            <field name="view_mode">kanban,tree,form,calendar,graph,pivot,activity</field>
+            <field name="search_view_id" ref="hr.view_employee_filter"/>
+            <field name="context">{
+                "searchpanel_default_department_id": active_id,
+                "default_department_id": active_id}
+            </field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Add a new employee
+                </p>
+                <p>
+                    With just a quick glance on the Odoo employee screen, you
+                    can easily find all the information you need for each person;
+                    contact data, job position, availability, etc.
+                </p>
+            </field>
+        </record>
+    </data>
+</odoo>

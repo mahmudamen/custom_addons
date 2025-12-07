@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="seq_lab" model="ir.sequence">
+            <field name="name">Lab</field>
+            <field name="code">lab</field>
+            <field name="prefix">LAB</field>
+            <field name="padding">6</field>
+        </record>
+        <record id="seq_rad" model="ir.sequence">
+            <field name="name">Rad</field>
+            <field name="code">rad</field>
+            <field name="prefix">RAD</field>
+            <field name="padding">6</field>
+        </record>
+
+    </data>
+</odoo>

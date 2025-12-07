@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.module.category" id="hospital_base.module_category_custom_sys_access_rights">
+            <field name="name">اعدادات النظام</field>
+            <field name="description">صلاحيات الوصول لاعدادات النظام</field>
+            <field name="sequence">74</field>
+        </record>
+
+        <record id="hospital_management" model="res.groups">
+            <field name="name">مدير المستشفي</field>
+            <field name="category_id" ref="hospital_base.module_category_custom_sys_access_rights"/>
+        </record>
+
+        <record id="hospital_management_entry" model="res.groups">
+            <field name="name">مدير النظام</field>
+            <field name="category_id" ref="hospital_base.module_category_custom_sys_access_rights"/>
+        </record>
+
+        <record id="hospital_management_apps" model="res.groups">
+            <field name="name">التطبيقات</field>
+            <field name="category_id" ref="hospital_base.module_category_custom_sys_access_rights"/>
+        </record>
+
+        <record model="ir.module.category" id="hospital_base.module_category_custom_acc_access_rights">
+            <field name="name">صلاحيات الحسابات</field>
+            <field name="description">صلاحيات الحسابات و التعاقدات</field>
+            <field name="sequence">74</field>
+        </record>
+
+        <record id="post_journal_entry" model="res.groups">
+            <field name="name">ترحيل القيد</field>
+            <field name="category_id" ref="hospital_base.module_category_custom_acc_access_rights"/>
+        </record>
+
+        <record id="set_draft_journal_entry" model="res.groups">
+            <field name="name">إعادة القيد مسودة</field>
+            <field name="category_id" ref="hospital_base.module_category_custom_acc_access_rights"/>
+        </record>
+
+        <record id="cancel_journal_entry" model="res.groups">
+            <field name="name">إلغاء القيد</field>
+            <field name="category_id" ref="hospital_base.module_category_custom_acc_access_rights"/>
+        </record>
+
+        <record id="post_invoices" model="res.groups">
+            <field name="name">تأكيد الفواتير</field>
+            <field name="category_id" ref="hospital_base.module_category_custom_acc_access_rights"/>
+        </record>
+
+        <record id="credit_invoices" model="res.groups">
+            <field name="name">اشعار دائن</field>
+            <field name="category_id" ref="hospital_base.module_category_custom_acc_access_rights"/>
+        </record>
+
+        <record id="cancel_invoices" model="res.groups">
+            <field name="name">إلغاء الفواتير</field>
+            <field name="category_id" ref="hospital_base.module_category_custom_acc_access_rights"/>
+        </record>
+
+        <record model="ir.module.category" id="hospital_base.module_category_custom_report_access_rights">
+            <field name="name">صلاحيات تقارير الحسابات</field>
+            <field name="description">Helps you handle Accounting report Security Per User.</field>
+            <field name="sequence">75</field>
+        </record>
+
+        <record id="custom_vendor_report" model="res.groups">
+            <field name="name">تقرير العملاء و الموردين</field>
+            <field name="category_id" ref="hospital_base.module_category_custom_report_access_rights"/>
+        </record>
+
+        <record id="trial_balance_report" model="res.groups">
+            <field name="name">ميزان المراجعة</field>
+            <field name="category_id" ref="hospital_base.module_category_custom_report_access_rights"/>
+        </record>
+
+        <record id="general_ledger_report" model="res.groups">
+            <field name="name">اﻷستاذ العام</field>
+            <field name="category_id" ref="hospital_base.module_category_custom_report_access_rights"/>
+        </record>
+
+        <record id="financial_statement_report" model="res.groups">
+            <field name="name">القوائم المالية</field>
+            <field name="category_id" ref="hospital_base.module_category_custom_report_access_rights"/>
+        </record>
+
+        <record id="fixed_assets_report" model="res.groups">
+            <field name="name">اﻷصول الثابتة</field>
+            <field name="category_id" ref="hospital_base.module_category_custom_report_access_rights"/>
+        </record>
+
+        <record model="ir.module.category" id="hospital_base.module_category_custom_purchase_access_rights">
+            <field name="name">المشتريات</field>
+            <field name="description">Helps you handle Purchase Security Per User.</field>
+            <field name="sequence">77</field>
+        </record>
+
+        <record id="purchase_order_confirm" model="res.groups">
+            <field name="name">تأكيد أمر الشراء</field>
+            <field name="category_id" ref="hospital_base.module_category_custom_purchase_access_rights"/>
+        </record>
+
+        <record id="purchase_create_bill" model="res.groups">
+            <field name="name">إنشاء فاتورة</field>
+            <field name="category_id" ref="hospital_base.module_category_custom_purchase_access_rights"/>
+        </record>
+
+        <record id="purchase_order_cancel" model="res.groups">
+            <field name="name">إلغاء أمر الشراء</field>
+            <field name="category_id" ref="hospital_base.module_category_custom_purchase_access_rights"/>
+        </record>
+
+        <record id="contract_user" model="res.groups">
+            <field name="name">التعاقدات</field>
+            <field name="category_id" ref="hospital_base.module_category_custom_acc_access_rights"/>
+        </record>
+
+        <record model="ir.module.category" id="hospital_base.module_category_custom_access_rights">
+            <field name="name">صلاحيات الاقسام</field>
+            <field name="description">صلاحيات مستخدمي الاقسام</field>
+            <field name="sequence">74</field>
+        </record>
+
+        <record id="reception_user" model="res.groups">
+            <field name="name">استقبال</field>
+            <field name="category_id" ref="hospital_base.module_category_custom_access_rights"/>
+        </record>
+
+        <record id="inventory_user" model="res.groups">
+            <field name="name">المخازن</field>
+            <field name="category_id" ref="hospital_base.module_category_custom_access_rights"/>
+        </record>
+
+        <record id="inpatient_user" model="res.groups">
+            <field name="name">الداخلي</field>
+            <field name="category_id" ref="hospital_base.module_category_custom_access_rights"/>
+        </record>
+
+        <record id="icu_user" model="res.groups">
+            <field name="name">العناية</field>
+            <field name="category_id" ref="hospital_base.module_category_custom_access_rights"/>
+        </record>
+
+        <record id="sur_user" model="res.groups">
+            <field name="name">العمليات</field>
+            <field name="category_id" ref="hospital_base.module_category_custom_access_rights"/>
+        </record>
+
+        <record id="pharmacy_user" model="res.groups">
+            <field name="name">الصيدلية</field>
+            <field name="category_id" ref="hospital_base.module_category_custom_access_rights"/>
+        </record>
+
+        <record id="catheter_user" model="res.groups">
+            <field name="name">القسطرة</field>
+            <field name="category_id" ref="hospital_base.module_category_custom_access_rights"/>
+        </record>
+
+        <record id="lab_user" model="res.groups">
+            <field name="name">التحاليل</field>
+            <field name="category_id" ref="hospital_base.module_category_custom_access_rights"/>
+        </record>
+
+        <record id="rad_user" model="res.groups">
+            <field name="name">الاشعة</field>
+            <field name="category_id" ref="hospital_base.module_category_custom_access_rights"/>
+        </record>
+
+
+
+        <record id="doctor_user" model="res.groups">
+            <field name="name">طبيب</field>
+            <field name="category_id" ref="hospital_base.module_category_custom_access_rights"/>
+        </record>
+        <record id="surgery_room_manager" model="res.groups">
+            <field name="name">ادارة غرف الجراحة</field>
+            <field name="category_id" ref="hospital_base.module_category_custom_access_rights"/>
+        </record>
+
+        <record id="surgery_room_user" model="res.groups">
+            <field name="name">مستخدم غرف الجراحة</field>
+            <field name="category_id" ref="hospital_base.module_category_custom_access_rights"/>
+        </record>
+        <record id="reception_clinic_user_online" model="res.groups">
+            <field name="name">Online User</field>
+            <field name="category_id" ref="hospital_base.module_category_custom_access_rights"/>
+        </record>
+        <record id="reception_clinic_user_offline" model="res.groups">
+            <field name="name">Offline User</field>
+            <field name="category_id" ref="hospital_base.module_category_custom_access_rights"/>
+        </record>
+
+
+        <record id="surgery_schedule_rule" model="ir.rule">
+            <field name="name">Surgery Schedule: Access own company</field>
+            <field name="model_id" ref="model_surgery_slot"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+
+    </data>
+</odoo>

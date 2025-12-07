@@ -1,0 +1,510 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="contract_price_lists_form" model="ir.ui.view">
+            <field name="name">contract_price_lists_form</field>
+            <field name="model">contract.price.lists</field>
+            <field name="arch" type="xml">
+                <form string="">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                        <notebook>
+                            <page string="الخدمات">
+                                <field name="service_ids" mode="list">
+                                    <list editable="bottom">
+                                        <field name="service_id" options="{'no_create': True}"/>
+                                        <field name="price"/>
+                                    </list>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="contract_price_lists_tree" model="ir.ui.view">
+            <field name="name">contract_price_lists_tree</field>
+            <field name="model">contract.price.lists</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="name"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="contract_price_lists_action" model="ir.actions.act_window">
+            <field name="name">قوائم الاسعار</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">contract.price.lists</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <menuitem id="contract_price_lists_menu"
+                  name="قوائم الاسعار"
+                  parent="hospital_base.hospital_insurance_contract_menu"
+                  action="hospital_base.contract_price_lists_action"
+                  sequence="10"/>
+
+        <record id="insurance_contract_form" model="ir.ui.view">
+            <field name="name">insurance_contract_form</field>
+            <field name="model">insurance.contractor</field>
+            <field name="arch" type="xml">
+                <form string="Contracts">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="date_from"/>
+                                <field name="auto_renew"/>
+                                <field name="exp_amount"/>
+                            </group>
+                            <group>
+                                <field name="partner_id"
+                                       context="{'default_company_type': 'insurance', 'default_is_insurance': True}"/>
+                                <field name="date_to"/>
+                                <field name="price_list" options="{'no_create': True}"/>
+                                <field name="active" invisible="1"/>
+                                <field name="tax_amount"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page name="serv" string="الخدمات">
+                                <field name="line_ids" mode="list">
+                                    <list editable="bottom">
+                                        <field name="service_id" options="{'no_create': True}"/>
+                                        <field name="approval"/>
+                                        <field name="price"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page name="med" string="الادوية">
+                                <group>
+                                    <group>
+                                        <field name="local_discount"/>
+                                    </group>
+                                    <group>
+                                        <field name="imported_discount"/>
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="o_attachment_preview"/>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <record id="insurance_contract_tree" model="ir.ui.view">
+            <field name="name">insurance_contract_tree</field>
+            <field name="model">insurance.contractor</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="name"/>
+                    <field name="partner_id"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="auto_renew"/>
+                    <field name="active" column_invisible="1"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="insurance_contract_action" model="ir.actions.act_window">
+            <field name="name">Contracts</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">insurance.contractor</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <menuitem id="insurance_contract_menu"
+                  name="التعاقدات"
+                  parent="hospital_base.hospital_insurance_contract_menu"
+                  action="insurance_contract_action"
+                  sequence="20"/>
+
+        <record id="service_approval_form" model="ir.ui.view">
+            <field name="name">service_approval_form</field>
+            <field name="model">service.approval</field>
+            <field name="arch" type="xml">
+                <form string="">
+                    <header>
+                        <button name="action_accept" string="موافقة" class="oe_highlight"
+                                invisible="state in ('refund', 'accepted', 'done')"
+                                type="object"/>
+                        <button name="button_refused" string="رفض" class="oe_highlight"
+                                invisible="state in ('refund', 'refused', 'done')"
+                                type="object"/>
+                        <button name="button_waiting" string="انتظار" class="oe_highlight"
+                                invisible="state in ('refund', 'waiting', 'done')"
+                                type="object"/>
+                        <button name="deposit_refund" string="رد الامانات" class="oe_highlight"
+                                invisible="state != 'accepted'"
+                                confirm="refund"
+                                type="object"/>
+                        <field name="state" widget="statusbar" statusbar_visible="waiting,accepted,refused,done"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="visit_id" options="{'no_create': True}"/>
+                                <field name="patient_id" options="{'no_create': True}"/>
+                                <field name="patient_employer" options="{'no_create': True}"/>
+                                <field name="deposit_amount"/>
+                                <field name="approve_number"/>
+                                <field name="account_journal" options="{'no_create': True}"/>
+                                <field name="refund_move" options="{'no_create': True}"/>
+                            </group>
+                            <group>
+                                <field name="description"/>
+                                <field name="service_id" options="{'no_create': True}"/>
+                                <field name="doctor_id" options="{'no_create': True}"/>
+                                <field name="patient_account" options="{'no_create': True}"/>
+                                <field name="patient_contract_company" options="{'no_create': True}"/>
+                                <field name="service_provider" options="{'no_create': True}"/>
+                                <field name="section_id" options="{'no_create': True}"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <div class="o_attachment_preview"/>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+        <record id="service_approval_tree" model="ir.ui.view">
+            <field name="name">service_approval_tree</field>
+            <field name="model">service.approval</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="name"/>
+                    <field name="description"/>
+                    <field name="visit_id" options="{'no_create': True}"/>
+                    <field name="service_id" options="{'no_create': True}"/>
+                    <field name="doctor_id" options="{'no_create': True}"/>
+                    <field name="patient_id" options="{'no_create': True}"/>
+                    <field name="patient_account" options="{'no_create': True}"/>
+                    <field name="patient_employer" options="{'no_create': True}"/>
+                    <field name="patient_contract_company" options="{'no_create': True}"/>
+                    <field name="service_provider" options="{'no_create': True}"/>
+                    <field name="state"/>
+                    <field name="deposit_amount"/>
+                    <field name="patient_per"/>
+                    <field name="approve_number"/>
+                    <field name="section_id"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="service_approval_action" model="ir.actions.act_window">
+            <field name="name">الموافقات</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">service.approval</field>
+            <field name="view_mode">list,form</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'list', 'view_id': ref('service_approval_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('service_approval_form')}),
+            ]"/>
+        </record>
+
+        <menuitem id="service_approval_menu"
+                  name="الموافقات"
+                  parent="hospital_base.hospital_insurance_contract_menu"
+                  action="hospital_base.service_approval_action"
+                  sequence="30"/>
+
+        <record id="inpatient_service_approval_form" model="ir.ui.view">
+            <field name="name">inpatient_service_approval_form</field>
+            <field name="model">service.approval</field>
+            <field name="arch" type="xml">
+                <form string="">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="patient_file" readonly="1"/>
+                                <field name="patient_id" readonly="1"/>
+                                <field name="room_id" readonly="1"/>
+                                <field name="patient_employer" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="description"/>
+                                <field name="service_id" options="{'no_create': True}"/>
+                                <field name="doctor_id" readonly="1"/>
+                                <field name="bed_id" readonly="1"/>
+                                <field name="patient_account" readonly="1"/>
+                                <field name="patient_contract_company" readonly="1"/>
+                                <field name="service_provider" options="{'no_create': True}"/>
+                                <field name="section_id" readonly="1"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="inpatient_service_approval_tree" model="ir.ui.view">
+            <field name="name">service_approval_tree</field>
+            <field name="model">service.approval</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="name"/>
+                    <field name="description"/>
+                    <field name="patient_file" readonly="1"/>
+                    <field name="service_id" readonly="1"/>
+                    <field name="doctor_id" readonly="1"/>
+                    <field name="patient_id" readonly="1"/>
+                    <field name="patient_account" readonly="1"/>
+                    <field name="patient_employer" readonly="1"/>
+                    <field name="patient_contract_company" readonly="1"/>
+                    <field name="service_provider" readonly="1"/>
+                    <field name="state"/>
+                    <field name="room_id" readonly="1"/>
+                    <field name="bed_id" readonly="1"/>
+                    <field name="approve_number"/>
+                    <field name="section_id"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="res_insurance_contract_company_form" model="ir.ui.view">
+            <field name="name">res_insurance_contract_company_form</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <form string="Contract Company">
+                    <div class="alert alert-warning oe_edit_only" role="alert" name="warning_tax"
+                         invisible="not same_vat_partner_id">
+                        A partner with the same
+                        <span>
+                            <span class="o_vat_label">Tax ID</span>
+                        </span>
+                        already exists (<field name="same_vat_partner_id"/>), are you sure to create a new one?
+                    </div>
+                    <div class="alert alert-warning oe_edit_only" role="alert" name="warning_company"
+                         invisible="not same_company_registry_partner_id">
+                        A partner with the same
+                        <span>
+                            <span class="o_vat_label">Company Registry</span>
+                        </span>
+                        already exists (<field name="same_company_registry_partner_id"/>), are you sure to create a new
+                        one?
+                    </div>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button class="oe_stat_button" name="open_doctor_services"
+                                    string="العقود"
+                                    invisible="is_insurance == False"
+                                    type="object" icon="fa-credit-card">
+                            </button>
+                            <button class="oe_stat_button" name="open_services_list"
+                                    string="المطالبات"
+                                    invisible="is_insurance == False"
+                                    type="object" icon="fa-credit-card">
+                            </button>
+                            <button class="oe_stat_button" name="open_request_approves_list"
+                                    string="الموافقات"
+                                    invisible="is_insurance == False"
+                                    type="object" icon="fa-credit-card">
+                            </button>
+                        </div>
+                        <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                        <field name="avatar_128" invisible="1"/>
+                        <field name="image_1920" widget="image" class="oe_avatar"
+                               options="{&quot;preview_image&quot;: &quot;avatar_128&quot;}"/>
+                        <div class="oe_title mb24">
+                            <field name="is_company" invisible="1"/>
+                            <field name="commercial_partner_id" invisible="1"/>
+                            <field name="active" invisible="1"/>
+                            <field name="company_id" invisible="1"/>
+                            <field name="country_code" invisible="1"/>
+                            <field name="company_type" invisible="1"/>
+                            <field name="is_insurance" invisible="1"/>
+                            <h1>
+                                <field id="individual" options="{'line_breaks': False}" widget="text" class="text-break"
+                                       name="name" default_focus="1" placeholder="Company Name"
+                                       required="True"/>
+                            </h1>
+                        </div>
+
+                        <group>
+                            <group>
+                                <span class="o_form_label o_td_label" name="address_name">
+                                    <field name="type" invisible="is_company" readonly="user_ids"
+                                           required="not is_company"
+                                           class="fw-bold"/>
+                                    <b invisible="not is_company">Address</b>
+                                </span>
+                                <div class="o_address_format">
+                                    <field name="street" placeholder="Street..." class="o_address_street"/>
+                                    <field name="street2" placeholder="Street 2..." class="o_address_street"/>
+                                    <field name="city" placeholder="City" class="o_address_city"/>
+                                    <field name="state_id" class="o_address_state" placeholder="State"
+                                           options="{'no_open': True, 'no_quick_create': True}"
+                                           context="{'country_id': country_id, 'default_country_id': country_id, 'zip': zip}"/>
+                                    <field name="zip" placeholder="ZIP" class="o_address_zip"/>
+                                    <div name="partner_address_country" class="d-flex justify-content-between">
+                                        <field name="country_id" placeholder="Country" class="o_address_country"
+                                               options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}"/>
+                                    </div>
+                                </div>
+                            </group>
+                            <group>
+                                <field name="phone" widget="phone"/>
+                                <field name="mobile" widget="phone"/>
+                                <field name="vat" placeholder="e.g. BE0477472701"/>
+                                <field name="user_ids" invisible="1"/>
+                                <field name="active_lang_count" invisible="1"/>
+                                <field name="lang" invisible="active_lang_count &lt;= 1"/>
+                                <field name="category_id" widget="many2many_tags"
+                                       options="{'color_field': 'color', 'no_create_edit': True}"
+                                       placeholder="e.g. &quot;B2B&quot;, &quot;VIP&quot;, &quot;Consulting&quot;, ..."/>
+                            </group>
+                        </group>
+                        <notebook colspan="4">
+                            <page string="Info" name="company_data" autofocus="autofocus">
+                                <group string="Accounting">
+                                    <group>
+                                        <field name="property_account_receivable_id"/>
+                                    </group>
+                                    <group>
+                                        <field name="property_account_payable_id"/>
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="res_insurance_contract_company_tree" model="ir.ui.view">
+            <field name="name">res_partner_doctor_tree</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="name"/>
+                    <field name="phone"/>
+                    <field name="mobile"/>
+                    <field name="company_type" column_invisible="True"/>
+                    <field name="is_insurance" column_invisible="True"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="res_insurance_contract_company_action" model="ir.actions.act_window">
+            <field name="name">شركات التعاقد</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[('is_insurance', '=', True), ('company_type', '=', 'insurance')]</field>
+            <field name="context">{'default_company_type': 'insurance', 'default_is_insurance': True}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'list', 'view_id': ref('res_insurance_contract_company_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('res_insurance_contract_company_form')}),
+            ]"/>
+        </record>
+
+        <menuitem id="insurance_contract_company_menu"
+                  name="شركات التعاقد"
+                  parent="hospital_base.hospital_insurance_contract_menu"
+                  action="res_insurance_contract_company_action"
+                  sequence="0"/>
+
+        <record id="contract_claim_form" model="ir.ui.view">
+            <field name="name">contract_claim_form</field>
+            <field name="model">contract.claim</field>
+            <field name="arch" type="xml">
+                <form string="">
+                    <header>
+                        <button name="action_post" string="تأكيد" class="oe_highlight"
+                                invisible="state in ('draft', 'post', 'canceled')"
+                                type="object"/>
+                        <button name="button_draft" string="مسودة" class="oe_highlight"
+                                invisible="state in ('draft', 'invoiced', 'canceled')"
+                                type="object"/>
+                        <button name="button_generate" string="إعداد المطالبة" class="oe_highlight"
+                                invisible="state in ('post', 'invoiced', 'canceled')"
+                                type="object"/>
+                        <button name="button_cancel" string="الغاء" class="oe_highlight"
+                                invisible="state in ('draft', 'canceled', 'invoiced')"
+                                type="object"/>
+                        <button name="create_invoice" string="اصدار الفاتورة" class="oe_highlight"
+                                invisible="state in ('post', 'canceled', 'invoiced')"
+                                type="object"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,post,invoiced,canceled"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="from_date"/>
+                                <field name="invoice_id" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="contract_id" options="{'no_create': True}"/>
+                                <field name="contract_company" invisible="1"/>
+                                <field name="to_date"/>
+                                <field name="type"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page name="lines" string="الخدمات">
+                                <field name="line_ids" mode="list">
+                                    <list editable="bottom">
+                                        <field name="patient_id" options="{'no_create': True}" optional="show"/>
+                                        <field name="employer" optional="show"/>
+                                        <field name="service_id" options="{'no_create': True}"/>
+                                        <field name="date" optional="show"/>
+                                        <field name="approve_id" optional="show"/>
+                                        <field name="total_amount" optional="show"/>
+                                        <field name="patient_amount" optional="show"/>
+                                        <field name="company_amount" optional="show"/>
+                                    </list>
+                                </field>
+                                <group col="12" class="oe_invoice_lines_tab">
+                                    <group colspan="8"></group>
+                                    <group colspan="4">
+                                        <group class="oe_subtotal_footer oe_right">
+                                            <field name="total_amount"/>
+                                            <field name="total_patient"/>
+                                            <field name="total_company" class="oe_subtotal_footer_separator"/>
+                                        </group>
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="o_attachment_preview"/>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+        <record id="contract_claim_tree" model="ir.ui.view">
+            <field name="name">contract_claim_tree</field>
+            <field name="model">contract.claim</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="name"/>
+                    <field name="contract_id"/>
+                    <field name="from_date"/>
+                    <field name="to_date"/>
+                    <field name="invoice_id"/>
+                    <field name="type"/>
+                </list>
+            </field>
+        </record>
+        <record id="contract_claim_action" model="ir.actions.act_window">
+            <field name="name">المطالبات</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">contract.claim</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <menuitem id="contract_claim_menu" name="المطالبات" parent="hospital_base.hospital_insurance_contract_menu" action="contract_claim_action" sequence="100"/>
+
+    </data>
+</odoo>

@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Report Action Definition for Radiology Request Receipt -->
+        <record id="report_radiology_receipt_report" model="ir.actions.report">
+            <field name="name">Radiology Receipt</field>
+            <field name="model">radiology.request</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">hospital_base.report_radiology_receipt</field>
+            <field name="binding_model_id" ref="hospital_base.model_radiology_request"/>
+            <field name="binding_type">report</field>
+            <field name="paperformat_id" ref="hospital_base.receipt_print"/>
+        </record>
+
+        <!-- Receipt Template for Radiology Request -->
+        <template id="report_radiology_receipt">
+            <t t-call="web.basic_layout">
+                <div class="page" style="font-family: 'Tajawal', Arial, sans-serif !important; max-width: 300px; margin: 0 auto; padding: 0;">
+                    <style>
+                        @font-face {
+                            font-family: 'Tajawal';
+                            src: url('/web/static/lib/fontawesome/fonts/Tajawal-Regular.ttf') format('truetype');
+                            font-weight: normal;
+                        }
+                        @font-face {
+                            font-family: 'Tajawal';
+                            src: url('/web/static/lib/fontawesome/fonts/Tajawal-Bold.ttf') format('truetype');
+                            font-weight: bold;
+                        }
+
+                        /* POS Receipt Styling */
+                        .pos-receipt {
+                            width: 100%;
+                            direction: rtl;
+                            text-align: right;
+                            font-family: 'Tajawal', Arial, sans-serif !important;
+                            font-size: 14px;
+                        }
+                        .pos-receipt * {
+                            font-family: 'Tajawal', Arial, sans-serif !important;
+                        }
+                        .receipt-header {
+                            text-align: center;
+                            font-size: 18px;
+                            font-weight: bold;
+                            border-bottom: 1px dashed #000;
+                            margin-bottom: 10px;
+                            padding-bottom: 5px;
+                        }
+                        .receipt-subheader {
+                            text-align: center;
+                            font-size: 16px;
+                            margin-bottom: 10px;
+                        }
+                        .receipt-logo {
+                            display: block;
+                            margin: 0 auto;
+                            text-align: center;
+                            border: 2px solid #000;
+                            width: 55px;
+                            height: 55px;
+                            border-radius: 50%;
+                            line-height: 55px;
+                            font-size: 32px;
+                            font-weight: bold;
+                            margin-bottom: 10px;
+                        }
+                        .receipt-line {
+                            margin: 8px 0;
+                            font-size: 14px;
+                            display: flex;
+                            justify-content: space-between;
+                        }
+                        .receipt-line .label {
+                            font-weight: bold;
+                        }
+                        .receipt-section {
+                            margin-top: 15px;
+                            border-top: 1px dashed #ccc;
+                            padding-top: 10px;
+                        }
+                        .receipt-total {
+                            font-size: 16px;
+                            font-weight: bold;
+                            margin: 10px 0;
+                        }
+                        .receipt-footer {
+                            text-align: center;
+                            border-top: 1px dashed #000;
+                            border-bottom: 1px dashed #000;
+                            margin: 15px 0;
+                            padding: 8px 0;
+                            font-size: 12px;
+                        }
+                        .receipt-date {
+                            text-align: center;
+                            font-size: 12px;
+                            margin-top: 10px;
+                        }
+                        .receipt-status {
+                            text-align: center;
+                            font-size: 16px;
+                            font-weight: bold;
+                            margin: 10px 0;
+                            padding: 5px;
+                            border: 1px dashed #000;
+                        }
+                    </style>
+
+                    <div class="pos-receipt">
+                        <div class="receipt-header">
+                            مركز الفرقان التخصصي
+                        </div>
+
+                        <!-- Radiology Header -->
+                        <div class="receipt-subheader">
+                            <strong>قسم الأشعة</strong>
+                        </div>
+
+                        <div class="receipt-logo">
+                            <span>أ</span>
+                        </div>
+
+                        <!-- Request Status -->
+                        <div class="receipt-status">
+                            <t t-if="state == 'waiting'">
+                                <span>بانتظار الخدمة</span>
+                            </t>
+                            <t t-elif="state == 'done'">
+                                <span>تم إنجاز الخدمة</span>
+                            </t>
+                            <t t-elif="state == 'cancelled'">
+                                <span>ملغية</span>
+                            </t>
+                        </div>
+
+                        <!-- Request Information -->
+                        <div class="receipt-section">
+                            <div class="receipt-line">
+                                <span class="label">رقم الطلب:</span>
+                                <span class="value"><t t-esc="name"/></span>
+                            </div>
+                            <div class="receipt-line">
+                                <span class="label">التاريخ:</span>
+                                <span class="value"><t t-esc="date"/></span>
+                            </div>
+                            <div class="receipt-line">
+                                <span class="label">المريض:</span>
+                                <span class="value"><t t-esc="patient_id.name"/></span>
+                            </div>
+                            <div class="receipt-line">
+                                <span class="label">الطبيب:</span>
+                                <span class="value"><t t-esc="doctor_id.name"/></span>
+                            </div>
+                            <div class="receipt-line">
+                                <span class="label">فني الأشعة:</span>
+                                <span class="value"><t t-esc="radiology_technician.name"/></span>
+                            </div>
+                        </div>
+
+                        <!-- Service Information -->
+                        <div class="receipt-section">
+                            <div class="receipt-line">
+                                <span class="label">نوع الأشعة:</span>
+                                <span class="value"><t t-esc="service_id.name"/></span>
+                            </div>
+                            <div class="receipt-line">
+                                <span class="label">العدد:</span>
+                                <span class="value"><t t-esc="quantity"/></span>
+                            </div>
+
+                            <!-- Display order information if available -->
+                            <t t-if="sale_order_id">
+                                <div class="receipt-line">
+                                    <span class="label">رقم الفاتورة:</span>
+                                    <span class="value"><t t-esc="sale_order_id.name"/></span>
+                                </div>
+                                <t t-if="sale_order_id.amount_total">
+                                    <div class="receipt-line receipt-total">
+                                        <span class="label">المبلغ الإجمالي:</span>
+                                        <span class="value"><t t-esc="sale_order_id.amount_total"/> ج</span>
+                                    </div>
+                                </t>
+                            </t>
+                        </div>
+
+                        <!-- Additional Information -->
+                        <div class="receipt-section">
+                            <div class="receipt-line">
+                                <span class="label">نوع الحساب:</span>
+                                <span class="value">
+                                    <t t-if="patient_account == 'cash'">نقدي</t>
+                                    <t t-elif="patient_account == 'contract'">تعاقد</t>
+                                    <t t-else=""><t t-esc="patient_account"/></t>
+                                </span>
+                            </div>
+
+                            <t t-if="patient_account == 'contract'">
+                                <div class="receipt-line">
+                                    <span class="label">الشركة التابع لها:</span>
+                                    <span class="value"><t t-esc="employer.name"/></span>
+                                </div>
+                                <div class="receipt-line">
+                                    <span class="label">شركة التعاقد:</span>
+                                    <span class="value"><t t-esc="contract_company.name"/></span>
+                                </div>
+                            </t>
+
+                            <t t-if="note">
+                                <div class="receipt-line" style="display: block;">
+                                    <div class="label">ملاحظات:</div>
+                                    <div style="margin-top: 5px;"><t t-esc="note"/></div>
+                                </div>
+                            </t>
+                        </div>
+
+                        <!-- Footer -->
+                        <div class="receipt-footer">
+                            في حالة فقد الايصال
+                            <br/>
+                            لا تؤدي الخدمة و لا تسترد القيمة
+                        </div>
+
+                        <div class="receipt-date">
+                            <span>تاريخ الطباعة: <t t-esc="context_today().strftime('%Y-%m-%d %H:%M')"/></span>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+    </data>
+</odoo>

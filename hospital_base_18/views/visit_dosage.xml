@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+<record id="view_visit_dosage_form" model="ir.ui.view">
+        <field name="name">visit.dosage.form</field>
+        <field name="model">visit.dosage</field>
+        <field name="arch" type="xml">
+            <form string="الجرعة">
+                <sheet>
+                    <group>
+                        <field name="name" placeholder="اسم الجرعة..."/>
+                        <field name="active" widget="boolean_toggle"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- List View -->
+    <record id="view_visit_dosage_tree" model="ir.ui.view">
+        <field name="name">visit.dosage.list</field>
+        <field name="model">visit.dosage</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_visit_dosage_search" model="ir.ui.view">
+        <field name="name">visit.dosage.search</field>
+        <field name="model">visit.dosage</field>
+        <field name="arch" type="xml">
+            <search string="بحث الجرعات">
+                <field name="name"/>
+                <filter string="نشط" name="active" domain="[('active', '=', True)]"/>
+                <filter string="غير نشط" name="inactive" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_visit_dosage" model="ir.actions.act_window">
+        <field name="name">الجرعات</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">visit.dosage</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_visit_dosage_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                قم بإنشاء أول جرعة
+            </p>
+        </field>
+    </record>
+        <menuitem id="doctor_dosage_view_menu"
+                  name="الجرعات"
+                  parent="hospital_base.hospital_doctor_menu"
+                  action="action_visit_dosage"
+                  sequence="100"/>
+    </data>
+</odoo>

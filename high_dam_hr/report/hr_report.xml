@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="hr_report_act_window" model="ir.actions.act_window">
+            <field name="name">تقارير الحالة الوظيفية</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">hr.report</field>
+            <field name="view_mode">tree,form,graph,pivot</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    تقرير الوظيفية .
+                </p>
+            </field>
+        </record>
+
+        <menuitem name="تقرير الحالة الوظيفية" id="hr_report_menu" parent="hr.menu_human_resources_configuration" action="hr_report_act_window"/>
+
+
+    </data>
+</odoo>
