@@ -38,7 +38,7 @@ class HrEmployee(models.Model):
                                        ('stoped', 'متوقف عن العمل'),
                                        ('end', 'معاش  ')
                                        ],
-                                      string="الحالة الحالية", default='basic', tracking=True, translate=True)
+                                      string="الحالة الحالية", ondelete="cascade", tracking=True, translate=True)
     job_type = fields.Selection([('manager', 'القيادية والاشرافية'),
                                  ('specialist', 'تخصصية'),
                                  ('user', 'فنية ومكتبية'),
